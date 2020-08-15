@@ -1,0 +1,9 @@
+.root
+{
+    -fx-font-family: "monospace";
+}
+
+.button
+{
+    -fx-pref-width: 80px;
+}
