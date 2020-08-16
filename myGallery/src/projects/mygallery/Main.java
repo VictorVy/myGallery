@@ -7,15 +7,15 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class Main extends Application
-{
+public class Main extends Application {
     public static Scene mainScene;
 
-    public static void main(String[] args) { launch(args); }
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
-    public void start(Stage mainStage) throws Exception
-    {
+    public void start(Stage mainStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
 
         mainScene = new Scene(root);

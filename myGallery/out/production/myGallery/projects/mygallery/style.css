@@ -1,9 +1,9 @@
-.root
-{
+.root {
     -fx-font-family: "monospace";
 }
 
-.button
-{
+.button {
     -fx-pref-width: 80px;
+
+    -fx-cursor: HAND;
 }

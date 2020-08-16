@@ -19,6 +19,8 @@
          <children>
             <Button mnemonicParsing="false" onAction="#btnAdd" text="Add" />
             <Button mnemonicParsing="false" onAction="#btnRemove" text="Remove" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#btnRefresh" text="Refresh" />
          </children>
          <BorderPane.margin>
             <Insets bottom="10.0" />
