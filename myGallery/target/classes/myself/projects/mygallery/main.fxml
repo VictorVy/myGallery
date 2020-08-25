@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.MainController">
+   <top>
+      <HBox spacing="10.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#btnAdd" text="Add" />
+            <Button mnemonicParsing="false" onAction="#btnRemove" text="Remove" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#btnRefresh" text="Refresh" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" />
+         </BorderPane.margin>
+      </HBox>
+   </top>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <center>
+      <TabPane fx:id="tabPane" onDragDropped="#dragDropView" onDragOver="#dragOverView" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+         <tabs>
+            <Tab fx:id="galleryTab" closable="false" onSelectionChanged="#updateView" text="Gallery">
+               <content>
+                  <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER">
+                     <content>
+                        <FlowPane fx:id="galleryView" hgap="20.0" minHeight="10.0" minWidth="10.0" prefHeight="${scrollPane.height}" prefWidth="${scrollPane.width}" vgap="20.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding></FlowPane>
+                     </content>
+                  </ScrollPane>
+               </content></Tab>
+            <Tab fx:id="detailsTab" closable="false" onSelectionChanged="#updateView" text="Details">
+               <content>
+                  <TableView fx:id="detailsView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" minWidth="10.0">
+                     <columns>
+                        <TableColumn fx:id="nameColumn" editable="false" maxWidth="1000.0" prefWidth="100.0" sortable="false" text="Name" />
+                        <TableColumn fx:id="pathColumn" editable="false" maxWidth="1000.0" prefWidth="150.0" sortable="false" text="Path" />
+                     </columns>
+                  </TableView>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </center>
+</BorderPane>
