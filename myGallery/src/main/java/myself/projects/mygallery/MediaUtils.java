@@ -10,9 +10,7 @@ import javafx.scene.media.MediaPlayer;
 import net.coobird.thumbnailator.Thumbnails;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,8 +40,19 @@ public class MediaUtils
         //saves thumbnail using thumbnailator
         try
         {
-            Thumbnails.of(vi.getPath())
-                    .size(sizeLimit, sizeLimit)
+            //only resize thumbnail if needed
+            BufferedImage image = ImageIO.read(new File(vi.getPath()));
+            double width = image.getWidth();
+            double height = image.getHeight();
+
+            if(image.getWidth() > sizeLimit || image.getHeight() > sizeLimit)
+            {
+                width = sizeLimit;
+                height = sizeLimit;
+            }
+
+            Thumbnails.of(image)
+                    .size((int) width, (int) height)
                     .toFile(getUserDataDirectory() + vi.getName().replace(vi.getType(), "png"));
         }
         catch (IOException e) { e.printStackTrace(); }
@@ -100,15 +109,15 @@ public class MediaUtils
         encoder.setRepeat(0);
         encoder.setQuality(1);
         //this code to keep the transparency doesn't work!
-        Color transparentColor = null;
-        BufferedImage firstFrameImage = ImageIO.read(new File(srcPath));
-        if (firstFrameImage.getColorModel() instanceof IndexColorModel)
-        {
-            IndexColorModel cm = (IndexColorModel) firstFrameImage.getColorModel();
-            int transparentPixel = cm.getTransparentPixel();
-            transparentColor = new Color(cm.getRGB(transparentPixel), true);
-        }
-        encoder.setTransparent(transparentColor);
+//        Color transparentColor = null;
+//        BufferedImage firstFrameImage = ImageIO.read(new File(srcPath));
+//        if (firstFrameImage.getColorModel() instanceof IndexColorModel)
+//        {
+//            IndexColorModel cm = (IndexColorModel) firstFrameImage.getColorModel();
+//            int transparentPixel = cm.getTransparentPixel();
+//            transparentColor = new Color(cm.getRGB(transparentPixel), true);
+//        }
+//        encoder.setTransparent(transparentColor);
 
         //adding frames to gif
         Set<Map.Entry<BufferedImage, Integer>> entrySet = frames.entrySet();
@@ -126,17 +135,11 @@ public class MediaUtils
     public static void createVideoThumb(ViewItem vi, int sizeLimit)
     {
         String name = vi.getName().substring(0, vi.getName().lastIndexOf('.')) + ".png";
-        System.out.println(new File(vi.getPath()).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(new Media(new File(vi.getPath()).toURI().toString()));
-        System.out.println("ay");
-        mediaPlayer.setOnReady(() -> {
-            System.out.println("inning");
-            helper(mediaPlayer, name, sizeLimit);
-        });
+        mediaPlayer.setOnReady(() -> vidThumbHelper(mediaPlayer, name, sizeLimit));
     }
-    private static void helper(MediaPlayer mediaPlayer, String name, int sizeLimit)
+    private static void vidThumbHelper(MediaPlayer mediaPlayer, String name, int sizeLimit)
     {
-        System.out.println("we in");
         double width = mediaPlayer.getMedia().getWidth();
         double height = mediaPlayer.getMedia().getHeight();
 
@@ -157,18 +160,17 @@ public class MediaUtils
 
         mv.setFitWidth(width);
         mv.setFitHeight(height);
-        WritableImage wi = new WritableImage((int) width, (int) height);
-
         mv.setMediaPlayer(mediaPlayer);
-        mv.snapshot(null, wi);
+
+        WritableImage wi = new WritableImage((int) width, (int) height);
+        wi = mv.snapshot(null, wi);
 
         //writes thumbnail to data folder
         try
         {
-            ImageIO.write(SwingFXUtils.fromFXImage(wi, null),
-                    "png",
-                    new File(getUserDataDirectory() + name));
-            System.out.println("success");
+            Thumbnails.of(SwingFXUtils.fromFXImage(wi, null))
+                    .scale(1)
+                    .toFile(getUserDataDirectory() + name);
         }
         catch (Exception e) { e.printStackTrace(); }
     }

@@ -143,7 +143,7 @@ public class MainController implements Initializable
             galleryView.getChildren().clear();
 
             for(ViewItem vi : viewItems)
-                galleryView.getChildren().add(new ImageView("file:" + MediaUtils.getUserDataDirectory() + vi.getName().replace(vi.getType(), ".png")));
+                galleryView.getChildren().add(new ImageView("file:" + vi.getThumb()));
         }
         else if(tab.equals(detailsTab))
             detailsView.setItems(SQLConnector.getDBItems());
