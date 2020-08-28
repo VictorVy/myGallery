@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -26,12 +27,14 @@ public class MainController implements Initializable
     @FXML private Tab galleryTab, detailsTab;
 
     @FXML private FlowPane galleryView;
+    private final Label lblEmpty = new Label("Drag files or press Add");
 
     @FXML private TableView<ViewItem> detailsView;
     @FXML private TableColumn<ViewItem, String> nameColumn, pathColumn;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources)
+    {
         detailsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         detailsView.setPlaceholder(new Label("Drag files or press Add"));
 
@@ -53,22 +56,12 @@ public class MainController implements Initializable
         fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Files", "*.png", "*.jpg", "*.bmp", "*.gif", "*.mp4", "*.m4v", "*.aif", "*.aiff"));
         List<File> files = fc.showOpenMultipleDialog(Main.mainScene.getWindow());
 
-        if (files != null)
+        if(files != null)
         {
             //inserts items into the db
             SQLConnector.insert(MediaUtils.filesToViewItems(files));
-
             //generating thumbnails
-            int sizeLimit = 150;
-            for(ViewItem vi : MediaUtils.filesToViewItems(files))
-            {
-                if(MediaUtils.isImage(vi.getType()))
-                    MediaUtils.createImageThumb(vi, sizeLimit);
-                else if(vi.getType().equals("gif"))
-                    MediaUtils.createGifThumb(vi, sizeLimit);
-                else if(MediaUtils.isVideo(vi.getType()))
-                    MediaUtils.createVideoThumb(vi, sizeLimit);
-            }
+            MediaUtils.createThumbs(MediaUtils.filesToViewItems(files), 150);
 
             updateView();
         }
@@ -79,12 +72,12 @@ public class MainController implements Initializable
     {
         ObservableList<ViewItem> selectedItems = detailsView.getSelectionModel().getSelectedItems();
 
-        if (selectedItems.size() > 0)
+        if(selectedItems.size() > 0)
         {
             Alert alert = createRemovalAlert(selectedItems);
 
             //removing selected items after alerting users
-            if (alert.showAndWait().orElse(null) == ButtonType.OK)
+            if(alert.showAndWait().orElse(null) == ButtonType.OK)
             {
                 SQLConnector.remove(selectedItems);
                 MediaUtils.removeThumbs(selectedItems);
@@ -96,14 +89,14 @@ public class MainController implements Initializable
     @FXML
     private void btnRefresh()
     {
-        if (detailsView.getItems().size() > 0)
+        if(galleryView.getChildren().size() > 0 || detailsView.getItems().size() > 0)
         {
             //checking if items in the db exists; if not, remove them
             ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
             ObservableList<ViewItem> toRemove = FXCollections.observableArrayList();
 
-            for (ViewItem vi : viewItems)
-                if (!(new File(vi.getPath()).exists())) toRemove.add(vi);
+            for(ViewItem vi : viewItems)
+                if(!(new File(vi.getPath()).exists())) toRemove.add(vi);
 
             if(toRemove.size() > 0)
             {
@@ -117,15 +110,18 @@ public class MainController implements Initializable
     @FXML
     private void dragOverView(DragEvent event)
     {
-        if (event.getDragboard().hasFiles())
+        if(event.getDragboard().hasFiles())
             event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
     }
+
     @FXML
     private void dragDropView(DragEvent event)
     {
         if(MediaUtils.wrongFiles(event.getDragboard().getFiles()).size() == 0)
         {
             SQLConnector.insert(MediaUtils.filesToViewItems(event.getDragboard().getFiles()));
+            MediaUtils.createThumbs(MediaUtils.filesToViewItems(event.getDragboard().getFiles()), 150);
+
             updateView();
         }
         else
@@ -141,9 +137,15 @@ public class MainController implements Initializable
         {
             ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
             galleryView.getChildren().clear();
+            galleryView.getChildren().add(lblEmpty);
 
-            for(ViewItem vi : viewItems)
-                galleryView.getChildren().add(new ImageView("file:" + vi.getThumb()));
+            if(viewItems != null && !viewItems.isEmpty())
+            {
+                galleryView.getChildren().clear();
+
+                for(ViewItem vi : viewItems)
+                    galleryView.getChildren().add(new ImageView("file:" + vi.getThumb()));
+            }
         }
         else if(tab.equals(detailsTab))
             detailsView.setItems(SQLConnector.getDBItems());
@@ -158,13 +160,13 @@ public class MainController implements Initializable
         alert.setHeaderText(null);
         alert.setContentText("Remove " + selectedItems.size() + " item(s)?");
         alert.setResizable(false);
-        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/bin.png").toString()));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/bin.png").toString()));
 
         //creating and setting expandable content
         StringBuilder names = new StringBuilder("Items: \n");
 
         String prefix = "";
-        for (ViewItem vi : selectedItems)
+        for(ViewItem vi : selectedItems)
         {
             names.append(prefix);
             prefix = ", ";
@@ -179,6 +181,7 @@ public class MainController implements Initializable
 
         return alert;
     }
+
     //returns an error alert when user drags non-media file
     private Alert createDragAlert(ObservableList<ViewItem> notMedia)
     {
@@ -188,13 +191,13 @@ public class MainController implements Initializable
         alert.setHeaderText(null);
         alert.setContentText("You can only add image or video files!");
         alert.setResizable(false);
-        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/bin.png").toString()));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/bin.png").toString()));
 
         //creating and setting expandable content
         StringBuilder names = new StringBuilder("Items: \n");
 
         String prefix = "";
-        for (ViewItem vi : notMedia)
+        for(ViewItem vi : notMedia)
         {
             names.append(prefix);
             prefix = ", ";
@@ -209,6 +212,4 @@ public class MainController implements Initializable
 
         return alert;
     }
-
-
 }

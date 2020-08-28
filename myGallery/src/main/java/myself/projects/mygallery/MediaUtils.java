@@ -34,6 +34,19 @@ public class MediaUtils
         }
     }
 
+    public static void createThumbs(ObservableList<ViewItem> viewItems, int sizeLimit)
+    {
+        for(ViewItem vi : viewItems)
+        {
+            if(MediaUtils.isImage(vi.getType()))
+                MediaUtils.createImageThumb(vi, sizeLimit);
+            else if(vi.getType().equals("gif"))
+                MediaUtils.createGifThumb(vi, sizeLimit);
+            else if(MediaUtils.isVideo(vi.getType()))
+                MediaUtils.createVideoThumb(vi, sizeLimit);
+        }
+    }
+
     //creates an image thumbnail
     public static void createImageThumb(ViewItem vi, int sizeLimit)
     {
@@ -202,7 +215,7 @@ public class MediaUtils
         ObservableList<ViewItem> notMedia = FXCollections.observableArrayList();
 
         for (ViewItem vi : items)
-            if(!isImage(vi.getType()) && !isVideo(vi.getType())) notMedia.add(vi);
+            if(!isImage(vi.getType()) && !vi.getType().equals("gif") && !isVideo(vi.getType())) notMedia.add(vi);
 
         return notMedia;
     }

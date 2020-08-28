@@ -23,11 +23,10 @@ public class SQLConnector
             //creates table if one doesn't exist
             if (!check.next())
             {
-                statement.execute("CREATE TABLE IF NOT EXISTS files (" +
+                statement.execute("CREATE TABLE files (" +
                         "id INTEGER PRIMARY KEY," +
                         "name VARCHAR(64)," +
-                        "path VARCHAR(256)" +
-                        "thumb BLOB);");
+                        "path VARCHAR(256));");
             }
         }
         catch (SQLException e) { e.printStackTrace(); }
