@@ -45,18 +45,12 @@
             <groupId>org.jcodec</groupId>
             <artifactId>jcodec</artifactId>
             <version>0.2.3</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jcodec</groupId>
-                    <artifactId>jcodec.scale</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.jcodec</groupId>
             <artifactId>jcodec-javase</artifactId>
             <version>0.2.3</version>
-        </dependency>-->
+        </dependency>
     </dependencies>
 
     <build>

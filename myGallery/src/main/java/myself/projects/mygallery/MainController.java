@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -18,6 +17,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable
@@ -89,7 +89,7 @@ public class MainController implements Initializable
     @FXML
     private void btnRefresh()
     {
-        if(galleryView.getChildren().size() > 0 || detailsView.getItems().size() > 0)
+        if(Objects.requireNonNull(SQLConnector.getDBItems()).size() > 0)
         {
             //checking if items in the db exists; if not, remove them
             ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
@@ -98,11 +98,9 @@ public class MainController implements Initializable
             for(ViewItem vi : viewItems)
                 if(!(new File(vi.getPath()).exists())) toRemove.add(vi);
 
-            if(toRemove.size() > 0)
-            {
-                SQLConnector.remove(toRemove);
-                updateView();
-            }
+            if(toRemove.size() > 0) { SQLConnector.remove(toRemove); }
+
+            updateView();
         }
     }
 
