@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class MediaUtils
 
         Thumbnails.of(image)
                 .size((int) width, (int) height)
-                .toFile(getUserDataDirectory() + vi.getName().replace(vi.getType(), "png"));
+                .toFile(getUserDataDirectory() + vi.getName() + ".png");
     }
 
     //creates a gif thumbnail (that's also a gif)
@@ -85,7 +86,7 @@ public class MediaUtils
         for(Map.Entry<BufferedImage, Integer> entry : entrySet)
             newFrames.put(Thumbnails.of(entry.getKey()).size(sizeLimit, sizeLimit).asBufferedImage(), entry.getValue());
 
-        encodeGif(newFrames,getUserDataDirectory() + vi.getName());
+        encodeGif(newFrames,getUserDataDirectory() + vi.getName() + ".gif");
     }
 
     //returns a map of all the frames and delay times
@@ -141,7 +142,7 @@ public class MediaUtils
 
         Thumbnails.of(thumb)
                 .size((int) width, (int) height)
-                .toFile(new File(getUserDataDirectory() + vi.getName().replace(vi.getType(), "png")));
+                .toFile(new File(getUserDataDirectory() + vi.getName() + ".png"));
     }
     //method with pure javafx is inconsistent and barely works
 //    private static void createVideoThumb()
@@ -178,7 +179,7 @@ public class MediaUtils
     public static void removeThumbs(ObservableList<ViewItem> selectedItems)
     {
         for(ViewItem vi : selectedItems)
-            new File(getUserDataDirectory() + vi.getName().replace(vi.getType(), vi.getType().equals("gif") ? "gif" : "png")).delete();
+            new File(getUserDataDirectory() + vi.getName() + (vi.getType().equals("gif") ? "gif" : "png")).delete();
     }
 
     //gets the folder where the thumbnails are stored
@@ -190,7 +191,15 @@ public class MediaUtils
         ObservableList<ViewItem> viewItems = FXCollections.observableArrayList();
 
         for(File f : files)
-            viewItems.add(new ViewItem(f.getName(), f.getAbsolutePath()));
+        {
+            try
+            {
+                BasicFileAttributes bfa = Files.readAttributes(f.toPath(), BasicFileAttributes.class);
+
+                viewItems.add(new ViewItem(f.getName().substring(0, f.getName().indexOf('.')), f.getName().substring(f.getName().indexOf('.') + 1), f.getAbsolutePath(), bfa.creationTime().toString()));
+            }
+            catch(IOException e) { e.printStackTrace(); }
+        }
 
         return viewItems;
     }

@@ -30,7 +30,7 @@ public class MainController implements Initializable
     private final Label lblEmpty = new Label("Drag files or press Add");
 
     @FXML private TableView<ViewItem> detailsView;
-    @FXML private TableColumn<ViewItem, String> nameColumn, pathColumn;
+    @FXML private TableColumn<ViewItem, String> nameColumn, typeColumn, pathColumn, cDateColumn;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
@@ -39,7 +39,9 @@ public class MainController implements Initializable
         detailsView.setPlaceholder(new Label("Drag files or press Add"));
 
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
         pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
+        cDateColumn.setCellValueFactory(new PropertyValueFactory<>("cDate"));
 
         SQLConnector.initialize();
         MediaUtils.initialize();
@@ -98,7 +100,11 @@ public class MainController implements Initializable
             for(ViewItem vi : viewItems)
                 if(!(new File(vi.getPath()).exists())) toRemove.add(vi);
 
-            if(toRemove.size() > 0) { SQLConnector.remove(toRemove); }
+            if(toRemove.size() > 0)
+            {
+                SQLConnector.remove(toRemove);
+                MediaUtils.removeThumbs(toRemove);
+            }
 
             updateView();
         }
@@ -168,7 +174,7 @@ public class MainController implements Initializable
         {
             names.append(prefix);
             prefix = ", ";
-            names.append(vi.getName());
+            names.append(vi.getName() + '.' + vi.getType());
         }
 
         Label itemNames = new Label(names.toString() + '.');
@@ -199,7 +205,7 @@ public class MainController implements Initializable
         {
             names.append(prefix);
             prefix = ", ";
-            names.append(vi.getName());
+            names.append(vi.getName() + '.' + vi.getType());
         }
 
         Label itemNames = new Label(names.toString() + '.');

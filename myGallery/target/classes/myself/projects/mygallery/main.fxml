@@ -41,7 +41,9 @@
                   <TableView fx:id="detailsView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" minWidth="10.0">
                      <columns>
                         <TableColumn fx:id="nameColumn" editable="false" maxWidth="1000.0" prefWidth="100.0" sortable="false" text="Name" />
-                        <TableColumn fx:id="pathColumn" editable="false" maxWidth="1000.0" prefWidth="150.0" sortable="false" text="Path" />
+                        <TableColumn fx:id="typeColumn" editable="false" maxWidth="1000.0" prefWidth="75.0" sortable="false" text="Type" />
+                        <TableColumn fx:id="pathColumn" editable="false" maxWidth="1000.0" prefWidth="175.0" sortable="false" text="Path" />
+                        <TableColumn fx:id="cDateColumn" editable="false" maxWidth="1000.0" prefWidth="125.0" sortable="false" text="Creation Date" />
                      </columns>
                   </TableView>
                </content>

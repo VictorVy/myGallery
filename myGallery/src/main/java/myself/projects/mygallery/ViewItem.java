@@ -3,18 +3,20 @@ package myself.projects.mygallery;
 //class for media files
 public class ViewItem
 {
-    private final String name, path, type, thumb;
+    private final String name, path, type, thumb, cDate;
 
-    public ViewItem(String name, String path)
+    public ViewItem(String name, String type, String path, String cDate)
     {
         this.name = name;
+        this.type = type.toLowerCase();
         this.path = path;
-        type = name.substring(name.indexOf('.') + 1).toLowerCase();
-        thumb = MediaUtils.getUserDataDirectory() + name.replace(type, type.equals("gif") ? "gif" : "png");
+        this.cDate = cDate;
+        thumb = MediaUtils.getUserDataDirectory() + name + (type.equals("gif") ? ".gif" : ".png");
     }
 
     public String getName() { return name; }
     public String getPath() { return path; }
     public String getType() { return type; }
     public String getThumb() { return thumb; }
+    public String getCDate() { return cDate; }
 }
