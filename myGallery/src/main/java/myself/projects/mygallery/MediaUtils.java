@@ -7,6 +7,8 @@ import javafx.collections.ObservableList;
 //import javafx.scene.media.Media;
 //import javafx.scene.media.MediaView;
 //import javafx.scene.media.MediaPlayer;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
 import net.coobird.thumbnailator.Thumbnails;
 import org.jcodec.api.JCodecException;
 import org.jcodec.api.awt.AWTFrameGrab;
@@ -225,5 +227,10 @@ public class MediaUtils
     public static Boolean isVideo(String type)
     {
         return type.equals("mp4") || type.equals("m4v") || type.equals("flv") || type.equals("aif") || type.equals("aiff");
+    }
+
+    public static ColorAdjust hoverEffect()
+    {
+        return new ColorAdjust(0, 0, -0.3, 0);
     }
 }

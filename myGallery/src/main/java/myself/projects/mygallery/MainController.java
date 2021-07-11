@@ -1,18 +1,22 @@
 package myself.projects.mygallery;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
@@ -23,14 +27,19 @@ import java.util.ResourceBundle;
 public class MainController implements Initializable
 {
     //injecting controls
-    @FXML private TabPane tabPane;
-    @FXML private Tab galleryTab, detailsTab;
+    @FXML
+    private TabPane tabPane;
+    @FXML
+    private Tab galleryTab, detailsTab;
 
-    @FXML private FlowPane galleryView;
+    @FXML
+    private FlowPane galleryView;
     private final Label lblEmpty = new Label("Drag files or press Add");
 
-    @FXML private TableView<ViewItem> detailsView;
-    @FXML private TableColumn<ViewItem, String> nameColumn, typeColumn, pathColumn, cDateColumn;
+    @FXML
+    private TableView<ViewItem> detailsView;
+    @FXML
+    private TableColumn<ViewItem, String> nameColumn, typeColumn, pathColumn, cDateColumn;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
@@ -42,7 +51,7 @@ public class MainController implements Initializable
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
         pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
         cDateColumn.setCellValueFactory(new PropertyValueFactory<>("cDate"));
-
+        
         SQLConnector.initialize();
         MediaUtils.initialize();
         updateView();
@@ -76,7 +85,7 @@ public class MainController implements Initializable
 
         if(selectedItems.size() > 0)
         {
-            Alert alert = createRemovalAlert(selectedItems);
+            Alert alert = Alerts.createRemovalAlert(selectedItems);
 
             //removing selected items after alerting users
             if(alert.showAndWait().orElse(null) == ButtonType.OK)
@@ -129,7 +138,7 @@ public class MainController implements Initializable
             updateView();
         }
         else
-            createDragAlert(MediaUtils.wrongFiles(event.getDragboard().getFiles())).showAndWait();
+            Alerts.createDragAlert(MediaUtils.wrongFiles(event.getDragboard().getFiles())).showAndWait();
     }
 
     //updates the view
@@ -148,72 +157,28 @@ public class MainController implements Initializable
                 galleryView.getChildren().clear();
 
                 for(ViewItem vi : viewItems)
-                    galleryView.getChildren().add(new ImageView("file:" + vi.getThumb()));
+                {
+                    ImageView imageView = new ImageView("file:" + vi.getThumb());
+                    //creates hover effect
+                    imageView.setOnMouseEntered(e -> imageView.setEffect(MediaUtils.hoverEffect()));
+                    imageView.setOnMouseExited(e -> imageView.setEffect(null));
+
+                    Pane imageViewWrapper = new BorderPane(imageView);
+                    imageViewWrapper.setPadding(new Insets(5));
+
+                    imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.clicked(vi));
+
+                    if(SelectionHandler.getSelected().contains(vi))
+                    {
+                        System.out.println("ay");
+                        imageViewWrapper.getStyleClass().add("image-view-border");
+                    }
+
+                    galleryView.getChildren().add(imageViewWrapper);
+                }
             }
         }
         else if(tab.equals(detailsTab))
             detailsView.setItems(SQLConnector.getDBItems());
-    }
-
-    //returns an alert to confirm removal with user
-    private Alert createRemovalAlert(ObservableList<ViewItem> selectedItems)
-    {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-
-        alert.setTitle("Confirm Removal");
-        alert.setHeaderText(null);
-        alert.setContentText("Remove " + selectedItems.size() + " item(s)?");
-        alert.setResizable(false);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/bin.png").toString()));
-
-        //creating and setting expandable content
-        StringBuilder names = new StringBuilder("Items: \n");
-
-        String prefix = "";
-        for(ViewItem vi : selectedItems)
-        {
-            names.append(prefix);
-            prefix = ", ";
-            names.append(vi.getName() + '.' + vi.getType());
-        }
-
-        Label itemNames = new Label(names.toString() + '.');
-        itemNames.setWrapText(true);
-
-        alert.getDialogPane().setExpandableContent(itemNames);
-        alert.getDialogPane().setPrefWidth(0);
-
-        return alert;
-    }
-
-    //returns an error alert when user drags non-media file
-    private Alert createDragAlert(ObservableList<ViewItem> notMedia)
-    {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-
-        alert.setTitle("Incorrect Filetype");
-        alert.setHeaderText(null);
-        alert.setContentText("You can only add image or video files!");
-        alert.setResizable(false);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/bin.png").toString()));
-
-        //creating and setting expandable content
-        StringBuilder names = new StringBuilder("Items: \n");
-
-        String prefix = "";
-        for(ViewItem vi : notMedia)
-        {
-            names.append(prefix);
-            prefix = ", ";
-            names.append(vi.getName() + '.' + vi.getType());
-        }
-
-        Label itemNames = new Label(names.toString() + '.');
-        itemNames.setWrapText(true);
-
-        alert.getDialogPane().setExpandableContent(itemNames);
-        alert.getDialogPane().setPrefWidth(0);
-
-        return alert;
     }
 }

@@ -10,6 +10,11 @@
     -fx-cursor: HAND;
 }
 
+.image-view-border
+{
+    -fx-background-color: rgba(66, 180, 230, 0.35);
+}
+
 #galleryView
 {
     -fx-background-color: WHITE;
@@ -18,4 +23,16 @@
 #typeColumn, #cDateColumn
 {
     -fx-alignment: CENTER;
+}
+
+#tabPane .tab-header-background
+{
+    -fx-background-color: #f4f4f4;
+}
+
+#id
+{
+    -fx-border-style: SOLID;
+    -fx-border-color: BLACK;
+    -fx-border-width: 10px;
 }
