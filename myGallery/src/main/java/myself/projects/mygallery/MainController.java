@@ -33,6 +33,8 @@ public class MainController implements Initializable
     private Tab galleryTab, detailsTab;
 
     @FXML
+    private ScrollPane galleryScroll;
+    @FXML
     private FlowPane galleryView;
     private final Label lblEmpty = new Label("Drag files or press Add");
 
