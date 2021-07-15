@@ -7,8 +7,8 @@ import javafx.collections.ObservableList;
 //import javafx.scene.media.Media;
 //import javafx.scene.media.MediaView;
 //import javafx.scene.media.MediaPlayer;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.Effect;
+import javafx.scene.effect.*;
+import javafx.scene.paint.Color;
 import net.coobird.thumbnailator.Thumbnails;
 import org.jcodec.api.JCodecException;
 import org.jcodec.api.awt.AWTFrameGrab;
@@ -229,8 +229,16 @@ public class MediaUtils
         return type.equals("mp4") || type.equals("m4v") || type.equals("flv") || type.equals("aif") || type.equals("aiff");
     }
 
-    public static ColorAdjust hoverEffect()
+    public static InnerShadow hoverEffect()
     {
-        return new ColorAdjust(0, 0, -0.3, 0);
+        InnerShadow effect = new InnerShadow();
+
+        effect.setBlurType(BlurType.GAUSSIAN);
+        effect.setColor(new Color(0, 0.663, 0.969, 0.8));
+        effect.setWidth(50);
+        effect.setHeight(50);
+        effect.setRadius(42);
+
+        return effect;
     }
 }

@@ -1,5 +1,7 @@
 package myself.projects.mygallery;
 
+import javafx.collections.ObservableList;
+
 //class for media files
 public class ViewItem
 {
@@ -13,6 +15,16 @@ public class ViewItem
         this.cDate = cDate;
         thumb = MediaUtils.getUserDataDirectory() + name + (type.equals("gif") ? ".gif" : ".png");
     }
+
+    public static int indexOf(ObservableList<ViewItem> list, ViewItem vi)
+    {
+        for(int i = 0; i < list.size(); i++)
+            if(list.get(i).equals(vi)) return i;
+
+        return -1;
+    }
+
+    public boolean equals(ViewItem vi) { return getPath().equals(vi.getPath()); }
 
     public String getName() { return name; }
     public String getPath() { return path; }

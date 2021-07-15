@@ -33,8 +33,6 @@ public class MainController implements Initializable
     private Tab galleryTab, detailsTab;
 
     @FXML
-    private ScrollPane galleryScroll;
-    @FXML
     private FlowPane galleryView;
     private final Label lblEmpty = new Label("Drag files or press Add");
 
@@ -53,7 +51,7 @@ public class MainController implements Initializable
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
         pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
         cDateColumn.setCellValueFactory(new PropertyValueFactory<>("cDate"));
-        
+
         SQLConnector.initialize();
         MediaUtils.initialize();
         updateView();
@@ -83,7 +81,13 @@ public class MainController implements Initializable
     @FXML
     private void btnRemove()
     {
-        ObservableList<ViewItem> selectedItems = detailsView.getSelectionModel().getSelectedItems();
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        ObservableList<ViewItem> selectedItems = FXCollections.observableArrayList();
+
+        if(tab.equals(galleryTab))
+            selectedItems = SelectionHandler.getSelected();
+        else if(tab.equals(detailsTab))
+            selectedItems = detailsView.getSelectionModel().getSelectedItems();
 
         if(selectedItems.size() > 0)
         {
@@ -104,7 +108,7 @@ public class MainController implements Initializable
     {
         if(Objects.requireNonNull(SQLConnector.getDBItems()).size() > 0)
         {
-            //checking if items in the db exists; if not, remove them
+            //checking if items in the db exist; if not, remove them
             ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
             ObservableList<ViewItem> toRemove = FXCollections.observableArrayList();
 
@@ -119,6 +123,13 @@ public class MainController implements Initializable
 
             updateView();
         }
+    }
+
+    @FXML
+    public void btnClear()
+    {
+        SelectionHandler.deselectAll();
+        updateHighlights();
     }
 
     //handling dragging files into view
@@ -152,12 +163,9 @@ public class MainController implements Initializable
         {
             ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
             galleryView.getChildren().clear();
-            galleryView.getChildren().add(lblEmpty);
 
             if(viewItems != null && !viewItems.isEmpty())
             {
-                galleryView.getChildren().clear();
-
                 for(ViewItem vi : viewItems)
                 {
                     ImageView imageView = new ImageView("file:" + vi.getThumb());
@@ -168,19 +176,44 @@ public class MainController implements Initializable
                     Pane imageViewWrapper = new BorderPane(imageView);
                     imageViewWrapper.setPadding(new Insets(5));
 
-                    imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.clicked(vi));
+                    imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.clicked(vi, e.isShiftDown(), e.isControlDown()));
 
-                    if(SelectionHandler.getSelected().contains(vi))
-                    {
-                        System.out.println("ay");
+                    if(SelectionHandler.isSelected(vi))
                         imageViewWrapper.getStyleClass().add("image-view-border");
-                    }
 
                     galleryView.getChildren().add(imageViewWrapper);
                 }
             }
+            else
+                galleryView.getChildren().add(lblEmpty);
         }
         else if(tab.equals(detailsTab))
             detailsView.setItems(SQLConnector.getDBItems());
+    }
+
+    public void galleryViewClicked() { updateHighlights(); }
+
+    public void updateHighlights()
+    {
+        ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
+        galleryView.getChildren().clear();
+
+        for(ViewItem vi : viewItems)
+        {
+            ImageView imageView = new ImageView("file:" + vi.getThumb());
+            //creates hover effect
+            imageView.setOnMouseEntered(e -> imageView.setEffect(MediaUtils.hoverEffect()));
+            imageView.setOnMouseExited(e -> imageView.setEffect(null));
+
+            Pane imageViewWrapper = new BorderPane(imageView);
+            imageViewWrapper.setPadding(new Insets(5));
+
+            imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.clicked(vi, e.isShiftDown(), e.isControlDown()));
+
+            if(SelectionHandler.isSelected(vi))
+                imageViewWrapper.getStyleClass().add("image-view-border");
+
+            galleryView.getChildren().add(imageViewWrapper);
+        }
     }
 }
