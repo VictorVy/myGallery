@@ -2,38 +2,58 @@ package myself.projects.mygallery;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.input.MouseButton;
 
-import java.util.Objects;
+import java.io.IOException;
 
 //handles selection in the gallery view
 public class SelectionHandler
 {
     private static ObservableList<ViewItem> selected = FXCollections.observableArrayList();
 
-    public static void clicked(ViewItem viewItem, boolean shiftPressed, boolean controlPressed)
+    public static void clicked(ViewItem viewItem, boolean shiftPressed, boolean controlPressed, MouseButton mouseButton, int clickCount)
     {
-        if(shiftPressed && selected.size() > 0)
+        //differentiate between mouse buttons
+        if(mouseButton.equals(MouseButton.PRIMARY))
         {
-            ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
-            ViewItem first = selected.get(0);
-            selected.clear();
-            selected.add(first);
+            //differentiate between key combinations
+            if(shiftPressed && selected.size() > 0)
+            {
+                ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
+                ViewItem first = selected.get(0);
+                selected.clear();
+                selected.add(first);
 
-            int a = ViewItem.indexOf(viewItems, first), b = ViewItem.indexOf(viewItems, viewItem);
+                int a = ViewItem.indexOf(viewItems, first), b = ViewItem.indexOf(viewItems, viewItem);
 
-            if(a != b) selected.addAll(a < b ? viewItems.subList(a + 1, b + 1) : viewItems.subList(b, a));
-        }
-        else if(controlPressed)
-        {
-            if(isSelected(viewItem))
-                selected.remove(ViewItem.indexOf(selected, viewItem));
+                if(a != b) selected.addAll(a < b ? viewItems.subList(a + 1, b + 1) : viewItems.subList(b, a));
+            }
+            else if(controlPressed)
+            {
+                if(isSelected(viewItem))
+                    selected.remove(ViewItem.indexOf(selected, viewItem));
+                else
+                    selected.add(viewItem);
+            }
             else
-                selected.add(viewItem);
-        }
-        else
-        {
-            selected.clear();
-            selected.add(viewItem);
+            {
+                switch(clickCount)
+                {
+                    case 1:
+                        selected.clear();
+                        selected.add(viewItem);
+                        break;
+                    case 2:
+                        ViewWindowController newWindow = new ViewWindowController();
+                        try //dreadful try-catch... necessary?
+                        {
+                            newWindow.show(viewItem);
+                        }
+                        catch(IOException e) { e.printStackTrace(); }
+                        break;
+                }
+
+            }
         }
     }
 
@@ -48,4 +68,9 @@ public class SelectionHandler
     public static void deselectAll() { selected.clear(); }
 
     public static ObservableList<ViewItem> getSelected() { return selected; }
+    public static void setSelected(ObservableList<ViewItem> viewItems)
+    {
+        selected.clear();
+        selected.addAll(viewItems);
+    }
 }

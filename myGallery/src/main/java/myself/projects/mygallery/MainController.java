@@ -1,13 +1,11 @@
 package myself.projects.mygallery;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
@@ -129,7 +127,8 @@ public class MainController implements Initializable
     public void btnClear()
     {
         SelectionHandler.deselectAll();
-        updateHighlights();
+        detailsView.getSelectionModel().clearSelection();
+        updateGalleryView();
     }
 
     //handling dragging files into view
@@ -157,63 +156,62 @@ public class MainController implements Initializable
     //updates the view
     public void updateView()
     {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+//        Tab tab = tabPane.getSelectionModel().getSelectedItem();
 
-        if(tab.equals(galleryTab))
+        if(galleryTab.isSelected())
+        {
+            //sync selection
+            try { SelectionHandler.setSelected(detailsView.getSelectionModel().getSelectedItems()); } //hmm... try-catch only necessary on startup...
+            catch (Exception e) { System.out.println("null"); }
+
+            updateGalleryView();
+        }
+        else if(detailsTab.isSelected())
         {
             ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
-            galleryView.getChildren().clear();
-
-            if(viewItems != null && !viewItems.isEmpty())
-            {
-                for(ViewItem vi : viewItems)
-                {
-                    ImageView imageView = new ImageView("file:" + vi.getThumb());
-                    //creates hover effect
-                    imageView.setOnMouseEntered(e -> imageView.setEffect(MediaUtils.hoverEffect()));
-                    imageView.setOnMouseExited(e -> imageView.setEffect(null));
-
-                    Pane imageViewWrapper = new BorderPane(imageView);
-                    imageViewWrapper.setPadding(new Insets(5));
-
-                    imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.clicked(vi, e.isShiftDown(), e.isControlDown()));
-
-                    if(SelectionHandler.isSelected(vi))
-                        imageViewWrapper.getStyleClass().add("image-view-border");
-
-                    galleryView.getChildren().add(imageViewWrapper);
-                }
-            }
-            else
-                galleryView.getChildren().add(lblEmpty);
-        }
-        else if(tab.equals(detailsTab))
             detailsView.setItems(SQLConnector.getDBItems());
+            //sync selection
+            if(SelectionHandler.getSelected().size() > 0)
+            {
+                detailsView.getSelectionModel().clearSelection();
+                detailsView.getSelectionModel().selectRange(ViewItem.indexOf(Objects.requireNonNull(viewItems), SelectionHandler.getSelected().get(0)),
+                                                            ViewItem.indexOf(viewItems, SelectionHandler.getSelected().get(SelectionHandler.getSelected().size() - 1)) + 1);
+            }
+        }
     }
 
-    public void galleryViewClicked() { updateHighlights(); }
+    public void galleryViewClicked() { updateGalleryView(); }
 
-    public void updateHighlights()
+    public void updateGalleryView()
     {
         ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
         galleryView.getChildren().clear();
+        galleryView.setAlignment(Pos.BASELINE_LEFT);
 
-        for(ViewItem vi : viewItems)
+        if(viewItems != null && !viewItems.isEmpty())
         {
-            ImageView imageView = new ImageView("file:" + vi.getThumb());
-            //creates hover effect
-            imageView.setOnMouseEntered(e -> imageView.setEffect(MediaUtils.hoverEffect()));
-            imageView.setOnMouseExited(e -> imageView.setEffect(null));
+            for(ViewItem vi : viewItems)
+            {
+                ImageView imageView = new ImageView("file:" + vi.getThumb());
+                //creates hover effect
+                imageView.setOnMouseEntered(e -> imageView.setEffect(MediaUtils.hoverEffect()));
+                imageView.setOnMouseExited(e -> imageView.setEffect(null));
 
-            Pane imageViewWrapper = new BorderPane(imageView);
-            imageViewWrapper.setPadding(new Insets(5));
+                Pane imageViewWrapper = new BorderPane(imageView);
+                imageViewWrapper.setPadding(new Insets(5));
 
-            imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.clicked(vi, e.isShiftDown(), e.isControlDown()));
+                imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.clicked(vi, e.isShiftDown(), e.isControlDown(), e.getButton(), e.getClickCount()));
 
-            if(SelectionHandler.isSelected(vi))
-                imageViewWrapper.getStyleClass().add("image-view-border");
+                if(SelectionHandler.isSelected(vi))
+                    imageViewWrapper.getStyleClass().add("image-view-border");
 
-            galleryView.getChildren().add(imageViewWrapper);
+                galleryView.getChildren().add(imageViewWrapper);
+            }
+        }
+        else
+        {
+            galleryView.getChildren().add(lblEmpty);
+            galleryView.setAlignment(Pos.CENTER);
         }
     }
 }
