@@ -1,4 +1,4 @@
 # myGallery
-Gallery project for practice.
-Written in Java, using JavaFX as well as an embedded database (SQLite).
+Gallery project for Capstone.
+Written in Java, using JavaFX and an embedded database (SQLite).
 Work-in-progress.
