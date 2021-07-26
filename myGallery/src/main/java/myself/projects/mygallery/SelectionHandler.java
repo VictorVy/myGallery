@@ -4,14 +4,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.input.MouseButton;
 
-import java.io.IOException;
 
 //handles selection in the gallery view
 public class SelectionHandler
 {
     private static ObservableList<ViewItem> selected = FXCollections.observableArrayList();
 
-    public static void clicked(ViewItem viewItem, boolean shiftPressed, boolean controlPressed, MouseButton mouseButton, int clickCount)
+    public static void galleryClicked(ViewItem viewItem, boolean shiftPressed, boolean controlPressed, MouseButton mouseButton, int clickCount)
     {
         //differentiate between mouse buttons
         if(mouseButton.equals(MouseButton.PRIMARY))
@@ -44,17 +43,18 @@ public class SelectionHandler
                         selected.add(viewItem);
                         break;
                     case 2:
-                        ViewWindowController newWindow = new ViewWindowController();
-                        try //dreadful try-catch... necessary?
-                        {
-                            newWindow.show(viewItem);
-                        }
-                        catch(IOException e) { e.printStackTrace(); }
+                        MainController.showItem(viewItem);
                         break;
                 }
 
             }
         }
+    }
+
+    public static void detailsClicked(ViewItem viewItem, int clickCount)
+    {
+        if(clickCount == 2)
+            MainController.showItem(viewItem);
     }
 
     public static boolean isSelected(ViewItem viewItem)

@@ -5,21 +5,19 @@
 
 .button
 {
-    -fx-pref-width: 80px;
-
+    -fx-min-width: 80;
+    -fx-padding: 4 10 4 10;
     -fx-cursor: HAND;
+}
+#btnClear
+{
+    -fx-pref-with: 120;
 }
 
 .image-view-border
 {
-    -fx-background-color: rgba(66, 180, 230, 0.35);
+    -fx-background-color: rgba(0, 169, 247, 0.4);
 }
-
-#galleryView
-{
-    -fx-background-color: WHITE;
-}
-
 #typeColumn, #cDateColumn
 {
     -fx-alignment: CENTER;
@@ -34,5 +32,5 @@
 {
     -fx-border-style: SOLID;
     -fx-border-color: BLACK;
-    -fx-border-width: 10px;
+    -fx-border-width: 10;
 }

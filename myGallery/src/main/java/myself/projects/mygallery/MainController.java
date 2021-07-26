@@ -3,11 +3,15 @@ package myself.projects.mygallery;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
@@ -15,8 +19,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +50,7 @@ public class MainController implements Initializable
     {
         detailsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         detailsView.setPlaceholder(new Label("Drag files or press Add"));
+        detailsView.setOnMouseClicked(e -> SelectionHandler.detailsClicked(detailsView.getSelectionModel().getSelectedItem(), e.getClickCount()));
 
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
@@ -170,6 +177,7 @@ public class MainController implements Initializable
         {
             ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
             detailsView.setItems(SQLConnector.getDBItems());
+
             //sync selection
             if(SelectionHandler.getSelected().size() > 0)
             {
@@ -200,7 +208,7 @@ public class MainController implements Initializable
                 Pane imageViewWrapper = new BorderPane(imageView);
                 imageViewWrapper.setPadding(new Insets(5));
 
-                imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.clicked(vi, e.isShiftDown(), e.isControlDown(), e.getButton(), e.getClickCount()));
+                imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.galleryClicked(vi, e.isShiftDown(), e.isControlDown(), e.getButton(), e.getClickCount()));
 
                 if(SelectionHandler.isSelected(vi))
                     imageViewWrapper.getStyleClass().add("image-view-border");
@@ -213,5 +221,29 @@ public class MainController implements Initializable
             galleryView.getChildren().add(lblEmpty);
             galleryView.setAlignment(Pos.CENTER);
         }
+    }
+
+    public static void showItem(ViewItem viewItem)
+    {
+        try //dreadful try-catch... necessary?
+        {
+            FXMLLoader loader = new FXMLLoader(SelectionHandler.class.getResource("/myself/projects/mygallery/view-window.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle(viewItem.getName() + "." + viewItem.getType());
+            stage.getIcons().add(new Image(SelectionHandler.class.getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(SelectionHandler.class.getResource("/myself/projects/mygallery/style.css").toString());
+
+            stage.setScene(scene);
+
+            ViewWindowController viewWindowController = loader.getController();
+            viewWindowController.init(viewItem);
+
+            stage.show();
+        }
+        catch(IOException e) { e.printStackTrace(); }
     }
 }
