@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.input.MouseButton;
 
-
 //handles selection in the gallery view
 public class SelectionHandler
 {

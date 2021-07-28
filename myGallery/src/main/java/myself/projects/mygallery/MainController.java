@@ -240,7 +240,7 @@ public class MainController implements Initializable
             stage.setScene(scene);
 
             ViewWindowController viewWindowController = loader.getController();
-            viewWindowController.init(viewItem);
+            viewWindowController.init(viewItem, stage);
 
             stage.show();
         }
