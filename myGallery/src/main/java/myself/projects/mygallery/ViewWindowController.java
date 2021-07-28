@@ -17,7 +17,7 @@ public class ViewWindowController
     @FXML
     private MediaView mediaView;
 
-    int maxHeight = 1820, maxWidth = 980;
+    int maxHeight = 980, maxWidth = 1820;
     Stage stage;
 
     public void init(ViewItem viewItem, Stage stage)
@@ -31,7 +31,7 @@ public class ViewWindowController
         {
             Image image = new Image("file:" + viewItem.getPath());
             imageView.setImage(image);
-
+            //constrains window size
             imageView.setFitHeight(Math.min(image.getHeight(), maxHeight));
             imageView.setFitWidth(Math.min(image.getWidth(), maxWidth));
 
@@ -42,17 +42,15 @@ public class ViewWindowController
             MediaPlayer mediaPlayer = new MediaPlayer(new Media(new File(viewItem.getPath()).toURI().toString()));
             mediaView.setMediaPlayer(mediaPlayer);
             mediaPlayer.setAutoPlay(true);
-
-            int height = Math.min(mediaPlayer.getMedia().getHeight(), maxHeight),
-                width = Math.min(mediaPlayer.getMedia().getWidth(), maxWidth);
-
-            stage.setHeight(height);
-            stage.setWidth(width);
-
+            //constrains window size
             mediaPlayer.setOnReady(() ->
             {
-                mediaView.setFitHeight(Math.min(height, maxHeight));
-                mediaView.setFitWidth(Math.min(width, maxWidth));
+                int height = Math.min(mediaPlayer.getMedia().getHeight(), maxHeight),
+                    width = Math.min(mediaPlayer.getMedia().getWidth(), maxWidth);
+
+                stage.setHeight(height);
+                stage.setWidth(width);
+                stage.centerOnScreen();
             });
 
             node = mediaView;
