@@ -13,6 +13,11 @@
 {
     -fx-pref-with: 120;
 }
+#btnPlay
+{
+    -fx-min-width: 10;
+    -fx-background-radius: 314;
+}
 
 .image-view-border
 {

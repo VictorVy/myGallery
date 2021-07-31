@@ -3,8 +3,10 @@ package myself.projects.mygallery;
 import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -16,14 +18,25 @@ public class ViewWindowController
     private ImageView imageView;
     @FXML
     private MediaView mediaView;
+    @FXML
+    private VBox controls;
 
-    int maxHeight = 980, maxWidth = 1820;
+    @FXML
+    private Button btnPlay;
+
+    int maxHeight = 680, maxWidth = 1520;
     Stage stage;
+
+    int btnSize = 40;
+    ImageView pauseImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/pause.png").toString()),
+              playImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/play.png").toString());
 
     public void init(ViewItem viewItem, Stage stage)
     {
         this.stage = stage;
         stage.setOnCloseRequest(e -> close());
+
+        btnPlay.setGraphic(pauseImg);
 
         Node node;
 
@@ -53,6 +66,8 @@ public class ViewWindowController
                 stage.centerOnScreen();
             });
 
+            controls.setDisable(false);
+            controls.setVisible(true);
             node = mediaView;
         }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.media.*?>
 <?import javafx.scene.image.*?>
@@ -23,4 +24,18 @@
          </children>
       </StackPane>
    </center>
+   <bottom>
+      <VBox fx:id="controls" alignment="CENTER" BorderPane.alignment="BOTTOM_CENTER">
+         <children>
+            <HBox alignment="CENTER" VBox.vgrow="NEVER">
+               <children>
+                  <Button fx:id="btnPlay" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false"  minHeight="${btnSize}" minWidth="${btnSize}" textAlignment="CENTER">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </bottom>
 </BorderPane>

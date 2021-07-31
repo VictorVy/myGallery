@@ -1,13 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.media.*?>
 <?import javafx.scene.image.*?>
 <?import java.lang.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.ViewWindowController">
+<BorderPane fx:id="borderPane" minHeight="150.0" minWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.ViewWindowController">
    <center>
-      <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+      <StackPane BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="imageView" disable="true" pickOnBounds="true" preserveRatio="true" visible="false">
+               <viewport>
+                  <Rectangle2D />
+               </viewport></ImageView>
+            <MediaView fx:id="mediaView" disable="true" visible="false">
+               <viewport>
+                  <Rectangle2D />
+               </viewport></MediaView>
+         </children>
+      </StackPane>
    </center>
+   <bottom>
+      <VBox fx:id="controls" alignment="CENTER" BorderPane.alignment="BOTTOM_CENTER">
+         <children>
+            <HBox alignment="CENTER" VBox.vgrow="NEVER">
+               <children>
+                  <Button fx:id="btnPlay" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false"  minHeight="${btnSize}" minWidth="${btnSize}" textAlignment="CENTER">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </bottom>
 </BorderPane>
