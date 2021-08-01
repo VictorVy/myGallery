@@ -5,10 +5,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Main extends Application
 {
+    public static double screenWidth, screenHeight;
+
     public static Scene mainScene;
 
     public static void main(String[] args) {
@@ -17,6 +20,9 @@ public class Main extends Application
 
     public void start(Stage mainStage) throws Exception
     {
+        screenWidth = Screen.getPrimary().getBounds().getWidth();
+        screenHeight = Screen.getPrimary().getBounds().getHeight();
+
         Parent root = FXMLLoader.load(getClass().getResource("/myself/projects/mygallery/main.fxml"));
 
         mainScene = new Scene(root, 1280, 720);

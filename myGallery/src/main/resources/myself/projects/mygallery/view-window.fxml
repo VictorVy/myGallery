@@ -21,21 +21,24 @@
                <viewport>
                   <Rectangle2D />
                </viewport></MediaView>
+            <BorderPane fx:id="overlay">
+               <bottom>
+                  <VBox fx:id="controls" alignment="CENTER" disable="true" visible="false" BorderPane.alignment="CENTER">
+                     <children>
+                        <HBox alignment="CENTER" VBox.vgrow="NEVER">
+                           <children>
+                              <Button fx:id="btnPlay" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#btnPlay" textAlignment="CENTER">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </bottom>
+            </BorderPane>
          </children>
       </StackPane>
    </center>
-   <bottom>
-      <VBox fx:id="controls" alignment="CENTER" BorderPane.alignment="BOTTOM_CENTER">
-         <children>
-            <HBox alignment="CENTER" VBox.vgrow="NEVER">
-               <children>
-                  <Button fx:id="btnPlay" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false"  minHeight="${btnSize}" minWidth="${btnSize}" textAlignment="CENTER">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></Button>
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-   </bottom>
 </BorderPane>

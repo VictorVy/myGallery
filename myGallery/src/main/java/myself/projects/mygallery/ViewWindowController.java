@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 
@@ -24,19 +25,29 @@ public class ViewWindowController
     @FXML
     private Button btnPlay;
 
-    int maxHeight = 680, maxWidth = 1520;
+    int maxHeight = (int)(Main.screenHeight * 0.5), maxWidth = (int)(Main.screenWidth * 0.5);
     Stage stage;
 
     int btnSize = 40;
+    double graphicRatio = btnSize * 0.6;
     ImageView pauseImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/pause.png").toString()),
               playImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/play.png").toString());
+
+    double yComp, xComp;
 
     public void init(ViewItem viewItem, Stage stage)
     {
         this.stage = stage;
         stage.setOnCloseRequest(e -> close());
 
+        pauseImg.setFitHeight(graphicRatio);
+        pauseImg.setFitWidth(graphicRatio);
+        playImg.setFitHeight(graphicRatio);
+        playImg.setFitWidth(graphicRatio);
+
         btnPlay.setGraphic(pauseImg);
+        btnPlay.setPrefHeight(btnSize);
+        btnPlay.setPrefWidth(btnSize);
 
         Node node;
 
@@ -44,9 +55,23 @@ public class ViewWindowController
         {
             Image image = new Image("file:" + viewItem.getPath());
             imageView.setImage(image);
+
             //constrains window size
-            imageView.setFitHeight(Math.min(image.getHeight(), maxHeight));
-            imageView.setFitWidth(Math.min(image.getWidth(), maxWidth));
+            int height = (int)image.getHeight(), width = (int)image.getWidth();
+            System.out.println(height + " by " + width);
+            if(height > maxHeight)
+            {
+                height = maxHeight;
+                width *= (double)height / maxHeight;
+            }
+            if(width > maxWidth)
+            {
+                width = maxWidth;
+                height *= (double)width / maxWidth;
+            }
+            System.out.println("to: " + height + " by " + width);
+            imageView.setFitHeight(height);
+            imageView.setFitWidth(width);
 
             node = imageView;
         }
@@ -58,11 +83,27 @@ public class ViewWindowController
             //constrains window size
             mediaPlayer.setOnReady(() ->
             {
-                int height = Math.min(mediaPlayer.getMedia().getHeight(), maxHeight),
-                    width = Math.min(mediaPlayer.getMedia().getWidth(), maxWidth);
+                yComp = stage.getHeight() - stage.getScene().getHeight();
+                xComp = stage.getWidth() - stage.getScene().getWidth();
 
-                stage.setHeight(height);
-                stage.setWidth(width);
+                int height = mediaPlayer.getMedia().getHeight(), width = mediaPlayer.getMedia().getWidth();
+                System.out.println(height + " by " + width);
+                if(height > maxHeight)
+                {
+                    height = maxHeight;
+                    width *= (double)height / maxHeight;
+                }
+                if(width > maxWidth)
+                {
+                    width = maxWidth;
+                    height *= (double)width / maxWidth;
+                }
+                System.out.println("to: " + height + " by " + width);
+                mediaView.setFitHeight(height);
+                mediaView.setFitWidth(width);
+
+                stage.setHeight(height + yComp);
+                stage.setWidth(width + xComp);
                 stage.centerOnScreen();
             });
 
@@ -73,6 +114,23 @@ public class ViewWindowController
 
         node.setDisable(false);
         node.setVisible(true);
+    }
+
+    @FXML
+    private void btnPlay()
+    {
+        boolean playing = mediaView.getMediaPlayer().getStatus().equals(Status.PLAYING);
+
+        if(playing)
+        {
+            mediaView.getMediaPlayer().pause();
+            btnPlay.setGraphic(playImg);
+        }
+        else
+        {
+            mediaView.getMediaPlayer().play();
+            btnPlay.setGraphic(pauseImg);
+        }
     }
 
     private void close()
