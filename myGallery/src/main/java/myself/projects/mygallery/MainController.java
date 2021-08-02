@@ -163,8 +163,6 @@ public class MainController implements Initializable
     //updates the view
     public void updateView()
     {
-//        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-
         if(galleryTab.isSelected())
         {
             //sync selection

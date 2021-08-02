@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.web.*?>
 <?import javafx.scene.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.media.*?>
@@ -23,8 +24,15 @@
                </viewport></MediaView>
             <BorderPane fx:id="overlay">
                <bottom>
-                  <VBox fx:id="controls" alignment="CENTER" disable="true" visible="false" BorderPane.alignment="CENTER">
+                  <VBox fx:id="controls" alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
                      <children>
+                        <Slider fx:id="progressBar">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin></Slider>
                         <HBox alignment="CENTER" VBox.vgrow="NEVER">
                            <children>
                               <Button fx:id="btnPlay" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#btnPlay" textAlignment="CENTER">
@@ -35,6 +43,12 @@
                            </children>
                         </HBox>
                      </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <BorderPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" />
+                     </BorderPane.margin>
                   </VBox>
                </bottom>
             </BorderPane>

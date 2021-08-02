@@ -4,8 +4,10 @@ import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -19,11 +21,15 @@ public class ViewWindowController
     private ImageView imageView;
     @FXML
     private MediaView mediaView;
-    @FXML
-    private VBox controls;
 
     @FXML
+    private BorderPane overlay;
+    @FXML
+    private VBox controls;
+    @FXML
     private Button btnPlay;
+    @FXML
+    private Slider progressBar;
 
     double maxHeight = Main.screenHeight * 0.75, maxWidth = Main.screenWidth * 0.75;
     Stage stage;
@@ -37,7 +43,7 @@ public class ViewWindowController
     {
         this.stage = stage;
         stage.setOnCloseRequest(e -> close());
-
+        //adjusts play button graphics
         pauseImg.setFitHeight(graphicRatio);
         pauseImg.setFitWidth(graphicRatio);
         playImg.setFitHeight(graphicRatio);
@@ -47,10 +53,13 @@ public class ViewWindowController
         btnPlay.setPrefHeight(btnSize);
         btnPlay.setPrefWidth(btnSize);
 
+        //prepares viewport according to media type
         Node node;
 
         if(MediaUtils.isImage(viewItem.getType()) || viewItem.getType().equals("gif"))
         {
+            overlay.getChildren().remove(controls); //removes irrelevant media controls
+
             Image image = new Image("file:" + viewItem.getPath());
             imageView.setImage(image);
 
@@ -70,7 +79,7 @@ public class ViewWindowController
 
             imageView.setFitHeight(height);
             imageView.setFitWidth(width);
-
+            //binds image size to window size
             stage.setOnShown(e ->
             {
                 imageView.fitHeightProperty().bind(stage.getScene().heightProperty());
@@ -79,7 +88,7 @@ public class ViewWindowController
 
             node = imageView;
         }
-        else
+        else if(MediaUtils.isVideo(viewItem.getType()))
         {
             MediaPlayer mediaPlayer = new MediaPlayer(new Media(new File(viewItem.getPath()).toURI().toString()));
             mediaView.setMediaPlayer(mediaPlayer);
@@ -87,9 +96,7 @@ public class ViewWindowController
             //constrains window size
             mediaPlayer.setOnReady(() ->
             {
-                double yComp = stage.getHeight() - stage.getScene().getHeight(),
-                       xComp = stage.getWidth() - stage.getScene().getWidth();
-
+                double yComp = stage.getHeight() - stage.getScene().getHeight(), xComp = stage.getWidth() - stage.getScene().getWidth(); //compensation for size diff between stage and scene
                 double height = mediaPlayer.getMedia().getHeight(), width = mediaPlayer.getMedia().getWidth();
 
                 if(height > maxHeight)
@@ -105,24 +112,28 @@ public class ViewWindowController
 
                 mediaView.setFitHeight(height);
                 mediaView.setFitWidth(width);
+                //binds video size to window size
                 mediaView.fitHeightProperty().bind(stage.getScene().heightProperty());
                 mediaView.fitWidthProperty().bind(stage.getScene().widthProperty());
 
                 stage.setHeight(height + yComp);
                 stage.setWidth(width + xComp);
                 stage.centerOnScreen();
+
+                //slider logic
+                progressBar.setMax(mediaPlayer.getTotalDuration().toMinutes());
+                System.out.println(progressBar.getMax());
             });
 
-            controls.setDisable(false);
-            controls.setVisible(true);
             node = mediaView;
         }
+        else return;
 
         node.setDisable(false);
         node.setVisible(true);
     }
 
-    @FXML
+    @FXML //handles play button logic
     private void btnPlay()
     {
         boolean playing = mediaView.getMediaPlayer().getStatus().equals(Status.PLAYING);
@@ -141,7 +152,10 @@ public class ViewWindowController
 
     private void close()
     {
+        //properly ends video when closed
         if(!mediaView.isDisable())
+        {
             mediaView.getMediaPlayer().dispose();
+        }
     }
 }
