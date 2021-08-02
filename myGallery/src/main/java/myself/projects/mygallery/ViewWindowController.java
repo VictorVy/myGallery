@@ -25,15 +25,13 @@ public class ViewWindowController
     @FXML
     private Button btnPlay;
 
-    int maxHeight = (int)(Main.screenHeight * 0.5), maxWidth = (int)(Main.screenWidth * 0.5);
+    double maxHeight = Main.screenHeight * 0.75, maxWidth = Main.screenWidth * 0.75;
     Stage stage;
 
     int btnSize = 40;
     double graphicRatio = btnSize * 0.6;
     ImageView pauseImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/pause.png").toString()),
               playImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/play.png").toString());
-
-    double yComp, xComp;
 
     public void init(ViewItem viewItem, Stage stage)
     {
@@ -57,21 +55,27 @@ public class ViewWindowController
             imageView.setImage(image);
 
             //constrains window size
-            int height = (int)image.getHeight(), width = (int)image.getWidth();
-            System.out.println(height + " by " + width);
+            double height = image.getHeight(), width = image.getWidth();
+
             if(height > maxHeight)
             {
+                width *= maxHeight / height;
                 height = maxHeight;
-                width *= (double)height / maxHeight;
             }
             if(width > maxWidth)
             {
+                height *= maxWidth / width;
                 width = maxWidth;
-                height *= (double)width / maxWidth;
             }
-            System.out.println("to: " + height + " by " + width);
+
             imageView.setFitHeight(height);
             imageView.setFitWidth(width);
+
+            stage.setOnShown(e ->
+            {
+                imageView.fitHeightProperty().bind(stage.getScene().heightProperty());
+                imageView.fitWidthProperty().bind(stage.getScene().widthProperty());
+            });
 
             node = imageView;
         }
@@ -83,24 +87,26 @@ public class ViewWindowController
             //constrains window size
             mediaPlayer.setOnReady(() ->
             {
-                yComp = stage.getHeight() - stage.getScene().getHeight();
-                xComp = stage.getWidth() - stage.getScene().getWidth();
+                double yComp = stage.getHeight() - stage.getScene().getHeight(),
+                       xComp = stage.getWidth() - stage.getScene().getWidth();
 
-                int height = mediaPlayer.getMedia().getHeight(), width = mediaPlayer.getMedia().getWidth();
-                System.out.println(height + " by " + width);
+                double height = mediaPlayer.getMedia().getHeight(), width = mediaPlayer.getMedia().getWidth();
+
                 if(height > maxHeight)
                 {
+                    width *= maxHeight / height;
                     height = maxHeight;
-                    width *= (double)height / maxHeight;
                 }
                 if(width > maxWidth)
                 {
+                    height *= maxWidth / width;
                     width = maxWidth;
-                    height *= (double)width / maxWidth;
                 }
-                System.out.println("to: " + height + " by " + width);
+
                 mediaView.setFitHeight(height);
                 mediaView.setFitWidth(width);
+                mediaView.fitHeightProperty().bind(stage.getScene().heightProperty());
+                mediaView.fitWidthProperty().bind(stage.getScene().widthProperty());
 
                 stage.setHeight(height + yComp);
                 stage.setWidth(width + xComp);
