@@ -13,11 +13,6 @@
 {
     -fx-pref-with: 120;
 }
-#btnPlay
-{
-    -fx-min-width: 10;
-    -fx-background-radius: 314;
-}
 
 .image-view-border
 {
@@ -39,3 +34,33 @@
     -fx-border-color: BLACK;
     -fx-border-width: 10;
 }
+
+/* ViewWindow */
+#btnPlay
+{
+    -fx-min-width: 10;
+    -fx-background-radius: 314;
+}
+
+/*#leftControls //for media control alignment debugging purposes
+{
+    -fx-border-style: solid;
+    -fx-border-color: pink;
+    -fx-border-width: 2;
+}
+#rightControls
+{
+    -fx-border-style: solid;
+    -fx-border-color: pink;
+    -fx-border-width: 2;
+}*/
+
+/*#progressBar .thumb //for progressBar hitbox debugging purposes
+{
+
+}
+#progressBar .track
+{
+    -fx-padding: 7.000000001;
+    -fx-opacity: 1;
+}*/

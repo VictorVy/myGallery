@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.web.*?>
 <?import javafx.scene.*?>
 <?import javafx.geometry.*?>
@@ -24,30 +26,43 @@
                </viewport></MediaView>
             <BorderPane fx:id="overlay">
                <bottom>
-                  <VBox fx:id="controls" alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
+                  <VBox fx:id="controls" alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Slider fx:id="progressBar">
+                        <Slider fx:id="progressBar" minHeight="0.0" onMouseClicked="#sliderSeek" onMouseDragged="#sliderSeek" onMousePressed="#sliderPressed" onMouseReleased="#sliderReleased" prefHeight="0.0" VBox.vgrow="NEVER">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
                            <VBox.margin>
-                              <Insets />
+                              <Insets left="10.0" right="10.0" />
                            </VBox.margin></Slider>
-                        <HBox alignment="CENTER" VBox.vgrow="NEVER">
+                        <AnchorPane fx:id="controlAnchor">
                            <children>
-                              <Button fx:id="btnPlay" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#btnPlay" textAlignment="CENTER">
+                              <HBox fx:id="leftControls" alignment="CENTER" nodeOrientation="RIGHT_TO_LEFT" prefHeight="${btnPlay.height}" AnchorPane.bottomAnchor="0.0">
+                                 <children>
+                                    <Label fx:id="lblTime" alignment="CENTER_RIGHT" contentDisplay="RIGHT" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
+                                    <ToggleButton fx:id="loopToggle" mnemonicParsing="false" onAction="#toggleLoop" text="Loop" />
+                                 </children>
+                              </HBox>
+                              <Button fx:id="btnPlay" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#btnPlay" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
+                              <HBox fx:id="rightControls" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="${btnPlay.height}" AnchorPane.bottomAnchor="0.0" />
                            </children>
-                        </HBox>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </AnchorPane>
                      </children>
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
                      <BorderPane.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" />
+                        <Insets bottom="10.0" />
                      </BorderPane.margin>
                   </VBox>
                </bottom>
