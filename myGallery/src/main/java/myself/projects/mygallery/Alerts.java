@@ -46,7 +46,7 @@ public class Alerts
 
         alert.setTitle("Incorrect Filetype");
         alert.setHeaderText(null);
-        alert.setContentText("You can only add image or video files!");
+        alert.setContentText("Unsupported file format!");
         alert.setResizable(false);
         ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Alerts.class.getResource("/myself/projects/mygallery/images/bin.png").toString()));
 

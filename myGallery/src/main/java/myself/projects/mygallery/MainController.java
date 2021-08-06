@@ -24,7 +24,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -212,7 +211,7 @@ public class MainController implements Initializable
                 imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.galleryClicked(vi, e.isShiftDown(), e.isControlDown(), e.getButton(), e.getClickCount()));
 
                 if(SelectionHandler.isSelected(vi))
-                    imageViewWrapper.getStyleClass().add("image-view-border");
+                    imageViewWrapper.getStyleClass().add("image-view-selected");
 
                 galleryView.getChildren().add(imageViewWrapper);
             }

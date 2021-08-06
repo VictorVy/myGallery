@@ -2,11 +2,15 @@ package myself.projects.mygallery;
 
 import java.io.File;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -47,7 +51,7 @@ public class ViewWindowController
     @FXML
     private MenuButton rateButton;
     @FXML
-    private CheckMenuItem expandMenuItem;
+    private CheckBox expandCheckBox;
 
     ImageView pauseImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/pause.png").toString()),
               playImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/play.png").toString()),
@@ -63,10 +67,13 @@ public class ViewWindowController
 
     int btnSize = 40;
     double graphicRatio = btnSize * 0.6;
-
-    boolean wasPlaying; //used to determine whether to unpause after moving slider
-
     double audioHeight = Main.screenHeight * 0.5, audioWidth = Main.screenWidth * 0.5;
+
+    boolean wasPlaying, isMenuOpen;
+
+    int fadeOutTime = 500, fadeInTime = 100;
+    FadeTransition fadeOutControls = new FadeTransition(),
+                   fadeInControls = new FadeTransition();
 
     public void init(ViewItem viewItem, Stage stage)
     {
@@ -190,9 +197,31 @@ public class ViewWindowController
         });
     }
 
+    @FXML
+    private void fadeTest()
+    {
+//        fadeControls.play();
+    }
+
     private void mediaControlsInit()
     {
-        //aligning media controls (extremely clunky...)
+        //prepares fade transitions
+        fadeOutControls.setNode(controls);
+        fadeInControls.setNode(controls);
+        fadeOutControls.setToValue(0);
+        fadeInControls.setToValue(1);
+        //transition easing (i wonder why there isn't a simple ease() function for animations)
+        fadeOutControls.setInterpolator(new Interpolator()
+        {
+            @Override
+            protected double curve(double t) { return Math.pow(t, 2); }
+        });
+        //sets fade transition listeners
+        overlay.setOnMouseMoved(e -> { if(controls.getOpacity() != 1) fadeInControls(); });
+        overlay.getScene().setOnMouseExited(e -> { if(controls.getOpacity() != 0 && !rateButton.isShowing()) fadeOutControls(); });
+        rateButton.showingProperty().addListener((observable, oldValue, newValue) -> { if(oldValue && !overlay.isHover()) fadeOutControls(); });
+
+        //aligning media controls (extremely primitive...)
         double btnCenter = (stage.getScene().getWidth() - btnSize) / 2, btnMargins = 20;
 
         AnchorPane.setLeftAnchor(btnPlay, btnCenter);
@@ -257,22 +286,16 @@ public class ViewWindowController
 
         //rate slider + label
         mediaPlayer.rateProperty().addListener((observable, oldValue, newValue) -> lblRate.setText(Math.round(newValue.doubleValue() * 4) / 4.0 + ""));
-        rateSlider.valueProperty().addListener((observable, oldValue, newValue) ->
-        {
-            if(newValue.doubleValue() > 0.01) mediaPlayer.setRate(newValue.doubleValue());
-        });
+        rateSlider.valueProperty().addListener((observable, oldValue, newValue) -> { if(newValue.doubleValue() > 0.01) mediaPlayer.setRate(newValue.doubleValue()); });
     }
 
     private void audioPlayerInit()
     {
         mediaPlayerInit();
 
-        //handles node + window sizing
+        //handles window sizing
         stage.setOnShown(event ->
         {
-            imageView.fitHeightProperty().bind(stage.getScene().heightProperty());
-            imageView.fitWidthProperty().bind(stage.getScene().widthProperty());
-
             stage.setHeight(audioHeight);
             stage.setWidth(audioWidth);
             stage.centerOnScreen();
@@ -287,7 +310,7 @@ public class ViewWindowController
     {
         if(mediaAtEnd() || progressBarAtEnd()) //workaround for irrational media status at end
         {
-            mediaPlayer.seek(new Duration(0));
+            mediaPlayer.seek(Duration.ZERO);
             mediaPlayer.play();
             btnPlay.setGraphic(pauseImg);
             return;
@@ -321,7 +344,7 @@ public class ViewWindowController
     {
         if(wasPlaying)
         {
-            if(loopToggle.isSelected() && progressBarAtEnd()) mediaPlayer.seek(new Duration(0));
+            if(loopToggle.isSelected() && progressBarAtEnd()) mediaPlayer.seek(Duration.ZERO);
             mediaPlayer.play();
         }
     }
@@ -334,13 +357,13 @@ public class ViewWindowController
     @FXML
     private void rateExpand()
     {
-        rateSlider.setMax(expandMenuItem.isSelected() ? 8 : 2);
-        rateSlider.setPrefWidth(expandMenuItem.isSelected() ? 250 : 125);
-        rateSlider.setMajorTickUnit(expandMenuItem.isSelected() ? 1 : 0.5);
+        rateSlider.setMax(expandCheckBox.isSelected() ? 8 : 2);
+        rateSlider.setPrefWidth(expandCheckBox.isSelected() ? 250 : 125);
+        rateSlider.setMajorTickUnit(expandCheckBox.isSelected() ? 1 : 0.5);
     }
 
     //mediaView utility methods
-    private void seek(double millis) { mediaPlayer.seek(new Duration(millis)); }
+    private void seek(double millis) { mediaPlayer.seek(Duration.millis(millis)); }
 
     private boolean progressBarAtEnd() { return progressBar.getValue() == progressBar.getMax(); }
     private boolean mediaAtEnd() { return mediaPlayer.getCurrentTime().equals(mediaPlayer.getStopTime()); }
@@ -360,6 +383,19 @@ public class ViewWindowController
         if(millis < 1.0 / 3) return volLImg;
         if(millis < 2.0 / 3) return volMImg;
         return volHImg;
+    }
+
+    private void fadeOutControls()
+    {
+        fadeInControls.stop();
+        fadeOutControls.setDuration(Duration.millis(fadeOutTime * controls.getOpacity()));
+        fadeOutControls.play();
+    }
+    private void fadeInControls()
+    {
+        fadeOutControls.stop();
+        fadeInControls.setDuration(Duration.millis(fadeInTime - fadeInTime * controls.getOpacity()));
+        fadeInControls.play();
     }
 
     ChangeListener<Number> workaround = (observable, oldValue, newValue) -> mediaPlayer.pause(); //listener used in workaround
