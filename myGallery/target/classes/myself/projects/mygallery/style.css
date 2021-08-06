@@ -42,6 +42,17 @@
     -fx-background-radius: 314;
 }
 
+#rateMenuItem:focused
+{
+    -fx-background: white;
+    -fx-background-color: -fx-background;
+}
+
+#rateSlider .axis
+{
+    -fx-tick-label-font-family: "monospace";
+}
+
 /*#leftControls //for media control alignment debugging purposes
 {
     -fx-border-style: solid;

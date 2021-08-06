@@ -2,12 +2,11 @@ package myself.projects.mygallery;
 
 import java.io.File;
 
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -23,63 +22,122 @@ import javafx.util.Duration;
 
 public class ViewWindowController
 {
+    ViewItem viewItem;
+
     @FXML
     private ImageView imageView;
     @FXML
     private MediaView mediaView;
+    private MediaPlayer mediaPlayer;
 
     @FXML
     private BorderPane overlay;
     @FXML
     private VBox controls;
     @FXML
-    private Slider progressBar;
+    private Slider progressBar, volumeSlider, rateSlider;
     @FXML
     private Button btnPlay;
     @FXML
-    private HBox leftControls, rightControls;
+    private HBox leftControls, rightControls, rCornerControls;
     @FXML
-    private Label lblTime;
+    private Label lblTime, lblRate;
     @FXML
-    private ToggleButton loopToggle;
+    private ToggleButton loopToggle, muteToggle;
+    @FXML
+    private MenuButton rateButton;
+    @FXML
+    private CheckMenuItem expandMenuItem;
+
+    ImageView pauseImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/pause.png").toString()),
+              playImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/play.png").toString()),
+              loopImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/loop.png").toString()),
+              volMuteImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/volMute.png").toString()),
+              volLImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/volL.png").toString()),
+              volMImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/volM.png").toString()),
+              volHImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/volH.png").toString()),
+              rateImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/rate.png").toString());
 
     double maxHeight = Main.screenHeight * 0.75, maxWidth = Main.screenWidth * 0.75;
     Stage stage;
 
     int btnSize = 40;
     double graphicRatio = btnSize * 0.6;
-    ImageView pauseImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/pause.png").toString()),
-              playImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/play.png").toString());
 
-    boolean wasPlaying, //used to determine whether to unpause after moving slider
-            atEnd; //SHOULD be unnecessary... used as a temporary workaround for a weird issue
+    boolean wasPlaying; //used to determine whether to unpause after moving slider
+
+    double audioHeight = Main.screenHeight * 0.5, audioWidth = Main.screenWidth * 0.5;
 
     public void init(ViewItem viewItem, Stage stage)
     {
+        this.viewItem = viewItem;
         this.stage = stage;
         stage.setOnCloseRequest(e -> close());
-        //adjusts play button graphics
-        pauseImg.setFitHeight(graphicRatio);
-        pauseImg.setFitWidth(graphicRatio);
-        playImg.setFitHeight(graphicRatio);
-        playImg.setFitWidth(graphicRatio);
-
-        btnPlay.setGraphic(pauseImg);
-        btnPlay.setPrefHeight(btnSize);
-        btnPlay.setPrefWidth(btnSize);
 
         //prepares viewport according to media type
         Node node;
-
         if(MediaUtils.isImage(viewItem.getType()) || viewItem.getType().equals("gif"))
         {
             overlay.getChildren().remove(controls); //removes irrelevant media controls
+            imageViewInit(new Image("file:" + viewItem.getPath()));
+            node = imageView;
+        }
+        else if(MediaUtils.isVideo(viewItem.getType()))
+        {
+            mediaViewInit();
+            node = mediaView;
+        }
+        else if(MediaUtils.isAudio(viewItem.getType()))
+        {
+            imageViewInit(new Image(getClass().getResource("/myself/projects/mygallery/images/music.png").toString()));
+            audioPlayerInit();
+            node = imageView;
+        }
+        else
+        {
+            System.out.println("file type error");
+            return;
+        }
+        //selectively enables appropriate node
+        node.setDisable(false);
+        node.setVisible(true);
+    }
 
-            Image image = new Image("file:" + viewItem.getPath());
-            imageView.setImage(image);
+    private void imageViewInit(Image image)
+    {
+        imageView.setImage(image);
 
-            //constrains window size
-            double height = image.getHeight(), width = image.getWidth();
+        //constrains window size
+        double height = image.getHeight(), width = image.getWidth();
+
+        if(height > maxHeight)
+        {
+            width *= maxHeight / height;
+            height = maxHeight;
+        }
+        if(width > maxWidth)
+        {
+            height *= maxWidth / width;
+            width = maxWidth;
+        }
+
+        imageView.setFitHeight(height);
+        imageView.setFitWidth(width);
+        stage.setOnShown(e ->
+        {
+            imageView.fitHeightProperty().bind(stage.getScene().heightProperty());
+            imageView.fitWidthProperty().bind(stage.getScene().widthProperty());
+        });
+    }
+
+    private void mediaViewInit()
+    {
+        mediaPlayerInit();
+
+        mediaPlayer.setOnReady(() ->
+        {
+            //handles node + window sizing
+            double height = mediaPlayer.getMedia().getHeight(), width = mediaPlayer.getMedia().getWidth();
 
             if(height > maxHeight)
             {
@@ -92,155 +150,217 @@ public class ViewWindowController
                 width = maxWidth;
             }
 
-            imageView.setFitHeight(height);
-            imageView.setFitWidth(width);
-            //binds image size to window size
-            stage.setOnShown(e ->
-            {
-                imageView.fitHeightProperty().bind(stage.getScene().heightProperty());
-                imageView.fitWidthProperty().bind(stage.getScene().widthProperty());
-            });
+            mediaView.setFitHeight(height);
+            mediaView.setFitWidth(width);
+            mediaView.fitHeightProperty().bind(stage.getScene().heightProperty());
+            mediaView.fitWidthProperty().bind(stage.getScene().widthProperty());
 
-            node = imageView;
-        }
-        else if(MediaUtils.isVideo(viewItem.getType()))
-        {
-            MediaPlayer mediaPlayer = new MediaPlayer(new Media(new File(viewItem.getPath()).toURI().toString()));
+            double yComp = stage.getHeight() - stage.getScene().getHeight(), xComp = stage.getWidth() - stage.getScene().getWidth(); //compensation for size diff between stage and scene
+
+            stage.setHeight(height + yComp);
+            stage.setWidth(width + xComp);
+            stage.centerOnScreen();
+
             mediaView.setMediaPlayer(mediaPlayer);
-            mediaPlayer.setAutoPlay(true);
-            mediaPlayer.setOnReady(() ->
-            {
-                // - - - - constraining window size - - - - //
-
-                double height = mediaPlayer.getMedia().getHeight(), width = mediaPlayer.getMedia().getWidth();
-
-                if(height > maxHeight)
-                {
-                    width *= maxHeight / height;
-                    height = maxHeight;
-                }
-                if(width > maxWidth)
-                {
-                    height *= maxWidth / width;
-                    width = maxWidth;
-                }
-
-                mediaView.setFitHeight(height);
-                mediaView.setFitWidth(width);
-                mediaView.fitHeightProperty().bind(stage.getScene().heightProperty());
-                mediaView.fitWidthProperty().bind(stage.getScene().widthProperty());
-
-                double yComp = stage.getHeight() - stage.getScene().getHeight(), xComp = stage.getWidth() - stage.getScene().getWidth(); //compensation for size diff between stage and scene
-
-                stage.setHeight(height + yComp);
-                stage.setWidth(width + xComp);
-                stage.centerOnScreen();
-
-                // - - - - media control setup - - - - //
-
-                //aligning media controls (extremely clunky...)
-                double btnCenter = (stage.getScene().getWidth() - btnSize) / 2, btnMargins = 15;
-                AnchorPane.setLeftAnchor(btnPlay, btnCenter);
-                AnchorPane.setRightAnchor(leftControls, btnCenter + btnSize + btnMargins);
-                AnchorPane.setLeftAnchor(rightControls, btnCenter + btnSize + btnMargins);
-                stage.getScene().widthProperty().addListener((observable, oldValue, newValue) ->
-                {
-                    AnchorPane.setLeftAnchor(btnPlay, (newValue.doubleValue() - btnSize) / 2);
-                    AnchorPane.setRightAnchor(leftControls, (newValue.doubleValue() + btnSize + btnMargins) / 2);
-                    AnchorPane.setLeftAnchor(rightControls, (newValue.doubleValue() + btnSize + btnMargins) / 2);
-                });
-
-                //progressBar slider
-                progressBar.setMax(mediaPlayer.getTotalDuration().toMillis());
-                mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> progressBar.setValue(newValue.toMillis()));
-                mediaPlayer.setOnEndOfMedia(() -> mediaEnd());
-
-                //time signature label
-                progressBar.valueProperty().addListener((observable, oldValue, newValue) ->
-                {
-                    int min = (int) (newValue.intValue() * 0.001 / 60);
-                    int sec = (int) (newValue.intValue() * 0.001) % 60;
-                    String signature = min + ":" + (sec < 10 ? "0" + sec : sec);
-                    lblTime.setText(signature);
-                });
-            });
-
-            node = mediaView;
-        }
-        else return;
-
-        node.setDisable(false);
-        node.setVisible(true);
+            //prepares rest of media controls
+            mediaControlsInit();
+        });
     }
 
-    @FXML //handles play button logic
+    private void mediaPlayerInit()
+    {
+        btnPlay.setPrefHeight(btnSize);
+        btnPlay.setPrefWidth(btnSize);
+
+        mediaPlayer = new MediaPlayer(new Media(new File(viewItem.getPath()).toURI().toString()));
+        mediaPlayer.setAutoPlay(true);
+        mediaPlayer.setOnPlaying(() -> btnPlay.setGraphic(pauseImg));
+        mediaPlayer.setOnPaused(() ->
+        {
+            btnPlay.setGraphic(playImg);
+            progressBar.valueProperty().removeListener(workaround); //inefficient but necessary as part of workaround
+        });
+        mediaPlayer.setOnEndOfMedia(() ->
+        {
+            if(!loopToggle.isSelected())
+            {
+                progressBar.setValue(progressBar.getMax());
+                btnPlay.setGraphic(playImg);
+            }
+        });
+    }
+
+    private void mediaControlsInit()
+    {
+        //aligning media controls (extremely clunky...)
+        double btnCenter = (stage.getScene().getWidth() - btnSize) / 2, btnMargins = 20;
+
+        AnchorPane.setLeftAnchor(btnPlay, btnCenter);
+        AnchorPane.setRightAnchor(leftControls, btnCenter + btnSize + btnMargins);
+        AnchorPane.setLeftAnchor(rightControls, btnCenter + btnSize + btnMargins);
+        AnchorPane.setRightAnchor(rCornerControls, btnMargins);
+
+        stage.getScene().widthProperty().addListener((observable, oldValue, newValue) ->
+        {
+            AnchorPane.setLeftAnchor(btnPlay, (newValue.doubleValue() - btnSize) / 2);
+            AnchorPane.setRightAnchor(leftControls, (newValue.doubleValue() + btnSize + btnMargins) / 2);
+            AnchorPane.setLeftAnchor(rightControls, (newValue.doubleValue() + btnSize + btnMargins) / 2);
+        });
+
+        //btnPlay graphics
+        pauseImg.setFitHeight(graphicRatio);
+        pauseImg.setFitWidth(graphicRatio);
+        playImg.setFitHeight(graphicRatio);
+        playImg.setFitWidth(graphicRatio);
+        btnPlay.setGraphic(pauseImg);
+        //loopToggle graphic
+        loopImg.setFitHeight(graphicRatio);
+        loopImg.setFitWidth(graphicRatio);
+        loopToggle.setPadding(new Insets(3, 4, 3, 4));
+        loopToggle.setGraphic(loopImg);
+        //muteToggle graphics
+        volMuteImg.setFitHeight(graphicRatio);
+        volMuteImg.setFitWidth(graphicRatio);
+        volLImg.setFitHeight(graphicRatio);
+        volLImg.setFitWidth(graphicRatio);
+        volMImg.setFitHeight(graphicRatio);
+        volMImg.setFitWidth(graphicRatio);
+        volHImg.setFitHeight(graphicRatio);
+        volHImg.setFitWidth(graphicRatio);
+        muteToggle.setPadding(new Insets(4, 6, 4, 7));
+        muteToggle.setGraphic(volHImg);
+        //rateButton graphics
+        rateImg.setFitHeight(btnSize * 0.5);
+        rateImg.setFitWidth(btnSize * 0.5);
+        rateButton.setGraphic(rateImg);
+
+        //progressBar slider
+        progressBar.setMax(mediaPlayer.getTotalDuration().toMillis());
+        mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> progressBar.setValue(newValue.toMillis()));
+
+        //timestamp label
+        progressBar.valueProperty().addListener((observable, oldValue, newValue) ->
+                lblTime.setText(MediaUtils.millisToStamp(newValue.intValue()) + " / " + MediaUtils.millisToStamp((int)progressBar.getMax())));
+
+        //volume slider
+        mediaPlayer.muteProperty().addListener((observable, oldValue, newValue) ->
+        {
+            muteToggle.setGraphic(newValue ? volMuteImg : getVolumeImage());
+            muteToggle.setSelected(newValue); //sometimes redundant
+        });
+        volumeSlider.valueProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if(mediaPlayer.isMute()) mediaPlayer.setMute(false);
+            mediaPlayer.setVolume(newValue.doubleValue());
+            muteToggle.setGraphic(getVolumeImage());
+        });
+
+        //rate slider + label
+        mediaPlayer.rateProperty().addListener((observable, oldValue, newValue) -> lblRate.setText(Math.round(newValue.doubleValue() * 4) / 4.0 + ""));
+        rateSlider.valueProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if(newValue.doubleValue() > 0.01) mediaPlayer.setRate(newValue.doubleValue());
+        });
+    }
+
+    private void audioPlayerInit()
+    {
+        mediaPlayerInit();
+
+        //handles node + window sizing
+        stage.setOnShown(event ->
+        {
+            imageView.fitHeightProperty().bind(stage.getScene().heightProperty());
+            imageView.fitWidthProperty().bind(stage.getScene().widthProperty());
+
+            stage.setHeight(audioHeight);
+            stage.setWidth(audioWidth);
+            stage.centerOnScreen();
+        });
+
+        //prepares rest of media controls
+        mediaPlayer.setOnReady(() -> mediaControlsInit());
+    }
+
+    @FXML
     private void btnPlay()
     {
-        if(isPlaying() && !atEnd)
-            pause();
-        else
+        if(mediaAtEnd() || progressBarAtEnd()) //workaround for irrational media status at end
         {
-            if(atEnd) seek(0);
-            play();
+            mediaPlayer.seek(new Duration(0));
+            mediaPlayer.play();
+            btnPlay.setGraphic(pauseImg);
+            return;
         }
+
+        if(isPlaying())
+            mediaPlayer.pause();
+        else
+            mediaPlayer.play();
     }
 
-    //slider input methods
     @FXML
-    private void sliderSeek() { seek(progressBar.getValue()); }
+    private void sliderClicked() { seek(progressBar.getValue()); }
+    @FXML
+    private void sliderDragged() { seek(progressBar.getValue()); }
+
     @FXML
     private void sliderPressed()
     {
-        wasPlaying = isPlaying();
-        pause();
+        mediaPlayer.pause();
+        wasPlaying = isPlaying() && !mediaAtEnd();
+
+        if(mediaAtEnd()) //kludgy workaround due to finicky lack of pausability at end of media
+        {
+            progressBar.valueProperty().removeListener(workaround);
+            progressBar.valueProperty().addListener(workaround);
+        }
     }
     @FXML
     private void sliderReleased()
     {
-        if(wasPlaying && !(progressBar.getValue() == progressBar.getMax() && !loopToggle.isSelected()))
+        if(wasPlaying)
         {
-            play();
-//            mediaEnd(); //i shouldn't really need this
+            if(loopToggle.isSelected() && progressBarAtEnd()) mediaPlayer.seek(new Duration(0));
+            mediaPlayer.play();
         }
     }
 
     @FXML
-    private void toggleLoop() { mediaView.getMediaPlayer().setCycleCount(loopToggle.isSelected() ? MediaPlayer.INDEFINITE : 0); }
+    private void toggleLoop() { mediaPlayer.setCycleCount(loopToggle.isSelected() ? MediaPlayer.INDEFINITE : 0); }
+    @FXML
+    private void toggleMute() { mediaPlayer.setMute(muteToggle.isSelected()); }
+
+    @FXML
+    private void rateExpand()
+    {
+        rateSlider.setMax(expandMenuItem.isSelected() ? 8 : 2);
+        rateSlider.setPrefWidth(expandMenuItem.isSelected() ? 250 : 125);
+        rateSlider.setMajorTickUnit(expandMenuItem.isSelected() ? 1 : 0.5);
+    }
 
     //mediaView utility methods
-    private void seek(double millis)
-    {
-        mediaView.getMediaPlayer().seek(new Duration(millis));
-        atEnd = millis > progressBar.getMax() - 100;
-    }
+    private void seek(double millis) { mediaPlayer.seek(new Duration(millis)); }
 
-    private void play()
-    {
-        mediaView.getMediaPlayer().play();
-        btnPlay.setGraphic(pauseImg);
-    }
-    private void pause()
-    {
-        mediaView.getMediaPlayer().pause();
-        btnPlay.setGraphic(playImg);
-    }
-    private boolean isPlaying() { return mediaView.getMediaPlayer().getStatus().equals(Status.PLAYING); } //unreliable at the end of playback
-
-    private void mediaEnd()
-    {
-        System.out.println("end");
-        if(!loopToggle.isSelected())
-        {
-            progressBar.setValue(progressBar.getMax());
-            pause(); //mediaPlayer status doesn't change to PAUSED, so i need an extra boolean
-            atEnd = true; //sigh...
-        }
-    }
+    private boolean progressBarAtEnd() { return progressBar.getValue() == progressBar.getMax(); }
+    private boolean mediaAtEnd() { return mediaPlayer.getCurrentTime().equals(mediaPlayer.getStopTime()); }
+    private boolean isPlaying() { return mediaPlayer.getStatus().equals(Status.PLAYING); } //unreliable at the end of playback
 
     private void close()
     {
-        //properly disposes media when closed
-        if(!mediaView.isDisable())
-            mediaView.getMediaPlayer().dispose();
+        //properly disposes of media when closed
+        if(overlay.getChildren().contains(controls))
+            mediaPlayer.dispose();
     }
+
+    private ImageView getVolumeImage()
+    {
+        double millis = volumeSlider.getValue();
+        if(millis == 0) return volMuteImg;
+        if(millis < 1.0 / 3) return volLImg;
+        if(millis < 2.0 / 3) return volMImg;
+        return volHImg;
+    }
+
+    ChangeListener<Number> workaround = (observable, oldValue, newValue) -> mediaPlayer.pause(); //listener used in workaround
 }

@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 //import javafx.scene.media.MediaView;
 //import javafx.scene.media.MediaPlayer;
 import javafx.scene.effect.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import net.coobird.thumbnailator.Thumbnails;
 import org.jcodec.api.JCodecException;
@@ -54,16 +55,18 @@ public class MediaUtils
                     MediaUtils.createGifThumb(vi, sizeLimit);
                 else if(MediaUtils.isVideo(vi.getType()))
                     MediaUtils.createVideoThumb(vi, sizeLimit);
+                else if(MediaUtils.isAudio(vi.getType()))
+                    MediaUtils.createAudioThumb(vi);
             }
         }
         catch(JCodecException | IOException e) { e.printStackTrace(); }
     }
 
-    //creates an image thumbnail
+    //creates and saves an image thumbnail
     public static void createImageThumb(ViewItem vi, int sizeLimit) throws IOException
     {
         //saves thumbnail using thumbnailator
-            //only resize thumbnail if needed
+        //only resizes thumbnail if needed
         BufferedImage image = ImageIO.read(new File(vi.getPath()));
         double width = image.getWidth();
         double height = image.getHeight();
@@ -71,12 +74,11 @@ public class MediaUtils
         if(width > sizeLimit || height > sizeLimit)
             width = height = sizeLimit;
 
-        Thumbnails.of(image)
-                .size((int) width, (int) height)
-                .toFile(getUserDataDirectory() + vi.getName() + ".png");
+        Thumbnails.of(image).size((int) width, (int) height)
+                            .toFile(getUserDataDirectory() + vi.getName() + ".png");
     }
 
-    //creates a gif thumbnail (that's also a gif)
+    //creates and saves a gif thumbnail (that's also a gif)
     public static void createGifThumb(ViewItem vi, int sizeLimit) throws IOException
     {
         //making map set of resized frames
@@ -94,16 +96,16 @@ public class MediaUtils
     //returns a map of all the frames and delay times
     private static LinkedHashMap<BufferedImage, Integer> decodeGif(String path)
     {
-        GifDecoder d = new GifDecoder();
-        d.read(path);
-        int n = d.getFrameCount();
+        GifDecoder decoder = new GifDecoder();
+        decoder.read(path);
+        int frameCount = decoder.getFrameCount();
 
-        LinkedHashMap<BufferedImage, Integer> frames = new LinkedHashMap<>(n);
+        LinkedHashMap<BufferedImage, Integer> frames = new LinkedHashMap<>(frameCount);
 
-        for(int i = 0; i < n; i++)
+        for(int i = 0; i < frameCount; i++)
         {
-            BufferedImage frame = d.getFrame(i);
-            int delay = d.getDelay(i);
+            BufferedImage frame = decoder.getFrame(i);
+            int delay = decoder.getDelay(i);
 
             frames.put(frame, delay);
         }
@@ -131,7 +133,7 @@ public class MediaUtils
         encoder.finish();
     }
 
-//    creates a video thumbnail
+    //creates a video thumbnail
     private static void createVideoThumb(ViewItem vi, int sizeLimit) throws IOException, JCodecException
     {
         BufferedImage thumb = AWTFrameGrab.getFrame(new File(vi.getPath()), 0);
@@ -142,11 +144,11 @@ public class MediaUtils
         if(width > sizeLimit || height > sizeLimit)
             width = height = sizeLimit;
 
-        Thumbnails.of(thumb)
-                .size((int) width, (int) height)
-                .toFile(new File(getUserDataDirectory() + vi.getName() + ".png"));
+        Thumbnails.of(thumb).size((int) width, (int) height)
+                            .toFile(new File(getUserDataDirectory() + vi.getName() + ".png"));
     }
-    //method with pure javafx is inconsistent and barely works
+
+    //method without external libraries is inconsistent and barely works
 //    private static void createVideoThumb()
 //    {
 //        MediaPlayer mp = new MediaPlayer(new Media(new File([path here]).toURI().toString()));
@@ -178,13 +180,20 @@ public class MediaUtils
 //        });
 //    }
 
+    private static void createAudioThumb(ViewItem vi) throws IOException
+    {
+        ImageIO.write(ImageIO.read(Objects.requireNonNull(MediaUtils.class.getResource("/myself/projects/mygallery/images/music.png"))),
+            "png",
+                       new File(getUserDataDirectory() + vi.getName() + ".png"));
+    }
+
     public static void removeThumbs(ObservableList<ViewItem> selectedItems)
     {
         for(ViewItem vi : selectedItems)
             new File(getUserDataDirectory() + vi.getName() + (vi.getType().equals("gif") ? "gif" : "png")).delete();
     }
 
-    //gets the folder where the thumbnails are stored
+    //PROPERLY gets the folder where the thumbnails are stored
     public static String getUserDataDirectory() { return System.getProperty("user.home") + File.separator + "myGallery" + File.separator + "thumbs" + File.separator; }
 
     //returns a list of ViewItems from a list of Files
@@ -213,21 +222,15 @@ public class MediaUtils
         ObservableList<ViewItem> notMedia = FXCollections.observableArrayList();
 
         for(ViewItem vi : items)
-            if(!isImage(vi.getType()) && !vi.getType().equals("gif") && !isVideo(vi.getType())) notMedia.add(vi);
+            if(!isImage(vi.getType()) && !vi.getType().equals("gif") && !isVideo(vi.getType()) && !isAudio(vi.getType())) notMedia.add(vi);
 
         return notMedia;
     }
 
-    //check if file is image or video
-    public static Boolean isImage(String type)
-    {
-        return type.equals("png") || type.equals("jpg") || type.equals("bmp");
-    }
-
-    public static Boolean isVideo(String type)
-    {
-        return type.equals("mp4") || type.equals("m4v") || type.equals("flv") || type.equals("aif") || type.equals("aiff");
-    }
+    //check item type
+    public static Boolean isImage(String type) { return type.equals("png") || type.equals("jpg") || type.equals("bmp"); }
+    public static Boolean isVideo(String type) { return type.equals("mp4") || type.equals("m4v") || type.equals("flv"); }
+    public static Boolean isAudio(String type) { return type.equals("mp3") || type.equals("wav")|| type.equals("aif") || type.equals("aiff"); }
 
     public static InnerShadow hoverEffect()
     {
@@ -240,5 +243,28 @@ public class MediaUtils
         effect.setRadius(42);
 
         return effect;
+    }
+
+    public static String millisToStamp(int millis)
+    {
+        int min = (int) (millis * 0.001 / 60);
+        int sec = (int) (millis * 0.001) % 60;
+
+        return min + ":" + (sec < 10 ? "0" + sec : sec);
+    }
+
+    public static boolean isPressed(MouseEvent e)
+    {
+        switch(e.getButton())
+        {
+            case PRIMARY:
+                return e.isPrimaryButtonDown();
+            case SECONDARY:
+                return e.isSecondaryButtonDown();
+            case MIDDLE:
+                return e.isMiddleButtonDown();
+            default:
+                return false;
+        }
     }
 }

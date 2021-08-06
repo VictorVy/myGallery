@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -69,7 +70,7 @@ public class MainController implements Initializable
         //choosing files
         FileChooser fc = new FileChooser();
         fc.setTitle("Add Files");
-        fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Files", "*.png", "*.jpg", "*.bmp", "*.gif", "*.mp4", "*.m4v", "*.aif", "*.aiff"));
+        fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Files", "*.png", "*.jpg", "*.bmp", "*.gif", "*.mp4", "*.m4v", "*.mp3", "*.wav", "*.aif", "*.aiff"));
         List<File> files = fc.showOpenMultipleDialog(Main.mainScene.getWindow());
 
         if(files != null)
@@ -149,15 +150,17 @@ public class MainController implements Initializable
     @FXML
     private void dragDropView(DragEvent event)
     {
-        if(MediaUtils.wrongFiles(event.getDragboard().getFiles()).size() == 0)
+        List<File> dragFiles = event.getDragboard().getFiles();
+
+        if(MediaUtils.wrongFiles(dragFiles).size() == 0)
         {
-            SQLConnector.insert(MediaUtils.filesToViewItems(event.getDragboard().getFiles()));
-            MediaUtils.createThumbs(MediaUtils.filesToViewItems(event.getDragboard().getFiles()), 150);
+            SQLConnector.insert(MediaUtils.filesToViewItems(dragFiles));
+            MediaUtils.createThumbs(MediaUtils.filesToViewItems(dragFiles), 150);
 
             updateView();
         }
         else
-            Alerts.createDragAlert(MediaUtils.wrongFiles(event.getDragboard().getFiles())).showAndWait();
+            Alerts.createDragAlert(MediaUtils.wrongFiles(dragFiles)).showAndWait();
     }
 
     //updates the view
@@ -165,7 +168,7 @@ public class MainController implements Initializable
     {
         if(galleryTab.isSelected())
         {
-            //sync selection
+            //sync selection between views
             try { SelectionHandler.setSelected(detailsView.getSelectionModel().getSelectedItems()); } //hmm... try-catch only necessary on startup...
             catch (Exception e) { System.out.println("null"); }
 
@@ -176,7 +179,7 @@ public class MainController implements Initializable
             ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
             detailsView.setItems(SQLConnector.getDBItems());
 
-            //sync selection
+            //sync selection between views
             if(SelectionHandler.getSelected().size() > 0)
             {
                 detailsView.getSelectionModel().clearSelection();

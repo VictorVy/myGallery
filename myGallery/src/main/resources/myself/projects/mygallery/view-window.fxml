@@ -12,7 +12,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="borderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.ViewWindowController">
+<BorderPane fx:id="borderPane" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.ViewWindowController">
    <center>
       <StackPane BorderPane.alignment="CENTER">
          <children>
@@ -28,7 +28,7 @@
                <bottom>
                   <VBox fx:id="controls" alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Slider fx:id="progressBar" minHeight="0.0" onMouseClicked="#sliderSeek" onMouseDragged="#sliderSeek" onMousePressed="#sliderPressed" onMouseReleased="#sliderReleased" prefHeight="0.0" VBox.vgrow="NEVER">
+                        <Slider fx:id="progressBar" minHeight="0.0" onMouseClicked="#sliderClicked" onMouseDragged="#sliderDragged" onMousePressed="#sliderPressed" onMouseReleased="#sliderReleased" prefHeight="0.0" VBox.vgrow="NEVER">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -37,13 +37,13 @@
                            </VBox.margin></Slider>
                         <AnchorPane fx:id="controlAnchor">
                            <children>
-                              <HBox fx:id="leftControls" alignment="CENTER" nodeOrientation="RIGHT_TO_LEFT" prefHeight="${btnPlay.height}" AnchorPane.bottomAnchor="0.0">
+                              <HBox fx:id="leftControls" alignment="CENTER_RIGHT" nodeOrientation="RIGHT_TO_LEFT" prefHeight="${btnPlay.height}" spacing="15.0" AnchorPane.bottomAnchor="0.0">
                                  <children>
-                                    <Label fx:id="lblTime" alignment="CENTER_RIGHT" contentDisplay="RIGHT" textFill="WHITE">
+                                    <ToggleButton fx:id="loopToggle" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#toggleLoop" />
+                                    <Label fx:id="lblTime" alignment="CENTER" contentDisplay="TEXT_ONLY" text="0:00" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font></Label>
-                                    <ToggleButton fx:id="loopToggle" mnemonicParsing="false" onAction="#toggleLoop" text="Loop" />
                                  </children>
                               </HBox>
                               <Button fx:id="btnPlay" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#btnPlay" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0">
@@ -51,7 +51,41 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
-                              <HBox fx:id="rightControls" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="${btnPlay.height}" AnchorPane.bottomAnchor="0.0" />
+                              <HBox fx:id="rightControls" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="${btnPlay.height}" spacing="15.0" AnchorPane.bottomAnchor="0.0">
+                                 <children>
+                                    <ToggleButton fx:id="muteToggle" contentDisplay="GRAPHIC_ONLY" maxHeight="10.0" maxWidth="10.0" mnemonicParsing="false" onAction="#toggleMute">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </ToggleButton>
+                                    <Slider fx:id="volumeSlider" blockIncrement="0.01" max="1.0" prefWidth="100.0" value="1.0" HBox.hgrow="NEVER" />
+                                 </children></HBox>
+                              <HBox fx:id="rCornerControls" alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="${btnPlay.height}" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" prefWidth="25.0">
+                                       <children>
+                                          <Label fx:id="lblRate" contentDisplay="TEXT_ONLY" text="1.0" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <MenuButton fx:id="rateButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP">
+                                      <items>
+                                          <CheckMenuItem fx:id="expandMenuItem" mnemonicParsing="false" onAction="#rateExpand" text="Expand Range" />
+                                          <CustomMenuItem fx:id="rateMenuItem" hideOnClick="false" mnemonicParsing="false">
+                                             <content>
+                                                <Slider fx:id="rateSlider" blockIncrement="0.05" majorTickUnit="0.5" max="2.0" minorTickCount="1" prefWidth="125.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
+                                             </content>
+                                          </CustomMenuItem>
+                                      </items>
+                                       <font>
+                                          <Font name="Monospaced Regular" size="14.0" />
+                                       </font>
+                                    </MenuButton>
+                                 </children>
+                              </HBox>
                            </children>
                            <VBox.margin>
                               <Insets />
