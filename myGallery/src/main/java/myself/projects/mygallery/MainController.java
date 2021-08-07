@@ -169,7 +169,7 @@ public class MainController implements Initializable
         {
             //sync selection between views
             try { SelectionHandler.setSelected(detailsView.getSelectionModel().getSelectedItems()); } //hmm... try-catch only necessary on startup...
-            catch (Exception e) { System.out.println("null"); }
+            catch (Exception e) { System.out.println("e.printStackTrace(lol);"); }
 
             updateGalleryView();
         }

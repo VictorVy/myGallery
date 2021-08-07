@@ -15,12 +15,11 @@ public class SQLConnector
         try
         {
             //connecting to sqlite db
-            connection = DriverManager.getConnection("jdbc:sqlite:myDB");
+            connection = DriverManager.getConnection("jdbc:sqlite::resource:db/myDB.db");
             statement = connection.createStatement();
 
-            ResultSet check = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'files';");
-
             //creates table if one doesn't exist
+            ResultSet check = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'files';");
             if (!check.next())
             {
                 statement.execute("CREATE TABLE files (" +
@@ -108,10 +107,7 @@ public class SQLConnector
 
     public static void close()
     {
-        try
-        {
-            connection.close();
-        }
+        try { connection.close(); }
         catch (SQLException e) { e.printStackTrace(); }
     }
 }
