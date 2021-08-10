@@ -49,7 +49,7 @@ public class ViewWindowController
     @FXML
     private ToggleButton loopToggle, muteToggle;
     @FXML
-    private MenuButton rateButton;
+    private MenuButton rateMenuBtn;
     @FXML
     private CheckBox expandCheckBox;
 
@@ -197,12 +197,6 @@ public class ViewWindowController
         });
     }
 
-    @FXML
-    private void fadeTest()
-    {
-//        fadeControls.play();
-    }
-
     private void mediaControlsInit()
     {
         //prepares fade transitions
@@ -218,8 +212,8 @@ public class ViewWindowController
         });
         //sets fade transition listeners
         overlay.setOnMouseMoved(e -> { if(controls.getOpacity() != 1) fadeInControls(); });
-        overlay.getScene().setOnMouseExited(e -> { if(controls.getOpacity() != 0 && !rateButton.isShowing()) fadeOutControls(); });
-        rateButton.showingProperty().addListener((observable, oldValue, newValue) -> { if(oldValue && !overlay.isHover()) fadeOutControls(); });
+        overlay.getScene().setOnMouseExited(e -> { if(controls.getOpacity() != 0 && !rateMenuBtn.isShowing()) fadeOutControls(); });
+        rateMenuBtn.showingProperty().addListener((observable, oldValue, newValue) -> { if(oldValue && !overlay.isHover()) fadeOutControls(); });
 
         //aligning media controls (extremely primitive...)
         double btnCenter = (stage.getScene().getWidth() - btnSize) / 2, btnMargins = 20;
@@ -261,7 +255,7 @@ public class ViewWindowController
         //rateButton graphics
         rateImg.setFitHeight(btnSize * 0.5);
         rateImg.setFitWidth(btnSize * 0.5);
-        rateButton.setGraphic(rateImg);
+        rateMenuBtn.setGraphic(rateImg);
 
         //progressBar slider
         progressBar.setMax(mediaPlayer.getTotalDuration().toMillis());

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.*?>
 <?import javafx.geometry.*?>
@@ -20,7 +21,7 @@
                <viewport>
                   <Rectangle2D />
                </viewport></MediaView>
-            <BorderPane fx:id="overlay" onMouseClicked="#fadeTest">
+            <BorderPane fx:id="overlay">
                <bottom>
                   <VBox fx:id="controls" alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
                      <children>
@@ -31,7 +32,7 @@
                            <VBox.margin>
                               <Insets left="10.0" right="10.0" />
                            </VBox.margin></Slider>
-                        <AnchorPane fx:id="controlAnchor" onMouseClicked="#fadeTest">
+                        <AnchorPane fx:id="controlAnchor">
                            <children>
                               <HBox fx:id="leftControls" alignment="CENTER_RIGHT" nodeOrientation="RIGHT_TO_LEFT" prefHeight="${btnPlay.height}" spacing="15.0" AnchorPane.bottomAnchor="0.0">
                                  <children>
@@ -70,7 +71,7 @@
                                           <Insets right="-8.0" />
                                        </HBox.margin>
                                     </HBox>
-                                    <MenuButton fx:id="rateButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP">
+                                    <MenuButton fx:id="rateMenuBtn" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP">
                                       <items>
                                           <CustomMenuItem fx:id="expandMenuItem" hideOnClick="false" mnemonicParsing="false">
                                             <content>

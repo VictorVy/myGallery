@@ -43,7 +43,10 @@ public class MainController implements Initializable
     @FXML
     private TableView<ViewItem> detailsView;
     @FXML
-    private TableColumn<ViewItem, String> nameColumn, typeColumn, pathColumn, cDateColumn;
+    private TableColumn<ViewItem, String> nameColumn, typeColumn, pathColumn, cDateColumn, aDateColumn;
+
+    @FXML
+    private ToggleGroup sortToggleGroup;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
@@ -56,6 +59,7 @@ public class MainController implements Initializable
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
         pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
         cDateColumn.setCellValueFactory(new PropertyValueFactory<>("cDate"));
+        aDateColumn.setCellValueFactory(new PropertyValueFactory<>("aDate"));
 
         SQLConnector.initialize();
         MediaUtils.initialize();
@@ -131,11 +135,20 @@ public class MainController implements Initializable
     }
 
     @FXML
-    public void btnClear()
+    private void btnClear()
     {
         SelectionHandler.deselectAll();
         detailsView.getSelectionModel().clearSelection();
         updateGalleryView();
+    }
+
+    @FXML
+    private void sortToggle()
+    {
+        RadioMenuItem selected = (RadioMenuItem) sortToggleGroup.getSelectedToggle();
+        String sortBy = selected.getId().substring(0, selected.getId().indexOf("Sort"));
+
+        System.out.println(sortBy);
     }
 
     //handling dragging files into view

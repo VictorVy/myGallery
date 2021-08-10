@@ -18,7 +18,7 @@
 {
     -fx-background-color: rgba(0, 169, 247, 0.4);
 }
-#typeColumn, #cDateColumn
+#typeColumn, #cDateColumn, #aDateColumn
 {
     -fx-alignment: CENTER;
 }

@@ -27,7 +27,8 @@ public class SQLConnector
                         "name VARCHAR(256)," +
                         "type VARCHAR(64)," +
                         "path VARCHAR(256)," +
-                        "c_date VARCHAR(64));");
+                        "c_date VARCHAR(64)," +
+                        "a_date VARCHAR(64));");
             }
         }
         catch (SQLException e) { e.printStackTrace(); }
@@ -38,7 +39,7 @@ public class SQLConnector
     {
         try
         {
-            PreparedStatement insertPS = connection.prepareStatement("INSERT INTO files(name, type, path, c_date) VALUES(?, ?, ?, ?);");
+            PreparedStatement insertPS = connection.prepareStatement("INSERT INTO files(name, type, path, c_date, a_date) VALUES(?, ?, ?, ?, ?);");
 
             for (ViewItem vi : viewItems)
             {
@@ -48,6 +49,7 @@ public class SQLConnector
                     insertPS.setString(2, vi.getType());
                     insertPS.setString(3, vi.getPath());
                     insertPS.setString(4, vi.getCDate());
+                    insertPS.setString(5, vi.getADate());
                     insertPS.execute();
                 }
             }
@@ -86,7 +88,8 @@ public class SQLConnector
                     viewItems.add(new ViewItem(rs.getString("name"),
                             rs.getString("type"),
                             rs.getString("path"),
-                            rs.getString("c_date").substring(0, rs.getString("c_date").indexOf('T'))));
+                            rs.getString("c_date").substring(0, rs.getString("c_date").indexOf('T')),
+                            rs.getString("a_date")));
             }
 
             return viewItems;

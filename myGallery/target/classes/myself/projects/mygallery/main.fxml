@@ -12,6 +12,18 @@
             <Button mnemonicParsing="false" onAction="#btnAdd" text="Add" />
             <Button mnemonicParsing="false" onAction="#btnRemove" text="Remove" />
             <Pane HBox.hgrow="ALWAYS" />
+            <MenuButton fx:id="sortMenuBtn" mnemonicParsing="false" text="Sort By">
+               <items>
+                  <RadioMenuItem fx:id="recentSort" mnemonicParsing="false" onAction="#sortToggle" selected="true" text="Recently Added">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="sortToggleGroup" />
+                     </toggleGroup>
+                  </RadioMenuItem>
+                  <RadioMenuItem fx:id="nameSort" mnemonicParsing="false" onAction="#sortToggle" text="Name" toggleGroup="$sortToggleGroup" />
+                  <RadioMenuItem fx:id="typeSort" mnemonicParsing="false" onAction="#sortToggle" text="Type" toggleGroup="$sortToggleGroup" />
+                  <RadioMenuItem fx:id="cDateSort" mnemonicParsing="false" onAction="#sortToggle" text="Creation Date" toggleGroup="$sortToggleGroup" />
+               </items>
+            </MenuButton>
             <Button mnemonicParsing="false" onAction="#btnClear" text="Clear Selected" />
             <Button mnemonicParsing="false" onAction="#btnRefresh" text="Refresh" />
          </children>
@@ -46,6 +58,7 @@
                         <TableColumn fx:id="typeColumn" editable="false" maxWidth="1000.0" prefWidth="75.0" sortable="false" text="Type" />
                         <TableColumn fx:id="pathColumn" editable="false" maxWidth="1000.0" prefWidth="175.0" sortable="false" text="Path" />
                         <TableColumn fx:id="cDateColumn" editable="false" maxWidth="1000.0" prefWidth="125.0" sortable="false" text="Creation Date" />
+                        <TableColumn fx:id="aDateColumn" editable="false" maxWidth="1000.0" prefWidth="125.0" sortable="false" text="Date Added" visible="false" />
                      </columns>
                   </TableView>
                </content>

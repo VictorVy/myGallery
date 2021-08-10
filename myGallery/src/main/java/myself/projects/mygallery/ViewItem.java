@@ -5,14 +5,15 @@ import javafx.collections.ObservableList;
 //class for media files
 public class ViewItem
 {
-    private final String name, path, type, thumb, cDate;
+    private final String name, path, type, thumb, cDate, aDate;
 
-    public ViewItem(String name, String type, String path, String cDate)
+    public ViewItem(String name, String type, String path, String cDate, String aDate)
     {
         this.name = name;
         this.type = type.toLowerCase();
         this.path = path;
         this.cDate = cDate;
+        this.aDate = aDate;
         thumb = MediaUtils.getUserDataDirectory() + name + (type.equals("gif") ? ".gif" : ".png");
     }
 
@@ -31,4 +32,5 @@ public class ViewItem
     public String getType() { return type; }
     public String getThumb() { return thumb; }
     public String getCDate() { return cDate; }
+    public String getADate() { return aDate; }
 }
