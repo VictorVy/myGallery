@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
@@ -208,7 +209,7 @@ public class MediaUtils
             {
                 BasicFileAttributes bfa = Files.readAttributes(f.toPath(), BasicFileAttributes.class);
 
-                viewItems.add(new ViewItem(f.getName().substring(0, f.getName().indexOf('.')), f.getName().substring(f.getName().lastIndexOf('.') + 1), f.getAbsolutePath(), bfa.creationTime().toString(), LocalDate.now().toString()));
+                viewItems.add(new ViewItem(f.getName().substring(0, f.getName().indexOf('.')), f.getName().substring(f.getName().lastIndexOf('.') + 1), f.getAbsolutePath(), bfa.creationTime().toString(), LocalDateTime.now().toString()));
             }
             catch(IOException e) { e.printStackTrace(); }
         }

@@ -24,6 +24,9 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -47,19 +50,33 @@ public class MainController implements Initializable
 
     @FXML
     private ToggleGroup sortToggleGroup;
+    public static String sortBy = "aDate";
+    @FXML
+    private MenuButton sortDirBtn;
+    @FXML
+    private RadioMenuItem ascSortDir;
+    public static boolean ascending = true;
+
+    ImageView sortDirImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        //preparing table view
         detailsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         detailsView.setPlaceholder(new Label("Drag files or press Add"));
         detailsView.setOnMouseClicked(e -> SelectionHandler.detailsClicked(detailsView.getSelectionModel().getSelectedItem(), e.getClickCount()));
-
+        //preparing columns
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
         pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
         cDateColumn.setCellValueFactory(new PropertyValueFactory<>("cDate"));
         aDateColumn.setCellValueFactory(new PropertyValueFactory<>("aDate"));
+
+        //graphics
+        sortDirImg.setPreserveRatio(true);
+        sortDirImg.setFitHeight(16); //hmm...
+        sortDirBtn.setGraphic(sortDirImg);
 
         SQLConnector.initialize();
         MediaUtils.initialize();
@@ -146,9 +163,15 @@ public class MainController implements Initializable
     private void sortToggle()
     {
         RadioMenuItem selected = (RadioMenuItem) sortToggleGroup.getSelectedToggle();
-        String sortBy = selected.getId().substring(0, selected.getId().indexOf("Sort"));
+        sortBy = selected.getId().substring(0, selected.getId().indexOf("Sort"));
+        updateView();
+    }
 
-        System.out.println(sortBy);
+    @FXML
+    private void sortDirToggle()
+    {
+        ascending = ascSortDir.isSelected();
+        updateView();
     }
 
     //handling dragging files into view

@@ -21,15 +21,11 @@ public class SQLConnector
             //creates table if one doesn't exist
             ResultSet check = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'files';");
             if (!check.next())
-            {
-                statement.execute("CREATE TABLE files (" +
-                        "id INTEGER PRIMARY KEY," +
-                        "name VARCHAR(256)," +
-                        "type VARCHAR(64)," +
-                        "path VARCHAR(256)," +
-                        "c_date VARCHAR(64)," +
-                        "a_date VARCHAR(64));");
-            }
+                statement.execute("CREATE TABLE files (name VARCHAR(256)," +
+                                                          "type VARCHAR(64)," +
+                                                          "path VARCHAR(256)," +
+                                                          "cDate VARCHAR(64)," +
+                                                          "aDate VARCHAR(64));");
         }
         catch (SQLException e) { e.printStackTrace(); }
     }
@@ -39,7 +35,7 @@ public class SQLConnector
     {
         try
         {
-            PreparedStatement insertPS = connection.prepareStatement("INSERT INTO files(name, type, path, c_date, a_date) VALUES(?, ?, ?, ?, ?);");
+            PreparedStatement insertPS = connection.prepareStatement("INSERT INTO files(name, type, path, cDate, aDate) VALUES(?, ?, ?, ?, ?);");
 
             for (ViewItem vi : viewItems)
             {
@@ -82,14 +78,14 @@ public class SQLConnector
 
             if(statement != null)
             {
-                ResultSet rs = statement.executeQuery("SELECT * FROM files");
+                ResultSet rs = statement.executeQuery("SELECT * FROM files ORDER BY " + MainController.sortBy + " " + (MainController.ascending ? "ASC" : "DESC"));
 
                 while (rs.next())
                     viewItems.add(new ViewItem(rs.getString("name"),
-                            rs.getString("type"),
-                            rs.getString("path"),
-                            rs.getString("c_date").substring(0, rs.getString("c_date").indexOf('T')),
-                            rs.getString("a_date")));
+                                               rs.getString("type"),
+                                               rs.getString("path"),
+                                               rs.getString("cDate").substring(0, rs.getString("cDate").indexOf('T')),
+                                               rs.getString("aDate").substring(0, rs.getString("cDate").indexOf('T'))));
             }
 
             return viewItems;

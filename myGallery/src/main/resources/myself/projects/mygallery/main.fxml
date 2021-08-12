@@ -12,9 +12,9 @@
             <Button mnemonicParsing="false" onAction="#btnAdd" text="Add" />
             <Button mnemonicParsing="false" onAction="#btnRemove" text="Remove" />
             <Pane HBox.hgrow="ALWAYS" />
-            <MenuButton fx:id="sortMenuBtn" mnemonicParsing="false" text="Sort By">
+            <MenuButton fx:id="sortMenuBtn" contentDisplay="TEXT_ONLY" mnemonicParsing="false" text="Sort By">
                <items>
-                  <RadioMenuItem fx:id="recentSort" mnemonicParsing="false" onAction="#sortToggle" selected="true" text="Recently Added">
+                  <RadioMenuItem fx:id="aDateSort" mnemonicParsing="false" onAction="#sortToggle" selected="true" text="Recently Added">
                      <toggleGroup>
                         <ToggleGroup fx:id="sortToggleGroup" />
                      </toggleGroup>
@@ -23,6 +23,19 @@
                   <RadioMenuItem fx:id="typeSort" mnemonicParsing="false" onAction="#sortToggle" text="Type" toggleGroup="$sortToggleGroup" />
                   <RadioMenuItem fx:id="cDateSort" mnemonicParsing="false" onAction="#sortToggle" text="Creation Date" toggleGroup="$sortToggleGroup" />
                </items>
+            </MenuButton>
+            <MenuButton fx:id="sortDirBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="24.0" minHeight="0.0" mnemonicParsing="false">
+              <items>
+                  <RadioMenuItem fx:id="ascSortDir" mnemonicParsing="false" onAction="#sortDirToggle" selected="true" text="Ascending">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="sortDirToggleGroup" />
+                     </toggleGroup>
+                  </RadioMenuItem>
+                  <RadioMenuItem mnemonicParsing="false" onAction="#sortDirToggle" text="Descending" toggleGroup="$sortDirToggleGroup" />
+              </items>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
             </MenuButton>
             <Button mnemonicParsing="false" onAction="#btnClear" text="Clear Selected" />
             <Button mnemonicParsing="false" onAction="#btnRefresh" text="Refresh" />
@@ -54,7 +67,7 @@
                <content>
                   <TableView fx:id="detailsView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" minWidth="10.0" tableMenuButtonVisible="true">
                      <columns>
-                        <TableColumn fx:id="nameColumn" editable="false" maxWidth="1000.0" prefWidth="100.0" sortable="false" text="Name" />
+                        <TableColumn fx:id="nameColumn" maxWidth="1000.0" prefWidth="100.0" sortable="false" text="Name" />
                         <TableColumn fx:id="typeColumn" editable="false" maxWidth="1000.0" prefWidth="75.0" sortable="false" text="Type" />
                         <TableColumn fx:id="pathColumn" editable="false" maxWidth="1000.0" prefWidth="175.0" sortable="false" text="Path" />
                         <TableColumn fx:id="cDateColumn" editable="false" maxWidth="1000.0" prefWidth="125.0" sortable="false" text="Creation Date" />
