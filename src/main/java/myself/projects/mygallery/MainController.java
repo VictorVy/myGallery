@@ -24,9 +24,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -42,6 +39,7 @@ public class MainController implements Initializable
     @FXML
     private FlowPane galleryView;
     private final Label lblEmpty = new Label("Drag files or press Add");
+    private boolean galleryHover;
 
     @FXML
     private TableView<ViewItem> detailsView;
@@ -198,6 +196,16 @@ public class MainController implements Initializable
             Alerts.createDragAlert(MediaUtils.wrongFiles(dragFiles)).showAndWait();
     }
 
+    @FXML
+    private void galleryScrollMouseReleased()
+    {
+        if(!galleryHover)
+        {
+            SelectionHandler.deselectAll();
+            updateGalleryView();
+        }
+    }
+
     //updates the view
     public void updateView()
     {
@@ -243,8 +251,9 @@ public class MainController implements Initializable
 
                 Pane imageViewWrapper = new BorderPane(imageView);
                 imageViewWrapper.setPadding(new Insets(5));
-
                 imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.galleryClicked(vi, e.isShiftDown(), e.isControlDown(), e.getButton(), e.getClickCount()));
+                imageViewWrapper.setOnMouseEntered(e -> galleryHover = true);
+                imageViewWrapper.setOnMouseExited(e -> galleryHover = false);
 
                 if(SelectionHandler.isSelected(vi))
                     imageViewWrapper.getStyleClass().add("image-view-selected");

@@ -53,7 +53,7 @@
          <tabs>
             <Tab fx:id="galleryTab" closable="false" onSelectionChanged="#updateView" text="Gallery">
                <content>
-                  <ScrollPane fx:id="galleryScroll" hbarPolicy="NEVER" prefHeight="10.0" prefViewportHeight="296.0" prefViewportWidth="560.0" prefWidth="500.0">
+                  <ScrollPane fx:id="galleryScroll" hbarPolicy="NEVER" onMouseReleased="#galleryScrollMouseReleased" prefHeight="10.0" prefViewportHeight="296.0" prefViewportWidth="560.0" prefWidth="500.0">
                      <content>
                         <FlowPane fx:id="galleryView" focusTraversable="true" hgap="20.0" minHeight="10.0" minWidth="10.0" onMouseClicked="#galleryViewClicked" prefWrapLength="${galleryScroll.width}" vgap="20.0"> <!--prefHeight="${galleryScroll.height}"-->
                            <padding>

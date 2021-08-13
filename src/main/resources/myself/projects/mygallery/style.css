@@ -28,17 +28,13 @@
     -fx-background-color: #f4f4f4;
 }
 
-#id
+#galleryScroll
 {
-    -fx-border-style: SOLID;
-    -fx-border-color: BLACK;
-    -fx-border-width: 10;
+    -fx-background: white;
+    /*-fx-border-style: solid;
+    -fx-border-color: gray;
+    -fx-border-width: 4;*/
 }
-
-/*#sortDirBtn > .arrow-button > .arrow //for graphic-spacing purposes
-{
-    -fx-margin: 0 0 0 0;
-}*/
 
 /* ViewWindow */
 #btnPlay
