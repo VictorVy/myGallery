@@ -38,7 +38,7 @@ public class MainController implements Initializable
 
     @FXML
     private FlowPane galleryView;
-    private final Label lblEmpty = new Label("Drag files or press Add");
+    private final Label lblEmpty = new Label("Drag and drop or press \"+\"");
     private boolean galleryHover;
 
     @FXML
@@ -71,6 +71,7 @@ public class MainController implements Initializable
         cDateColumn.setCellValueFactory(new PropertyValueFactory<>("cDate"));
         aDateColumn.setCellValueFactory(new PropertyValueFactory<>("aDate"));
 
+
         //graphics
         sortDirImg.setPreserveRatio(true);
         sortDirImg.setFitHeight(16); //hmm...
@@ -81,9 +82,8 @@ public class MainController implements Initializable
         updateView();
     }
 
-    //handling buttons
     @FXML
-    private void btnAdd()
+    private void addFiles()
     {
         //choosing files
         FileChooser fc = new FileChooser();
@@ -103,7 +103,7 @@ public class MainController implements Initializable
     }
 
     @FXML
-    private void btnRemove()
+    private void removeFiles()
     {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         ObservableList<ViewItem> selectedItems = FXCollections.observableArrayList();
@@ -113,15 +113,24 @@ public class MainController implements Initializable
         else if(tab.equals(detailsTab))
             selectedItems = detailsView.getSelectionModel().getSelectedItems();
 
-        if(selectedItems.size() > 0)
+        remove(selectedItems);
+    }
+    @FXML
+    private void removeAll()
+    {
+        remove(SQLConnector.getDBItems());
+    }
+    private void remove(ObservableList<ViewItem> items)
+    {
+        if(items.size() > 0)
         {
-            Alert alert = Alerts.createRemovalAlert(selectedItems);
+            Alert alert = Alerts.createRemovalAlert(items);
 
             //removing selected items after alerting users
             if(alert.showAndWait().orElse(null) == ButtonType.OK)
             {
-                SQLConnector.remove(selectedItems);
-                MediaUtils.removeThumbs(selectedItems);
+                SQLConnector.remove(items);
+                MediaUtils.removeThumbs(items);
                 updateView();
             }
         }
@@ -155,6 +164,19 @@ public class MainController implements Initializable
         SelectionHandler.deselectAll();
         detailsView.getSelectionModel().clearSelection();
         updateGalleryView();
+    }
+
+    @FXML
+    private void selectAll()
+    {
+        detailsView.getSelectionModel().selectAll();
+        updateView();
+    }
+    @FXML
+    private void clearSelection()
+    {
+        SelectionHandler.deselectAll();
+        updateView();
     }
 
     @FXML
@@ -212,7 +234,7 @@ public class MainController implements Initializable
         if(galleryTab.isSelected())
         {
             //sync selection between views
-            try { SelectionHandler.setSelected(detailsView.getSelectionModel().getSelectedItems()); } //hmm... try-catch only necessary on startup...
+            try { SelectionHandler.setSelected(detailsView.getSelectionModel().getSelectedItems()); } //detailsView not init yet
             catch (Exception e) { System.out.println("e.printStackTrace(lol);"); }
 
             updateGalleryView();
@@ -220,7 +242,7 @@ public class MainController implements Initializable
         else if(detailsTab.isSelected())
         {
             ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
-            detailsView.setItems(SQLConnector.getDBItems());
+            detailsView.setItems(viewItems);
 
             //sync selection between views
             if(SelectionHandler.getSelected().size() > 0)
@@ -251,7 +273,7 @@ public class MainController implements Initializable
 
                 Pane imageViewWrapper = new BorderPane(imageView);
                 imageViewWrapper.setPadding(new Insets(5));
-                imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.galleryClicked(vi, e.isShiftDown(), e.isControlDown(), e.getButton(), e.getClickCount()));
+                imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.viewItemClicked(vi, e.isShiftDown(), e.isControlDown(), e.getButton(), e.getClickCount()));
                 imageViewWrapper.setOnMouseEntered(e -> galleryHover = true);
                 imageViewWrapper.setOnMouseExited(e -> galleryHover = false);
 
@@ -270,7 +292,7 @@ public class MainController implements Initializable
 
     public static void showItem(ViewItem viewItem)
     {
-        try //dreadful try-catch... necessary?
+        try //necessary?
         {
             FXMLLoader loader = new FXMLLoader(SelectionHandler.class.getResource("/myself/projects/mygallery/view-window.fxml"));
             Parent root = loader.load();
@@ -290,5 +312,11 @@ public class MainController implements Initializable
             stage.show();
         }
         catch(IOException e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    private void close()
+    {
+        Main.close();
     }
 }

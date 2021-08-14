@@ -12,13 +12,14 @@ public class Main extends Application
 {
     public static double screenWidth, screenHeight;
 
+    private static Stage stage;
     public static Scene mainScene;
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    public void start(Stage mainStage) throws Exception
+    public void start(Stage stage) throws Exception
     {
         screenWidth = Screen.getPrimary().getBounds().getWidth();
         screenHeight = Screen.getPrimary().getBounds().getHeight();
@@ -28,10 +29,21 @@ public class Main extends Application
         mainScene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
         mainScene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
 
-        mainStage.setTitle("myGallery");
-        mainStage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
-        mainStage.setOnCloseRequest(e -> SQLConnector.close());
-        mainStage.setScene(mainScene);
-        mainStage.show();
+        this.stage = stage;
+        stage.setTitle("myGallery");
+        stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+        stage.setOnCloseRequest(e ->
+        {
+            e.consume();
+            close();
+        });
+        stage.setScene(mainScene);
+        stage.show();
+    }
+
+    public static void close()
+    {
+        SQLConnector.close();
+        stage.close();
     }
 }

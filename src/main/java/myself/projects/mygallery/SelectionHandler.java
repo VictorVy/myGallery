@@ -9,7 +9,7 @@ public class SelectionHandler
 {
     private static ObservableList<ViewItem> selected = FXCollections.observableArrayList();
 
-    public static void galleryClicked(ViewItem viewItem, boolean shiftPressed, boolean controlPressed, MouseButton mouseButton, int clickCount)
+    public static void viewItemClicked(ViewItem viewItem, boolean shiftPressed, boolean controlPressed, MouseButton mouseButton, int clickCount)
     {
         //differentiate between mouse buttons
         if(mouseButton.equals(MouseButton.PRIMARY))

@@ -5,7 +5,7 @@
 
 .button
 {
-    -fx-min-width: 80;
+    -fx-min-width: 40;
     -fx-padding: 4 10 4 10;
     -fx-cursor: HAND;
 }
