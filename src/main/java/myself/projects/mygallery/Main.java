@@ -29,7 +29,7 @@ public class Main extends Application
         mainScene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
         mainScene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
 
-        this.stage = stage;
+        Main.stage = stage;
         stage.setTitle("myGallery");
         stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
         stage.setOnCloseRequest(e ->

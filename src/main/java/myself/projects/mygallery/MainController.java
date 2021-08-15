@@ -71,6 +71,14 @@ public class MainController implements Initializable
         cDateColumn.setCellValueFactory(new PropertyValueFactory<>("cDate"));
         aDateColumn.setCellValueFactory(new PropertyValueFactory<>("aDate"));
 
+        //better than onSelectionChanged
+        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if(newValue.equals(galleryTab))
+                updateGalleryView();
+            else if(newValue.equals(detailsTab))
+                updateDetailsView();
+        });
 
         //graphics
         sortDirImg.setPreserveRatio(true);
@@ -79,7 +87,7 @@ public class MainController implements Initializable
 
         SQLConnector.initialize();
         MediaUtils.initialize();
-        updateView();
+        updateGalleryView();
     }
 
     @FXML
@@ -105,16 +113,16 @@ public class MainController implements Initializable
     @FXML
     private void removeFiles()
     {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
         ObservableList<ViewItem> selectedItems = FXCollections.observableArrayList();
 
-        if(tab.equals(galleryTab))
+        if(galleryTab.isSelected())
             selectedItems = SelectionHandler.getSelected();
-        else if(tab.equals(detailsTab))
+        else if(detailsTab.isSelected())
             selectedItems = detailsView.getSelectionModel().getSelectedItems();
 
         remove(selectedItems);
     }
+
     @FXML
     private void removeAll()
     {
@@ -135,7 +143,6 @@ public class MainController implements Initializable
             }
         }
     }
-
     @FXML
     private void btnRefresh()
     {
@@ -159,26 +166,20 @@ public class MainController implements Initializable
     }
 
     @FXML
-    private void btnClear()
-    {
-        SelectionHandler.deselectAll();
-        detailsView.getSelectionModel().clearSelection();
-        updateGalleryView();
-    }
-
-    @FXML
     private void selectAll()
     {
+        SelectionHandler.selectAll();
         detailsView.getSelectionModel().selectAll();
         updateView();
     }
+
     @FXML
     private void clearSelection()
     {
-        SelectionHandler.deselectAll();
+        SelectionHandler.clearSelection();
+        detailsView.getSelectionModel().clearSelection();
         updateView();
     }
-
     @FXML
     private void sortToggle()
     {
@@ -195,13 +196,13 @@ public class MainController implements Initializable
     }
 
     //handling dragging files into view
+
     @FXML
     private void dragOverView(DragEvent event)
     {
         if(event.getDragboard().hasFiles())
             event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
     }
-
     @FXML
     private void dragDropView(DragEvent event)
     {
@@ -219,45 +220,33 @@ public class MainController implements Initializable
     }
 
     @FXML
-    private void galleryScrollMouseReleased()
+    private void galleryClicked() { updateGalleryView(); }
+    @FXML
+    private void galleryMouseReleased()
     {
         if(!galleryHover)
         {
-            SelectionHandler.deselectAll();
+            SelectionHandler.clearSelection();
             updateGalleryView();
         }
     }
 
     //updates the view
+
     public void updateView()
     {
         if(galleryTab.isSelected())
-        {
-            //sync selection between views
-            try { SelectionHandler.setSelected(detailsView.getSelectionModel().getSelectedItems()); } //detailsView not init yet
-            catch (Exception e) { System.out.println("e.printStackTrace(lol);"); }
-
             updateGalleryView();
-        }
         else if(detailsTab.isSelected())
-        {
-            ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
-            detailsView.setItems(viewItems);
-
-            //sync selection between views
-            if(SelectionHandler.getSelected().size() > 0)
-            {
-                detailsView.getSelectionModel().clearSelection();
-                detailsView.getSelectionModel().selectRange(ViewItem.indexOf(Objects.requireNonNull(viewItems), SelectionHandler.getSelected().get(0)),
-                                                            ViewItem.indexOf(viewItems, SelectionHandler.getSelected().get(SelectionHandler.getSelected().size() - 1)) + 1);
-            }
-        }
+            updateDetailsView();
     }
-
-    public void galleryViewClicked() { updateGalleryView(); }
 
     public void updateGalleryView()
     {
+        //sync selection between views
+        if(!detailsView.getSelectionModel().getSelectedItems().isEmpty())
+            SelectionHandler.setSelected(detailsView.getSelectionModel().getSelectedItems());
+
         ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
         galleryView.getChildren().clear();
         galleryView.setAlignment(Pos.BASELINE_LEFT);
@@ -268,7 +257,11 @@ public class MainController implements Initializable
             {
                 ImageView imageView = new ImageView("file:" + vi.getThumb());
                 //creates hover effect
-                imageView.setOnMouseEntered(e -> imageView.setEffect(MediaUtils.hoverEffect()));
+                imageView.setOnMouseEntered(e ->
+                    {
+                        imageView.setEffect(MediaUtils.hoverEffect());
+                        System.out.println(vi.getName());
+                    });
                 imageView.setOnMouseExited(e -> imageView.setEffect(null));
 
                 Pane imageViewWrapper = new BorderPane(imageView);
@@ -288,6 +281,17 @@ public class MainController implements Initializable
             galleryView.getChildren().add(lblEmpty);
             galleryView.setAlignment(Pos.CENTER);
         }
+    }
+
+    private void updateDetailsView()
+    {
+        ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
+        detailsView.setItems(viewItems);
+
+        //sync selection between views
+        if(SelectionHandler.getSelected().size() > 0)
+            detailsView.getSelectionModel().selectRange(ViewItem.indexOf(Objects.requireNonNull(viewItems), SelectionHandler.getSelected().get(0)),
+                    ViewItem.indexOf(viewItems, SelectionHandler.getSelected().get(SelectionHandler.getSelected().size() - 1)) + 1);
     }
 
     public static void showItem(ViewItem viewItem)

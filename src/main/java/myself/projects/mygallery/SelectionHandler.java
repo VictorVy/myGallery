@@ -64,7 +64,8 @@ public class SelectionHandler
         return false;
     }
 
-    public static void deselectAll() { selected.clear(); }
+    public static void selectAll() { setSelected(SQLConnector.getDBItems()); }
+    public static void clearSelection() { selected.clear(); }
 
     public static ObservableList<ViewItem> getSelected() { return selected; }
     public static void setSelected(ObservableList<ViewItem> viewItems)

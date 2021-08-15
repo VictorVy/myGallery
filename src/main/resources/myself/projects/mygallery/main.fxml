@@ -10,11 +10,11 @@
    <center>
       <TabPane fx:id="tabPane" onDragDropped="#dragDropView" onDragOver="#dragOverView" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
          <tabs>
-            <Tab fx:id="galleryTab" closable="false" onSelectionChanged="#updateView" text="Gallery">
+            <Tab fx:id="galleryTab" closable="false" text="Gallery">
                <content>
-                  <ScrollPane fx:id="galleryScroll" hbarPolicy="NEVER" onMouseReleased="#galleryScrollMouseReleased" prefHeight="10.0" prefViewportHeight="296.0" prefViewportWidth="560.0" prefWidth="500.0">
+                  <ScrollPane fx:id="galleryScroll" hbarPolicy="NEVER" onMouseClicked="#galleryClicked" onMouseReleased="#galleryMouseReleased" prefHeight="10.0" prefViewportHeight="296.0" prefViewportWidth="560.0" prefWidth="500.0">
                      <content>
-                        <FlowPane fx:id="galleryView" focusTraversable="true" hgap="20.0" minHeight="10.0" minWidth="10.0" onMouseClicked="#galleryViewClicked" prefWrapLength="${galleryScroll.width}" vgap="20.0"> <!--prefHeight="${galleryScroll.height}"-->
+                        <FlowPane fx:id="galleryView" focusTraversable="true" hgap="20.0" minHeight="10.0" minWidth="10.0" prefWrapLength="${galleryScroll.width}" vgap="20.0"> <!--prefHeight="${galleryScroll.height}"-->
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
@@ -22,7 +22,7 @@
                      </content>
                   </ScrollPane>
                </content></Tab>
-            <Tab fx:id="detailsTab" closable="false" onSelectionChanged="#updateView" text="Details">
+            <Tab fx:id="detailsTab" closable="false" text="Details">
                <content>
                   <TableView fx:id="detailsView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" minWidth="10.0" tableMenuButtonVisible="true">
                      <columns>
@@ -103,7 +103,6 @@
                         <Insets />
                      </HBox.margin>
                   </MenuButton>
-                  <Button mnemonicParsing="false" onAction="#btnClear" text="Clear Selected" />
                   <Button mnemonicParsing="false" onAction="#btnRefresh" text="Refresh" />
                </children>
                <VBox.margin>
