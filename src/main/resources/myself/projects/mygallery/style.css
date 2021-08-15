@@ -14,10 +14,15 @@
     -fx-pref-with: 120;
 }
 
+.image-view:hover
+{
+    -fx-background-color: rgba(0, 169, 247, 0.2);
+}
 .image-view-selected
 {
     -fx-background-color: rgba(0, 169, 247, 0.4);
 }
+
 #typeColumn, #cDateColumn, #aDateColumn
 {
     -fx-alignment: CENTER;

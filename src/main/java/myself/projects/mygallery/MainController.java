@@ -14,6 +14,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -75,9 +77,23 @@ public class MainController implements Initializable
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
         {
             if(newValue.equals(galleryTab))
+            {
+                //update selection
+                if(!detailsView.getSelectionModel().getSelectedItems().isEmpty())
+                    SelectionHandler.setSelected(detailsView.getSelectionModel().getSelectedItems());
+
                 updateGalleryView();
+            }
             else if(newValue.equals(detailsTab))
+            {
                 updateDetailsView();
+
+                //update selection
+                ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
+                if(SelectionHandler.getSelected().size() > 0)
+                    detailsView.getSelectionModel().selectRange(ViewItem.indexOf(Objects.requireNonNull(viewItems), SelectionHandler.getSelected().get(0)),
+                            ViewItem.indexOf(viewItems, SelectionHandler.getSelected().get(SelectionHandler.getSelected().size() - 1)) + 1);
+            }
         });
 
         //graphics
@@ -169,8 +185,8 @@ public class MainController implements Initializable
     private void selectAll()
     {
         SelectionHandler.selectAll();
-        detailsView.getSelectionModel().selectAll();
         updateView();
+        detailsView.getSelectionModel().selectAll();
     }
 
     @FXML
@@ -220,15 +236,12 @@ public class MainController implements Initializable
     }
 
     @FXML
-    private void galleryClicked() { updateGalleryView(); }
-    @FXML
-    private void galleryMouseReleased()
+    private void galleryClicked()
     {
         if(!galleryHover)
-        {
             SelectionHandler.clearSelection();
-            updateGalleryView();
-        }
+
+        updateGalleryView();
     }
 
     //updates the view
@@ -243,10 +256,6 @@ public class MainController implements Initializable
 
     public void updateGalleryView()
     {
-        //sync selection between views
-        if(!detailsView.getSelectionModel().getSelectedItems().isEmpty())
-            SelectionHandler.setSelected(detailsView.getSelectionModel().getSelectedItems());
-
         ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
         galleryView.getChildren().clear();
         galleryView.setAlignment(Pos.BASELINE_LEFT);
@@ -256,13 +265,9 @@ public class MainController implements Initializable
             for(ViewItem vi : viewItems)
             {
                 ImageView imageView = new ImageView("file:" + vi.getThumb());
-                //creates hover effect
-                imageView.setOnMouseEntered(e ->
-                    {
-                        imageView.setEffect(MediaUtils.hoverEffect());
-                        System.out.println(vi.getName());
-                    });
-                imageView.setOnMouseExited(e -> imageView.setEffect(null));
+
+//                imageView.setOnMouseEntered(e -> imageView.setEffect(MediaUtils.hoverEffect()));
+//                imageView.setOnMouseExited(e -> imageView.setEffect(null));
 
                 Pane imageViewWrapper = new BorderPane(imageView);
                 imageViewWrapper.setPadding(new Insets(5));
@@ -272,6 +277,8 @@ public class MainController implements Initializable
 
                 if(SelectionHandler.isSelected(vi))
                     imageViewWrapper.getStyleClass().add("image-view-selected");
+                else
+                    imageViewWrapper.getStyleClass().add("image-view");
 
                 galleryView.getChildren().add(imageViewWrapper);
             }
@@ -283,16 +290,7 @@ public class MainController implements Initializable
         }
     }
 
-    private void updateDetailsView()
-    {
-        ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
-        detailsView.setItems(viewItems);
-
-        //sync selection between views
-        if(SelectionHandler.getSelected().size() > 0)
-            detailsView.getSelectionModel().selectRange(ViewItem.indexOf(Objects.requireNonNull(viewItems), SelectionHandler.getSelected().get(0)),
-                    ViewItem.indexOf(viewItems, SelectionHandler.getSelected().get(SelectionHandler.getSelected().size() - 1)) + 1);
-    }
+    private void updateDetailsView() { detailsView.setItems(SQLConnector.getDBItems()); }
 
     public static void showItem(ViewItem viewItem)
     {
@@ -319,8 +317,5 @@ public class MainController implements Initializable
     }
 
     @FXML
-    private void close()
-    {
-        Main.close();
-    }
+    private void close() { Main.close(); }
 }

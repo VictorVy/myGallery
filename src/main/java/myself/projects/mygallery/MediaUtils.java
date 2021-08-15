@@ -7,9 +7,9 @@ import javafx.collections.ObservableList;
 //import javafx.scene.media.Media;
 //import javafx.scene.media.MediaView;
 //import javafx.scene.media.MediaPlayer;
-import javafx.scene.effect.*;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
+//import javafx.scene.effect.*;
+//import javafx.scene.input.MouseEvent;
+//import javafx.scene.paint.Color;
 import net.coobird.thumbnailator.Thumbnails;
 import org.jcodec.api.JCodecException;
 import org.jcodec.api.awt.AWTFrameGrab;
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
@@ -234,18 +233,18 @@ public class MediaUtils
     public static Boolean isVideo(String type) { return type.equals("mp4") || type.equals("m4v") || type.equals("flv"); }
     public static Boolean isAudio(String type) { return type.equals("mp3") || type.equals("wav")|| type.equals("aif") || type.equals("aiff"); }
 
-    public static InnerShadow hoverEffect()
-    {
-        InnerShadow effect = new InnerShadow();
-
-        effect.setBlurType(BlurType.GAUSSIAN);
-        effect.setColor(new Color(0, 0.663, 0.969, 0.8));
-        effect.setWidth(50);
-        effect.setHeight(50);
-        effect.setRadius(42);
-
-        return effect;
-    }
+//    public static InnerShadow hoverEffect() //disused
+//    {
+//        InnerShadow effect = new InnerShadow();
+//
+//        effect.setBlurType(BlurType.GAUSSIAN);
+//        effect.setColor(new Color(0, 0.663, 0.969, 0.8));
+//        effect.setWidth(50);
+//        effect.setHeight(50);
+//        effect.setRadius(42);
+//
+//        return effect;
+//    }
 
     public static String millisToStamp(int millis)
     {
@@ -253,20 +252,5 @@ public class MediaUtils
         int sec = (int) (millis * 0.001) % 60;
 
         return min + ":" + (sec < 10 ? "0" + sec : sec);
-    }
-
-    public static boolean isPressed(MouseEvent e)
-    {
-        switch(e.getButton())
-        {
-            case PRIMARY:
-                return e.isPrimaryButtonDown();
-            case SECONDARY:
-                return e.isSecondaryButtonDown();
-            case MIDDLE:
-                return e.isMiddleButtonDown();
-            default:
-                return false;
-        }
     }
 }
