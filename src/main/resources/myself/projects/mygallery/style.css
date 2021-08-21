@@ -14,11 +14,16 @@
     -fx-pref-with: 120;
 }
 
-.image-view:hover
+.view-item-wrapper
+{
+    -fx-padding: 5;
+    -fx-alignment: center;
+}
+.view-item-wrapper:hover
 {
     -fx-background-color: rgba(0, 169, 247, 0.2);
 }
-.image-view-selected
+.view-item-wrapper:selected
 {
     -fx-background-color: rgba(0, 169, 247, 0.4);
 }
@@ -36,9 +41,6 @@
 #galleryScroll
 {
     -fx-background: white;
-    /*-fx-border-style: solid;
-    -fx-border-color: gray;
-    -fx-border-width: 4;*/
 }
 
 /* ViewWindow */

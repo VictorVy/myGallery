@@ -1,76 +1,51 @@
 package myself.projects.mygallery;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.scene.input.MouseButton;
+
+import java.util.List;
 
 //handles selection in the gallery view
 public class SelectionHandler
 {
-    private static ObservableList<ViewItem> selected = FXCollections.observableArrayList();
+    private static final ObservableList<ViewItem> selected = FXCollections.observableArrayList();
 
-    public static void viewItemClicked(ViewItem viewItem, boolean shiftPressed, boolean controlPressed, MouseButton mouseButton, int clickCount)
+    public static void initialize()
     {
-        //differentiate between mouse buttons
-        if(mouseButton.equals(MouseButton.PRIMARY))
+        selected.addListener((ListChangeListener<ViewItem>) c ->
         {
-            //differentiate between key combinations
-            if(shiftPressed && selected.size() > 0)
+            while(c.next())
             {
-                ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
-                ViewItem first = selected.get(0);
-                selected.clear();
-                selected.add(first);
+                if(c.wasAdded())
+                    for(ViewItem viewItem : c.getAddedSubList())
+                        viewItem.setSelected(true);
 
-                int a = ViewItem.indexOf(viewItems, first), b = ViewItem.indexOf(viewItems, viewItem);
-
-                if(a != b) selected.addAll(a < b ? viewItems.subList(a + 1, b + 1) : viewItems.subList(b, a));
+                if(c.wasRemoved())
+                    for(ViewItem viewItem : c.getRemoved())
+                        viewItem.setSelected(false);
             }
-            else if(controlPressed)
-            {
-                if(isSelected(viewItem))
-                    selected.remove(ViewItem.indexOf(selected, viewItem));
-                else
-                    selected.add(viewItem);
-            }
-            else
-            {
-                switch(clickCount)
-                {
-                    case 1:
-                        selected.clear();
-                        selected.add(viewItem);
-                        break;
-                    case 2:
-                        MainController.showItem(viewItem);
-                        break;
-                }
-
-            }
-        }
+        });
     }
 
-    public static void detailsClicked(ViewItem viewItem, int clickCount)
-    {
-        if(clickCount == 2)
-            MainController.showItem(viewItem);
-    }
+    public static boolean isSelected(ViewItem viewItem) { return ViewItem.contains(selected, viewItem); }
 
-    public static boolean isSelected(ViewItem viewItem)
-    {
-        for(ViewItem vi : selected)
-            if(vi.equals(viewItem)) return true;
+    public static void select(ViewItem viewItem) { selected.add(viewItem); }
+    public static void select(List<ViewItem> items) { selected.addAll(items); }
+    public static void deselect(ViewItem viewItem) { selected.remove(ViewItem.indexOf(selected, viewItem));}
 
-        return false;
-    }
-
-    public static void selectAll() { setSelected(SQLConnector.getDBItems()); }
+    public static void selectAll() { setSelected(Main.mainController.getViewItems()); }
     public static void clearSelection() { selected.clear(); }
 
     public static ObservableList<ViewItem> getSelected() { return selected; }
+    public static void setSelected(ViewItem viewItem)
+    {
+        clearSelection();
+        select(viewItem);
+    }
     public static void setSelected(ObservableList<ViewItem> viewItems)
     {
-        selected.clear();
-        selected.addAll(viewItems);
+        clearSelection();
+        select(viewItems);
     }
 }

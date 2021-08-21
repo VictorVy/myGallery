@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application
 {
+    static MainController mainController;
+
     public static double screenWidth, screenHeight;
 
     private static Stage stage;
@@ -24,7 +26,10 @@ public class Main extends Application
         screenWidth = Screen.getPrimary().getBounds().getWidth();
         screenHeight = Screen.getPrimary().getBounds().getHeight();
 
-        Parent root = FXMLLoader.load(getClass().getResource("/myself/projects/mygallery/main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/myself/projects/mygallery/main.fxml"));
+        Parent root = loader.load();
+        mainController = loader.getController();
+        mainController.init(); //regular initialize doesn't work...
 
         mainScene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
         mainScene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());

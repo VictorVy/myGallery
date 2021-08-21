@@ -78,7 +78,7 @@ public class SQLConnector
 
             if(statement != null)
             {
-                ResultSet rs = statement.executeQuery("SELECT * FROM files ORDER BY " + MainController.sortBy + " " + (MainController.ascending ? "ASC" : "DESC"));
+                ResultSet rs = statement.executeQuery("SELECT * FROM files ORDER BY " + Main.mainController.sortBy + " " + (Main.mainController.ascending ? "ASC" : "DESC"));
 
                 while (rs.next())
                     viewItems.add(new ViewItem(rs.getString("name"),

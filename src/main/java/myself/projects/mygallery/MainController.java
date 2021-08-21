@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,23 +13,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.Objects;
-import java.util.ResourceBundle;
 
-public class MainController implements Initializable
+public class MainController
 {
     //injecting controls
     @FXML
@@ -41,7 +34,7 @@ public class MainController implements Initializable
     @FXML
     private FlowPane galleryView;
     private final Label lblEmpty = new Label("Drag and drop or press \"+\"");
-    private boolean galleryHover;
+    public boolean galleryHover;
 
     @FXML
     private TableView<ViewItem> detailsView;
@@ -50,22 +43,21 @@ public class MainController implements Initializable
 
     @FXML
     private ToggleGroup sortToggleGroup;
-    public static String sortBy = "aDate";
+    public String sortBy = "aDate";
     @FXML
     private MenuButton sortDirBtn;
     @FXML
     private RadioMenuItem ascSortDir;
-    public static boolean ascending = true;
+    public boolean ascending = true;
 
-    ImageView sortDirImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
+    private final ImageView sortDirImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources)
+    public void init()
     {
         //preparing table view
         detailsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         detailsView.setPlaceholder(new Label("Drag files or press Add"));
-        detailsView.setOnMouseClicked(e -> SelectionHandler.detailsClicked(detailsView.getSelectionModel().getSelectedItem(), e.getClickCount()));
+        detailsView.setOnMouseClicked(e -> detailsClicked(detailsView.getSelectionModel().getSelectedItem(), e.getClickCount()));
         //preparing columns
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
@@ -81,8 +73,6 @@ public class MainController implements Initializable
                 //update selection
                 if(!detailsView.getSelectionModel().getSelectedItems().isEmpty())
                     SelectionHandler.setSelected(detailsView.getSelectionModel().getSelectedItems());
-
-                updateGalleryView();
             }
             else if(newValue.equals(detailsTab))
             {
@@ -103,6 +93,7 @@ public class MainController implements Initializable
 
         SQLConnector.initialize();
         MediaUtils.initialize();
+        SelectionHandler.initialize();
         updateGalleryView();
     }
 
@@ -185,7 +176,6 @@ public class MainController implements Initializable
     private void selectAll()
     {
         SelectionHandler.selectAll();
-        updateView();
         detailsView.getSelectionModel().selectAll();
     }
 
@@ -194,7 +184,6 @@ public class MainController implements Initializable
     {
         SelectionHandler.clearSelection();
         detailsView.getSelectionModel().clearSelection();
-        updateView();
     }
     @FXML
     private void sortToggle()
@@ -209,6 +198,18 @@ public class MainController implements Initializable
     {
         ascending = ascSortDir.isSelected();
         updateView();
+    }
+
+    @FXML
+    private void galleryClicked()
+    {
+        if(!galleryHover)
+            SelectionHandler.clearSelection();
+    }
+    public void detailsClicked(ViewItem viewItem, int clickCount)
+    {
+        if(clickCount == 2)
+            showItem(viewItem);
     }
 
     //handling dragging files into view
@@ -235,15 +236,6 @@ public class MainController implements Initializable
             Alerts.createDragAlert(MediaUtils.wrongFiles(dragFiles)).showAndWait();
     }
 
-    @FXML
-    private void galleryClicked()
-    {
-        if(!galleryHover)
-            SelectionHandler.clearSelection();
-
-        updateGalleryView();
-    }
-
     //updates the view
 
     public void updateView()
@@ -263,25 +255,7 @@ public class MainController implements Initializable
         if(viewItems != null && !viewItems.isEmpty())
         {
             for(ViewItem vi : viewItems)
-            {
-                ImageView imageView = new ImageView("file:" + vi.getThumb());
-
-//                imageView.setOnMouseEntered(e -> imageView.setEffect(MediaUtils.hoverEffect()));
-//                imageView.setOnMouseExited(e -> imageView.setEffect(null));
-
-                Pane imageViewWrapper = new BorderPane(imageView);
-                imageViewWrapper.setPadding(new Insets(5));
-                imageViewWrapper.setOnMouseClicked(e -> SelectionHandler.viewItemClicked(vi, e.isShiftDown(), e.isControlDown(), e.getButton(), e.getClickCount()));
-                imageViewWrapper.setOnMouseEntered(e -> galleryHover = true);
-                imageViewWrapper.setOnMouseExited(e -> galleryHover = false);
-
-                if(SelectionHandler.isSelected(vi))
-                    imageViewWrapper.getStyleClass().add("image-view-selected");
-                else
-                    imageViewWrapper.getStyleClass().add("image-view");
-
-                galleryView.getChildren().add(imageViewWrapper);
-            }
+                galleryView.getChildren().add(new ViewItemWrapper(vi));
         }
         else
         {
@@ -289,22 +263,31 @@ public class MainController implements Initializable
             galleryView.setAlignment(Pos.CENTER);
         }
     }
+    public ObservableList<ViewItem> getViewItems()
+    {
+        ObservableList<ViewItem> items = FXCollections.observableArrayList();
+
+        for(int i = 0; i < galleryView.getChildren().size(); i++)
+            items.add(((ViewItemWrapper) galleryView.getChildren().get(i)).getViewItem());
+
+        return items;
+    }
 
     private void updateDetailsView() { detailsView.setItems(SQLConnector.getDBItems()); }
 
-    public static void showItem(ViewItem viewItem)
+    public void showItem(ViewItem viewItem)
     {
         try //necessary?
         {
-            FXMLLoader loader = new FXMLLoader(SelectionHandler.class.getResource("/myself/projects/mygallery/view-window.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myself/projects/mygallery/view-window.fxml"));
             Parent root = loader.load();
 
             Stage stage = new Stage();
             stage.setTitle(viewItem.getName() + "." + viewItem.getType());
-            stage.getIcons().add(new Image(SelectionHandler.class.getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+            stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
 
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(SelectionHandler.class.getResource("/myself/projects/mygallery/style.css").toString());
+            scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
 
             stage.setScene(scene);
 

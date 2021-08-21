@@ -1,11 +1,14 @@
 package myself.projects.mygallery;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 
 //class for media files
 public class ViewItem
 {
     private final String name, path, type, thumb, cDate, aDate;
+    private final BooleanProperty selected = new SimpleBooleanProperty(false);
 
     public ViewItem(String name, String type, String path, String cDate, String aDate)
     {
@@ -25,6 +28,14 @@ public class ViewItem
         return -1;
     }
 
+    public static boolean contains(ObservableList<ViewItem> list, ViewItem vi)
+    {
+        for(ViewItem viewItem : list)
+            if(viewItem.equals(vi)) return true;
+
+        return false;
+    }
+
     public boolean equals(ViewItem vi) { return getPath().equals(vi.getPath()); }
 
     public String getName() { return name; }
@@ -33,4 +44,6 @@ public class ViewItem
     public String getThumb() { return thumb; }
     public String getCDate() { return cDate; }
     public String getADate() { return aDate; }
+    public BooleanProperty getSelectedProperty() { return selected; }
+    public void setSelected(boolean bool) { selected.setValue(bool); }
 }
