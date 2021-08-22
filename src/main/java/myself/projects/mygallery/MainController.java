@@ -68,21 +68,15 @@ public class MainController
         //better than onSelectionChanged
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
         {
-            if(newValue.equals(galleryTab))
+            //updates/synchronizes selections accordingly
+            if(newValue.equals(galleryTab) && !detailsView.getSelectionModel().getSelectedItems().isEmpty())
+                SelectionHandler.findAndSelect(detailsView.getSelectionModel().getSelectedItems());
+            else if(newValue.equals(detailsTab) && SelectionHandler.getSelected().size() > 0)
             {
-                //update selection
-                if(!detailsView.getSelectionModel().getSelectedItems().isEmpty())
-                    SelectionHandler.setSelected(detailsView.getSelectionModel().getSelectedItems());
-            }
-            else if(newValue.equals(detailsTab))
-            {
-                updateDetailsView();
+                detailsView.getSelectionModel().clearSelection();
 
-                //update selection
-                ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
-                if(SelectionHandler.getSelected().size() > 0)
-                    detailsView.getSelectionModel().selectRange(ViewItem.indexOf(Objects.requireNonNull(viewItems), SelectionHandler.getSelected().get(0)),
-                            ViewItem.indexOf(viewItems, SelectionHandler.getSelected().get(SelectionHandler.getSelected().size() - 1)) + 1);
+                for(ViewItem vi : SelectionHandler.getSelected())
+                    detailsView.getSelectionModel().select(ViewItem.indexOf(getViewItems(), vi));
             }
         });
 
@@ -94,7 +88,7 @@ public class MainController
         SQLConnector.initialize();
         MediaUtils.initialize();
         SelectionHandler.initialize();
-        updateGalleryView();
+        updateViews();
     }
 
     @FXML
@@ -113,7 +107,7 @@ public class MainController
             //generating thumbnails
             MediaUtils.createThumbs(MediaUtils.filesToViewItems(files), 150);
 
-            updateView();
+            updateViews();
         }
     }
 
@@ -146,7 +140,7 @@ public class MainController
             {
                 SQLConnector.remove(items);
                 MediaUtils.removeThumbs(items);
-                updateView();
+                updateViews();
             }
         }
     }
@@ -168,7 +162,7 @@ public class MainController
                 MediaUtils.removeThumbs(toRemove);
             }
 
-            updateView();
+            updateViews();
         }
     }
 
@@ -190,14 +184,14 @@ public class MainController
     {
         RadioMenuItem selected = (RadioMenuItem) sortToggleGroup.getSelectedToggle();
         sortBy = selected.getId().substring(0, selected.getId().indexOf("Sort"));
-        updateView();
+        updateViews();
     }
 
     @FXML
     private void sortDirToggle()
     {
         ascending = ascSortDir.isSelected();
-        updateView();
+        updateViews();
     }
 
     @FXML
@@ -230,7 +224,7 @@ public class MainController
             SQLConnector.insert(MediaUtils.filesToViewItems(dragFiles));
             MediaUtils.createThumbs(MediaUtils.filesToViewItems(dragFiles), 150);
 
-            updateView();
+            updateViews();
         }
         else
             Alerts.createDragAlert(MediaUtils.wrongFiles(dragFiles)).showAndWait();
@@ -238,12 +232,10 @@ public class MainController
 
     //updates the view
 
-    public void updateView()
+    public void updateViews()
     {
-        if(galleryTab.isSelected())
-            updateGalleryView();
-        else if(detailsTab.isSelected())
-            updateDetailsView();
+        updateGalleryView();
+        updateDetailsView();
     }
 
     public void updateGalleryView()

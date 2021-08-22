@@ -38,7 +38,7 @@ public class ViewItemWrapper extends StackPane
         if(e.getButton().equals(MouseButton.PRIMARY))
         {
             //differentiate between key modifiers
-            if(e.isShiftDown() && SelectionHandler.getSelected().size() > 0)
+            if(e.isShiftDown() && SelectionHandler.getSelected().size() > 0) //shift-select
             {
                 ObservableList<ViewItem> viewItems = Main.mainController.getViewItems();
                 ViewItem first = SelectionHandler.getSelected().get(0);
@@ -48,14 +48,14 @@ public class ViewItemWrapper extends StackPane
 
                 if(a != b) SelectionHandler.select(a < b ? viewItems.subList(a + 1, b + 1) : viewItems.subList(b, a));
             }
-            else if(e.isControlDown())
+            else if(e.isControlDown()) //control-select
             {
                 if(SelectionHandler.isSelected(viewItem))
                     SelectionHandler.deselect(viewItem);
                 else
                     SelectionHandler.select(viewItem);
             }
-            else
+            else //no modifiers
             {
                 switch(e.getClickCount())
                 {

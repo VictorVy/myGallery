@@ -34,7 +34,11 @@ public class SelectionHandler
     public static void select(List<ViewItem> items) { selected.addAll(items); }
     public static void deselect(ViewItem viewItem) { selected.remove(ViewItem.indexOf(selected, viewItem));}
 
-    public static void selectAll() { setSelected(Main.mainController.getViewItems()); }
+    public static void selectAll()
+    {
+        clearSelection();
+        select(Main.mainController.getViewItems());
+    }
     public static void clearSelection() { selected.clear(); }
 
     public static ObservableList<ViewItem> getSelected() { return selected; }
@@ -43,9 +47,13 @@ public class SelectionHandler
         clearSelection();
         select(viewItem);
     }
-    public static void setSelected(ObservableList<ViewItem> viewItems)
+    public static void findAndSelect(ObservableList<ViewItem> viewItems)
     {
         clearSelection();
-        select(viewItems);
+
+        ObservableList<ViewItem> items = Main.mainController.getViewItems();
+
+        for(ViewItem vi : viewItems)
+            select(items.get(ViewItem.indexOf(items, vi)));
     }
 }
