@@ -18,16 +18,34 @@ public class SQLConnector
             connection = DriverManager.getConnection("jdbc:sqlite::resource:db/myDB.db");
             statement = connection.createStatement();
 
-            //creates table if one doesn't exist
-            ResultSet check = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'files';");
-            if (!check.next())
-                statement.execute("CREATE TABLE files (name VARCHAR(256)," +
-                                                          "type VARCHAR(64)," +
-                                                          "path VARCHAR(256)," +
-                                                          "cDate VARCHAR(64)," +
-                                                          "aDate VARCHAR(64));");
+            initializeTables();
         }
         catch (SQLException e) { e.printStackTrace(); }
+    }
+    //creates tables if they don't already exist
+    private static void initializeTables() throws SQLException
+    {
+        //checking files table
+        ResultSet check = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'files';");
+        if (!check.next())
+            statement.execute("CREATE TABLE files (fileID INTEGER PRIMARY KEY," +
+                                                      "name VARCHAR(256)," +
+                                                      "type VARCHAR(64)," +
+                                                      "path VARCHAR(256)," +
+                                                      "cDate VARCHAR(64)," +
+                                                      "aDate VARCHAR(64));");
+        //checking tags table
+        check = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'tags';");
+        if (!check.next())
+            statement.execute("CREATE TABLE tags (tagID INTEGER PRIMARY KEY," +
+                                                     "name VARCHAR(128));");
+
+        //checking associative entity (cross-reference) table
+        check = statement.executeQuery("SELECT * FROM sqlite_master WHERE type = 'table' AND name = 'fileTagXRef';");
+        if (!check.next())
+            statement.execute("CREATE TABLE fileTagXRef (fileID INTEGER," +
+                                                            "tagID INTEGER," +
+                                                            "PRIMARY KEY (fileID, tagID));");
     }
 
     //inserts a list of items into the db
@@ -109,4 +127,16 @@ public class SQLConnector
         try { connection.close(); }
         catch (SQLException e) { e.printStackTrace(); }
     }
+
+//    public static void test()
+//    {
+//        try
+//        {
+//            ResultSet rs = statement.executeQuery("SELECT id FROM files");
+//
+//            while(rs.next())
+//                System.out.println(rs.getInt("id"));
+//        }
+//        catch(Exception e) { return; }
+//    }
 }
