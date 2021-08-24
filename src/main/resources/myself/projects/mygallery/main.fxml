@@ -22,7 +22,10 @@
                         </FlowPane>
                      </content>
                   </ScrollPane>
-               </content></Tab>
+               </content>
+               <tooltip>
+                  <Tooltip text="Gallery view" />
+               </tooltip></Tab>
             <Tab fx:id="detailsTab" closable="false" text="Details">
                <content>
                   <TableView fx:id="detailsView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" minWidth="10.0" tableMenuButtonVisible="true">
@@ -35,6 +38,9 @@
                      </columns>
                   </TableView>
                </content>
+               <tooltip>
+                  <Tooltip text="Details view" />
+               </tooltip>
             </Tab>
          </tabs>
          <BorderPane.margin>
@@ -56,6 +62,7 @@
                               <MenuItem mnemonicParsing="false" onAction="#removeAll" text="All" />
                           </items>
                         </Menu>
+                        <MenuItem mnemonicParsing="false" onAction="#syncFiles" text="Sync Files" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem mnemonicParsing="false" onAction="#close" text="Exit" />
                   </items>
@@ -73,11 +80,16 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <Separator prefWidth="200.0" />
             <HBox spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#addFiles" text="+" />
-                  <Button mnemonicParsing="false" onAction="#removeFiles" text="-" />
+                  <Button mnemonicParsing="false" onAction="#addFiles" text="+">
+                     <tooltip>
+                        <Tooltip text="Add files" />
+                     </tooltip></Button>
+                  <Button mnemonicParsing="false" onAction="#removeFiles" text="-">
+                     <tooltip>
+                        <Tooltip text="Remove files" />
+                     </tooltip></Button>
                   <Pane HBox.hgrow="ALWAYS" />
                   <MenuButton fx:id="sortMenuBtn" contentDisplay="TEXT_ONLY" mnemonicParsing="false" text="Sort By">
                      <items>
@@ -90,6 +102,9 @@
                         <RadioMenuItem fx:id="typeSort" mnemonicParsing="false" onAction="#sortToggle" text="Type" toggleGroup="$sortToggleGroup" />
                         <RadioMenuItem fx:id="cDateSort" mnemonicParsing="false" onAction="#sortToggle" text="Creation Date" toggleGroup="$sortToggleGroup" />
                      </items>
+                     <tooltip>
+                        <Tooltip text="Sort by value" />
+                     </tooltip>
                   </MenuButton>
                   <MenuButton fx:id="sortDirBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="24.0" minHeight="0.0" mnemonicParsing="false">
                     <items>
@@ -103,8 +118,10 @@
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
+                     <tooltip>
+                        <Tooltip text="Choose order" />
+                     </tooltip>
                   </MenuButton>
-                  <Button mnemonicParsing="false" onAction="#btnRefresh" text="Refresh" />
                </children>
                <VBox.margin>
                   <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />

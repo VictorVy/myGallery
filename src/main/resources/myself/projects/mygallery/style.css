@@ -3,20 +3,26 @@
     -fx-font-family: "monospace";
 }
 
+.tooltip
+{
+    -fx-font-family: "System";
+    -fx-font-size: 1em;
+
+    -fx-text-fill: black;
+    -fx-background-color: white;
+
+    -fx-background-radius: 0.25em;
+}
+
 .button
 {
-    -fx-min-width: 40;
-    -fx-padding: 4 10 4 10;
-    -fx-cursor: HAND;
-}
-#btnClear
-{
-    -fx-pref-with: 120;
+    -fx-min-width: 2.75em;
+    -fx-padding: 0.4em 1em 0.4em 1em;
 }
 
 .view-item-wrapper
 {
-    -fx-padding: 5;
+    -fx-padding: 0.5em;
     -fx-alignment: center;
 }
 .view-item-wrapper:hover
@@ -46,8 +52,7 @@
 /* ViewWindow */
 #btnPlay
 {
-    -fx-min-width: 10;
-    -fx-background-radius: 314;
+    -fx-background-radius: 10em;
 }
 
 #rateMenuItem:focused, #expandMenuItem:focused

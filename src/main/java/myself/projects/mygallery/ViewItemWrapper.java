@@ -3,6 +3,7 @@ package myself.projects.mygallery;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -15,9 +16,9 @@ public class ViewItemWrapper extends StackPane
 
     private static final PseudoClass SELECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("selected");
 
-    public ViewItemWrapper(ViewItem viewItem)
+    public ViewItemWrapper(ViewItem vi)
     {
-        this.viewItem = viewItem;
+        viewItem = vi;
 
         imageView = new ImageView("file:" + viewItem.getThumb());
         getChildren().add(imageView);
@@ -30,6 +31,8 @@ public class ViewItemWrapper extends StackPane
         setAlignment(Pos.CENTER);
 
         getStyleClass().add("view-item-wrapper");
+
+        Tooltip.install(this, new Tooltip(viewItem.getName() + "." + viewItem.getType()));
     }
 
     private void mouseClicked(MouseEvent e)

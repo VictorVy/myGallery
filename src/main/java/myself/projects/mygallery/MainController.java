@@ -145,7 +145,7 @@ public class MainController
         }
     }
     @FXML
-    private void btnRefresh()
+    private void syncFiles()
     {
         if(Objects.requireNonNull(SQLConnector.getDBItems()).size() > 0)
         {

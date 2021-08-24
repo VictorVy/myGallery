@@ -53,6 +53,9 @@ public class ViewWindowController
     @FXML
     private CheckBox expandCheckBox;
 
+    @FXML
+    private Tooltip progressTooltip, playTooltip, volumeTooltip, muteTooltip;
+
     ImageView pauseImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/pause.png").toString()),
               playImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/play.png").toString()),
               loopImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/loop.png").toString()),
@@ -69,7 +72,7 @@ public class ViewWindowController
     double graphicRatio = btnSize * 0.6;
     double audioHeight = Main.screenHeight * 0.5, audioWidth = Main.screenWidth * 0.5;
 
-    boolean wasPlaying, isMenuOpen;
+    boolean wasPlaying;
 
     int fadeOutTime = 500, fadeInTime = 100;
     FadeTransition fadeOutControls = new FadeTransition(),
@@ -181,10 +184,15 @@ public class ViewWindowController
 
         mediaPlayer = new MediaPlayer(new Media(new File(viewItem.getPath()).toURI().toString()));
         mediaPlayer.setAutoPlay(true);
-        mediaPlayer.setOnPlaying(() -> btnPlay.setGraphic(pauseImg));
+        mediaPlayer.setOnPlaying(() ->
+        {
+            btnPlay.setGraphic(pauseImg);
+            playTooltip.setText("Pause");
+        });
         mediaPlayer.setOnPaused(() ->
         {
             btnPlay.setGraphic(playImg);
+            playTooltip.setText("Play");
             progressBar.valueProperty().removeListener(workaround); //inefficient but necessary as part of workaround
         });
         mediaPlayer.setOnEndOfMedia(() ->
@@ -260,10 +268,13 @@ public class ViewWindowController
         //progressBar slider
         progressBar.setMax(mediaPlayer.getTotalDuration().toMillis());
         mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> progressBar.setValue(newValue.toMillis()));
-
-        //timestamp label
+        //progressBar listener for timestamp + tooltip
         progressBar.valueProperty().addListener((observable, oldValue, newValue) ->
-                lblTime.setText(MediaUtils.millisToStamp(newValue.intValue()) + " / " + MediaUtils.millisToStamp((int)progressBar.getMax())));
+        {
+            String timestamp = MediaUtils.millisToStamp(newValue.intValue()) + " / " + MediaUtils.millisToStamp((int) progressBar.getMax());
+            lblTime.setText(timestamp);
+            progressTooltip.setText(timestamp.substring(0, timestamp.indexOf(' ')));
+        });
 
         //volume slider
         mediaPlayer.muteProperty().addListener((observable, oldValue, newValue) ->
@@ -276,6 +287,7 @@ public class ViewWindowController
             if(mediaPlayer.isMute()) mediaPlayer.setMute(false);
             mediaPlayer.setVolume(newValue.doubleValue());
             muteToggle.setGraphic(getVolumeImage());
+            volumeTooltip.setText((int)(volumeSlider.getValue() / volumeSlider.getMax() * 100) + "");
         });
 
         //rate slider + label
@@ -346,7 +358,11 @@ public class ViewWindowController
     @FXML
     private void toggleLoop() { mediaPlayer.setCycleCount(loopToggle.isSelected() ? MediaPlayer.INDEFINITE : 0); }
     @FXML
-    private void toggleMute() { mediaPlayer.setMute(muteToggle.isSelected()); }
+    private void toggleMute()
+    {
+        mediaPlayer.setMute(muteToggle.isSelected());
+        muteTooltip.setText(muteToggle.isSelected() ? "Unmute" : "Mute");
+    }
 
     @FXML
     private void rateExpand()
