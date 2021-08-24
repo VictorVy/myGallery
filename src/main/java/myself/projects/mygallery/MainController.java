@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,6 +17,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -54,16 +54,7 @@ public class MainController
 
     public void init()
     {
-        //preparing table view
-        detailsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        detailsView.setPlaceholder(new Label("Drag files or press Add"));
-        detailsView.setOnMouseClicked(e -> detailsClicked(detailsView.getSelectionModel().getSelectedItem(), e.getClickCount()));
-        //preparing columns
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
-        pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
-        cDateColumn.setCellValueFactory(new PropertyValueFactory<>("cDate"));
-        aDateColumn.setCellValueFactory(new PropertyValueFactory<>("aDate"));
+        detailsViewInit();
 
         //better than onSelectionChanged
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
@@ -90,6 +81,41 @@ public class MainController
         SelectionHandler.initialize();
         updateViews();
     }
+
+    private void detailsViewInit()
+    {
+        detailsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        detailsView.setPlaceholder(new Label("Drag files or press Add"));
+        //setting cell values
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
+        cDateColumn.setCellValueFactory(new PropertyValueFactory<>("cDate"));
+        aDateColumn.setCellValueFactory(new PropertyValueFactory<>("aDate"));
+
+        //rowFactory for better input detection
+        detailsView.setRowFactory(tv ->
+        {
+            TableRow<ViewItem> row = new TableRow<>();
+            row.setOnMouseClicked(e ->
+            {
+                if(!row.isEmpty())
+                {
+                    if(e.getClickCount() == 2)
+                        showItem(row.getItem());
+                }
+                else
+                    detailsView.getSelectionModel().clearSelection();
+            });
+            return row;
+        });
+    }
+    //table column context menus
+    @FXML private void nameColHide() { nameColumn.setVisible(false); }
+    @FXML private void typeColHide() { typeColumn.setVisible(false); }
+    @FXML private void pathColHide() { pathColumn.setVisible(false); }
+    @FXML private void cDateColHide() { cDateColumn.setVisible(false); }
+    @FXML private void aDateColHide() { aDateColumn.setVisible(false); }
 
     @FXML
     private void addFiles()
@@ -199,11 +225,6 @@ public class MainController
     {
         if(!galleryHover)
             SelectionHandler.clearSelection();
-    }
-    public void detailsClicked(ViewItem viewItem, int clickCount)
-    {
-        if(clickCount == 2)
-            showItem(viewItem);
     }
 
     //handling dragging files into view

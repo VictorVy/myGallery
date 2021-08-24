@@ -30,11 +30,46 @@
                <content>
                   <TableView fx:id="detailsView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" minWidth="10.0" tableMenuButtonVisible="true">
                      <columns>
-                        <TableColumn fx:id="nameColumn" maxWidth="1000.0" prefWidth="100.0" sortable="false" text="Name" />
-                        <TableColumn fx:id="typeColumn" editable="false" maxWidth="1000.0" prefWidth="75.0" sortable="false" text="Type" />
-                        <TableColumn fx:id="pathColumn" editable="false" maxWidth="1000.0" prefWidth="175.0" sortable="false" text="Path" />
-                        <TableColumn fx:id="cDateColumn" editable="false" maxWidth="1000.0" prefWidth="125.0" sortable="false" text="Creation Date" />
-                        <TableColumn fx:id="aDateColumn" editable="false" maxWidth="1000.0" prefWidth="125.0" sortable="false" text="Date Added" visible="false" />
+                        <TableColumn fx:id="nameColumn" maxWidth="1000.0" prefWidth="100.0" sortable="false" text="Name">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#nameColHide" text="Hide" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></TableColumn>
+                        <TableColumn fx:id="typeColumn" editable="false" maxWidth="1000.0" prefWidth="75.0" sortable="false" text="Type">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#typeColHide" text="Hide" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></TableColumn>
+                        <TableColumn fx:id="pathColumn" editable="false" maxWidth="1000.0" prefWidth="175.0" sortable="false" text="Path">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#pathColHide" text="Hide" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></TableColumn>
+                        <TableColumn fx:id="cDateColumn" editable="false" maxWidth="1000.0" prefWidth="125.0" sortable="false" text="Creation Date">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#cDateColHide" text="Hide" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></TableColumn>
+                        <TableColumn fx:id="aDateColumn" editable="false" maxWidth="1000.0" prefWidth="125.0" sortable="false" text="Date Added" visible="false">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#aDateColHide" text="Hide" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></TableColumn>
                      </columns>
                   </TableView>
                </content>
