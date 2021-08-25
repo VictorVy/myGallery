@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -13,14 +10,21 @@
          <tabs>
             <Tab fx:id="galleryTab" closable="false" text="Gallery">
                <content>
-                  <ScrollPane fx:id="galleryScroll" hbarPolicy="NEVER" onMouseClicked="#galleryClicked" prefHeight="10.0" prefViewportHeight="296.0" prefViewportWidth="560.0" prefWidth="500.0">
+                  <ScrollPane fx:id="galleryScroll" hbarPolicy="NEVER" prefHeight="10.0" prefViewportHeight="296.0" prefViewportWidth="560.0" prefWidth="500.0">
                      <content>
-                        <FlowPane fx:id="galleryView" focusTraversable="true" hgap="20.0" minHeight="10.0" minWidth="10.0" prefWrapLength="${galleryScroll.width}" vgap="20.0"> <!--prefHeight="${galleryScroll.height}"-->
+                        <FlowPane fx:id="galleryView" focusTraversable="true" hgap="20.0" minHeight="10.0" minWidth="10.0" onContextMenuRequested="#galleryContextMenuRequested" onMouseClicked="#galleryClicked" prefHeight="${galleryScroll.height}" prefWrapLength="${galleryScroll.width}" vgap="20.0"> <!--prefHeight="${galleryScroll.height}"-->
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
                         </FlowPane>
                      </content>
+                     <contextMenu>
+                        <ContextMenu fx:id="galleryContextMenu">
+                          <items>
+                            <MenuItem mnemonicParsing="false" onAction="#addFiles" text="Add.." />
+                          </items>
+                        </ContextMenu>
+                     </contextMenu>
                   </ScrollPane>
                </content>
                <tooltip>

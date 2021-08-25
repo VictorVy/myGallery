@@ -44,12 +44,17 @@
     -fx-background-color: #f4f4f4;
 }
 
-#galleryScroll
+/*#galleryScroll
 {
     -fx-background: white;
+}*/
+#galleryView
+{
+    -fx-background-color: white;
 }
 
 /* ViewWindow */
+
 #btnPlay
 {
     -fx-background-radius: 10em;

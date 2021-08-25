@@ -3,6 +3,8 @@ package myself.projects.mygallery;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -12,7 +14,8 @@ import javafx.scene.layout.StackPane;
 public class ViewItemWrapper extends StackPane
 {
     private final ViewItem viewItem;
-    private final ImageView imageView;
+
+    private final ContextMenu contextMenu = new ContextMenu();
 
     private static final PseudoClass SELECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("selected");
 
@@ -20,17 +23,21 @@ public class ViewItemWrapper extends StackPane
     {
         viewItem = vi;
 
-        imageView = new ImageView("file:" + viewItem.getThumb());
+        MenuItem removeMenuItem = new MenuItem("Remove");
+        removeMenuItem.setOnAction(e -> Main.mainController.removeFiles());
+        contextMenu.getItems().add(removeMenuItem);
+        setOnContextMenuRequested(e -> contextMenu.show(this, e.getScreenX(), e.getScreenY()));
+
+        ImageView imageView = new ImageView("file:" + viewItem.getThumb());
         getChildren().add(imageView);
+        setAlignment(Pos.CENTER);
+        setOnMouseClicked(this::mouseClicked);
+
+        getStyleClass().add("view-item-wrapper");
 
         viewItem.getSelectedProperty().addListener((observable, oldValue, newValue) -> pseudoClassStateChanged(SELECTED_PSEUDO_CLASS, newValue));
 
         hoverProperty().addListener((observable, oldValue, newValue) -> Main.mainController.galleryHover = newValue);
-
-        setOnMouseClicked(this::mouseClicked);
-        setAlignment(Pos.CENTER);
-
-        getStyleClass().add("view-item-wrapper");
 
         Tooltip.install(this, new Tooltip(viewItem.getName() + "." + viewItem.getType()));
     }
@@ -70,6 +77,11 @@ public class ViewItemWrapper extends StackPane
                         break;
                 }
             }
+        }
+        else if(e.getButton().equals(MouseButton.SECONDARY))
+        {
+            if(!viewItem.isSelected())
+                SelectionHandler.setSelected(viewItem);
         }
     }
 

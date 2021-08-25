@@ -44,6 +44,7 @@ public class ViewItem
     public String getThumb() { return thumb; }
     public String getCDate() { return cDate; }
     public String getADate() { return aDate; }
+    public boolean isSelected() { return selected.get(); }
     public BooleanProperty getSelectedProperty() { return selected; }
     public void setSelected(boolean bool) { selected.setValue(bool); }
 }

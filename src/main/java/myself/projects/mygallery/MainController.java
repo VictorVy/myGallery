@@ -8,16 +8,19 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -35,6 +38,8 @@ public class MainController
     private FlowPane galleryView;
     private final Label lblEmpty = new Label("Drag and drop or press \"+\"");
     public boolean galleryHover;
+    @FXML
+    private ContextMenu galleryContextMenu;
 
     @FXML
     private TableView<ViewItem> detailsView;
@@ -97,16 +102,33 @@ public class MainController
         detailsView.setRowFactory(tv ->
         {
             TableRow<ViewItem> row = new TableRow<>();
+
+            //prepares context menus
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem removeMenuItem = new MenuItem("Remove");
+            removeMenuItem.setOnAction(e -> Main.mainController.removeFiles());
+            contextMenu.getItems().add(removeMenuItem);
+            //handles clicks
             row.setOnMouseClicked(e ->
             {
-                if(!row.isEmpty())
+                //messy if-elses... temporary!!
+                if(e.getButton().equals(MouseButton.PRIMARY))
                 {
-                    if(e.getClickCount() == 2)
-                        showItem(row.getItem());
+                    if(!row.isEmpty())
+                    {
+                        if(e.getClickCount() == 2)
+                            showItem(row.getItem());
+                    }
+                    else
+                        detailsView.getSelectionModel().clearSelection();
                 }
-                else
-                    detailsView.getSelectionModel().clearSelection();
+                else if(e.getButton().equals(MouseButton.SECONDARY))
+                {
+                    if(row.isEmpty()) galleryContextMenu.show(detailsView, e.getScreenX(), e.getScreenY());
+                    else contextMenu.show(row, e.getScreenX(), e.getScreenY());
+                }
             });
+
             return row;
         });
     }
@@ -138,7 +160,7 @@ public class MainController
     }
 
     @FXML
-    private void removeFiles()
+    public void removeFiles()
     {
         ObservableList<ViewItem> selectedItems = FXCollections.observableArrayList();
 
@@ -151,10 +173,7 @@ public class MainController
     }
 
     @FXML
-    private void removeAll()
-    {
-        remove(SQLConnector.getDBItems());
-    }
+    private void removeAll() { remove(SQLConnector.getDBItems()); }
     private void remove(ObservableList<ViewItem> items)
     {
         if(items.size() > 0)
@@ -285,6 +304,8 @@ public class MainController
 
         return items;
     }
+    @FXML
+    private void galleryContextMenuRequested(ContextMenuEvent e) { if(galleryHover) e.consume(); }
 
     private void updateDetailsView() { detailsView.setItems(SQLConnector.getDBItems()); }
 
