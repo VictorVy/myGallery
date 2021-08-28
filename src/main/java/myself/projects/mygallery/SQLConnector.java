@@ -48,8 +48,8 @@ public class SQLConnector
                                                             "PRIMARY KEY (fileID, tagID));");
     }
 
-    //inserts a list of items into the db
-    public static void insert(ObservableList<ViewItem> viewItems)
+    //inserts files into db
+    public static void insertFiles(ObservableList<ViewItem> viewItems)
     {
         try
         {
@@ -70,9 +70,34 @@ public class SQLConnector
         }
         catch (SQLException e) { e.printStackTrace(); }
     }
+    //inserts tags into db
+    public static void insertTags(ObservableList<String> tags)
+    {
+        try
+        {
+            for(String t : tags)
+                if(!containsTag(t)) statement.execute("INSERT INTO tags(name) VALUES('" + t + "')");
+        }
+        catch (SQLException e) { e.printStackTrace(); }
 
-    //removes a list of items from the db
-    public static void remove(ObservableList<ViewItem> viewItems)
+//        try { statement.execute("DELETE FROM tags"); } catch(SQLException e) { e.printStackTrace(); }
+//        print();
+    }
+    //inserts entry into cross-reference table
+    public static void insertXRef(String[] itemPaths, String[] tagNames)
+    {
+        try
+        {
+            for(int i = 0; i < itemPaths.length; i++)
+                statement.execute("INSERT INTO fileTagXRef VALUES('" + getFileId(itemPaths[i]) + "', '" + getTagId(tagNames[i]) + "')");
+        }
+        catch (SQLException e) { e.printStackTrace(); }
+
+//        try { statement.execute("DELETE FROM fileTagXRef"); } catch(SQLException e) { e.printStackTrace(); }
+//        print();
+    }
+
+    public static void removeFiles(ObservableList<ViewItem> viewItems)
     {
         try
         {
@@ -99,7 +124,8 @@ public class SQLConnector
                 ResultSet rs = statement.executeQuery("SELECT * FROM files ORDER BY " + Main.mainController.sortBy + " " + (Main.mainController.ascending ? "ASC" : "DESC"));
 
                 while (rs.next())
-                    viewItems.add(new ViewItem(rs.getString("name"),
+                    viewItems.add(new ViewItem(rs.getInt("fileID"),
+                                               rs.getString("name"),
                                                rs.getString("type"),
                                                rs.getString("path"),
                                                rs.getString("cDate").substring(0, rs.getString("cDate").indexOf('T')),
@@ -111,13 +137,46 @@ public class SQLConnector
         catch (SQLException e) { e.printStackTrace(); return null; }
     }
 
-    //checks if an item exists in the db
+    public static int getFileId(String path)
+    {
+        try
+        {
+            ResultSet rs = statement.executeQuery("SELECT fileID FROM files WHERE path LIKE '" + path + "'");
+            if(rs.next())
+                return rs.getInt("fileID");
+            return -1;
+        }
+        catch(SQLException e) { e.printStackTrace(); return -1; }
+    }
+    public static int getTagId(String name)
+    {
+        try
+        {
+            ResultSet rs = statement.executeQuery("SELECT tagID FROM tags WHERE name LIKE '" + name + "'");
+            if(rs.next())
+                return rs.getInt("tagID");
+            return -10;
+        }
+        catch(SQLException e) { e.printStackTrace(); return -1; }
+    }
+
+    //checks if a file exists in the db
     private static boolean containsFile(ViewItem vi) throws SQLException
     {
-        ResultSet rs = statement.executeQuery("SELECT * FROM files");
+        ResultSet rs = statement.executeQuery("SELECT path FROM files");
 
-        while (rs.next())
-            if (rs.getString("path").equals(vi.getPath())) return true;
+        while(rs.next())
+            if(rs.getString("path").equals(vi.getPath())) return true;
+
+        return false;
+    }
+    //checks if a tag exists in the db
+    private static boolean containsTag(String t) throws SQLException
+    {
+        ResultSet rs = statement.executeQuery("SELECT name FROM tags");
+
+        while(rs.next())
+            if(rs.getString("name").equals(t)) return true;
 
         return false;
     }
@@ -128,15 +187,16 @@ public class SQLConnector
         catch (SQLException e) { e.printStackTrace(); }
     }
 
-//    public static void test()
-//    {
-//        try
-//        {
-//            ResultSet rs = statement.executeQuery("SELECT id FROM files");
-//
-//            while(rs.next())
-//                System.out.println(rs.getInt("id"));
-//        }
-//        catch(Exception e) { return; }
-//    }
+    public static void print()
+    {
+        try
+        {
+            ResultSet rs = statement.executeQuery("SELECT f.name AS fileName, t.name AS tagName " +
+                                                      "FROM files f, tags t, fileTagXRef x " +
+                                                      "WHERE f.fileID = x.fileID AND x.tagID = t.tagID");
+            while(rs.next())
+                System.out.println(rs.getString("fileName") + " : " + rs.getString("tagName"));
+        }
+        catch(Exception e) { }
+    }
 }

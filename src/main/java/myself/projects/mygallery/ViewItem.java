@@ -7,11 +7,13 @@ import javafx.collections.ObservableList;
 //class for media files
 public class ViewItem
 {
+    private final int id;
     private final String name, path, type, thumb, cDate, aDate;
     private final BooleanProperty selected = new SimpleBooleanProperty(false);
 
-    public ViewItem(String name, String type, String path, String cDate, String aDate)
+    public ViewItem(int id, String name, String type, String path, String cDate, String aDate)
     {
+        this.id = id;
         this.name = name;
         this.type = type.toLowerCase();
         this.path = path;
@@ -38,6 +40,7 @@ public class ViewItem
 
     public boolean equals(ViewItem vi) { return getPath().equals(vi.getPath()); }
 
+    public int getId() { return id; }
     public String getName() { return name; }
     public String getPath() { return path; }
     public String getType() { return type; }

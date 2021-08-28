@@ -208,7 +208,7 @@ public class MediaUtils
             {
                 BasicFileAttributes bfa = Files.readAttributes(f.toPath(), BasicFileAttributes.class);
 
-                viewItems.add(new ViewItem(f.getName().substring(0, f.getName().indexOf('.')), f.getName().substring(f.getName().lastIndexOf('.') + 1), f.getAbsolutePath(), bfa.creationTime().toString(), LocalDateTime.now().toString()));
+                viewItems.add(new ViewItem(SQLConnector.getFileId(f.getAbsolutePath()), f.getName().substring(0, f.getName().lastIndexOf('.')), f.getName().substring(f.getName().lastIndexOf('.') + 1), f.getAbsolutePath(), bfa.creationTime().toString(), LocalDateTime.now().toString()));
             }
             catch(IOException e) { e.printStackTrace(); }
         }

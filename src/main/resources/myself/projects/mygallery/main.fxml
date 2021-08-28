@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -129,6 +130,8 @@
                      <tooltip>
                         <Tooltip text="Remove files" />
                      </tooltip></Button>
+                  <Button mnemonicParsing="false" onAction="#test" text="test" />
+                  <Button mnemonicParsing="false" onAction="#test2" text="test tag" />
                   <Pane HBox.hgrow="ALWAYS" />
                   <MenuButton fx:id="sortMenuBtn" contentDisplay="TEXT_ONLY" mnemonicParsing="false" text="Sort By">
                      <items>

@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainController
@@ -131,6 +132,8 @@ public class MainController
 
             return row;
         });
+
+
     }
     //table column context menus
     @FXML private void nameColHide() { nameColumn.setVisible(false); }
@@ -151,7 +154,7 @@ public class MainController
         if(files != null)
         {
             //inserts items into the db
-            SQLConnector.insert(MediaUtils.filesToViewItems(files));
+            SQLConnector.insertFiles(MediaUtils.filesToViewItems(files));
             //generating thumbnails
             MediaUtils.createThumbs(MediaUtils.filesToViewItems(files), 150);
 
@@ -183,7 +186,7 @@ public class MainController
             //removing selected items after alerting users
             if(alert.showAndWait().orElse(null) == ButtonType.OK)
             {
-                SQLConnector.remove(items);
+                SQLConnector.removeFiles(items);
                 MediaUtils.removeThumbs(items);
                 updateViews();
             }
@@ -203,7 +206,7 @@ public class MainController
 
             if(toRemove.size() > 0)
             {
-                SQLConnector.remove(toRemove);
+                SQLConnector.removeFiles(toRemove);
                 MediaUtils.removeThumbs(toRemove);
             }
 
@@ -261,7 +264,7 @@ public class MainController
 
         if(MediaUtils.wrongFiles(dragFiles).size() == 0)
         {
-            SQLConnector.insert(MediaUtils.filesToViewItems(dragFiles));
+            SQLConnector.insertFiles(MediaUtils.filesToViewItems(dragFiles));
             MediaUtils.createThumbs(MediaUtils.filesToViewItems(dragFiles), 150);
 
             updateViews();
@@ -335,4 +338,32 @@ public class MainController
 
     @FXML
     private void close() { Main.close(); }
+
+    @FXML
+    private void test()
+    {
+        ObservableList<String> tags = FXCollections.observableArrayList();
+
+        tags.add("test1");
+        tags.add("test2");
+        tags.add("test3");
+
+        SQLConnector.insertTags(tags);
+    }
+    @FXML
+    private void test2()
+    {
+        String[] itemNames = new String[3];
+        String[] tagNames = new String[3];
+
+        itemNames[0] = "D:\\Pictures\\Saved Pictures\\GitHub.png";
+        itemNames[1] = "D:\\Pictures\\Saved Pictures\\gOn.PNG";
+        itemNames[2] = "D:\\Pictures\\Saved Pictures\\kirito.PNG";
+
+        tagNames[0] = "test1";
+        tagNames[1] = "test2";
+        tagNames[2] = "test3";
+
+        SQLConnector.insertXRef(itemNames, tagNames);
+    }
 }

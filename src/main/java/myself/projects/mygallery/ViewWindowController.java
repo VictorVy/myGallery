@@ -287,8 +287,8 @@ public class ViewWindowController
             if(mediaPlayer.isMute()) mediaPlayer.setMute(false);
             mediaPlayer.setVolume(newValue.doubleValue());
             muteToggle.setGraphic(getVolumeImage());
-            volumeTooltip.setText((int)(volumeSlider.getValue() / volumeSlider.getMax() * 100) + "");
         });
+        volumeSlider.setOnMouseMoved(e -> volumeTooltip.setText((int)(e.getX() / volumeSlider.getMax()) + ""));
 
         //rate slider + label
         mediaPlayer.rateProperty().addListener((observable, oldValue, newValue) -> lblRate.setText(Math.round(newValue.doubleValue() * 4) / 4.0 + ""));
