@@ -14,8 +14,7 @@ public class Main extends Application
 
     public static double screenWidth, screenHeight;
 
-    private static Stage stage;
-    public static Scene mainScene;
+    public static Stage stage;
 
     public static void main(String[] args) {
         launch(args);
@@ -31,7 +30,7 @@ public class Main extends Application
         mainController = loader.getController();
         mainController.init(); //regular initialize doesn't work...
 
-        mainScene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
+        Scene mainScene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
         mainScene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
 
         Main.stage = stage;

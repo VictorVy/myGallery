@@ -189,14 +189,28 @@ public class SQLConnector
 
     public static void print()
     {
-        try
-        {
-            ResultSet rs = statement.executeQuery("SELECT f.name AS fileName, t.name AS tagName " +
-                                                      "FROM files f, tags t, fileTagXRef x " +
-                                                      "WHERE f.fileID = x.fileID AND x.tagID = t.tagID");
-            while(rs.next())
-                System.out.println(rs.getString("fileName") + " : " + rs.getString("tagName"));
-        }
-        catch(Exception e) { }
+//        try
+//        {
+//            ResultSet rs = statement.executeQuery("SELECT f.name AS fileName, t.name AS tagName " +
+//                                                      "FROM files f, tags t, fileTagXRef x " +
+//                                                      "WHERE f.fileID = x.fileID AND x.tagID = t.tagID");
+//            while(rs.next())
+//                System.out.println(rs.getString("fileName") + " : " + rs.getString("tagName"));
+//        }
+//        catch(Exception e) { }
+
+//        try
+//        {
+//            ResultSet rs = statement.executeQuery("SELECT * FROM tags");
+//            while(rs.next())
+//                System.out.println(rs.getString("name"));
+//            rs = statement.executeQuery("SELECT * FROM fileTagXRef");
+//            while(rs.next())
+//                System.out.println(rs.getInt("fileID") + " : " + rs.getInt("tagID"));
+//        }
+//        catch(SQLException e)
+//        {
+//            e.printStackTrace();
+//        }
     }
 }

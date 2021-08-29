@@ -103,6 +103,7 @@
                           </items>
                         </Menu>
                         <MenuItem mnemonicParsing="false" onAction="#syncFiles" text="Sync Files" />
+                        <MenuItem mnemonicParsing="false" onAction="#showTagManager" text="Manage Tags" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem mnemonicParsing="false" onAction="#close" text="Exit" />
                   </items>
@@ -130,8 +131,6 @@
                      <tooltip>
                         <Tooltip text="Remove files" />
                      </tooltip></Button>
-                  <Button mnemonicParsing="false" onAction="#test" text="test" />
-                  <Button mnemonicParsing="false" onAction="#test2" text="test tag" />
                   <Pane HBox.hgrow="ALWAYS" />
                   <MenuButton fx:id="sortMenuBtn" contentDisplay="TEXT_ONLY" mnemonicParsing="false" text="Sort By">
                      <items>

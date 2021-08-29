@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -19,12 +18,12 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class MainController
@@ -58,6 +57,8 @@ public class MainController
 
     private final ImageView sortDirImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
 
+    static Stage tagManagerStage;
+
     public void init()
     {
         detailsViewInit();
@@ -77,17 +78,17 @@ public class MainController
             }
         });
 
-        //graphics
+        //controls
         sortDirImg.setPreserveRatio(true);
         sortDirImg.setFitHeight(16); //hmm...
         sortDirBtn.setGraphic(sortDirImg);
 
+        tagManagerInit();
         SQLConnector.initialize();
         MediaUtils.initialize();
         SelectionHandler.initialize();
         updateViews();
     }
-
     private void detailsViewInit()
     {
         detailsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -132,9 +133,26 @@ public class MainController
 
             return row;
         });
-
-
     }
+    private void tagManagerInit()
+    {
+        try
+        {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myself/projects/mygallery/tag-manager.fxml"));
+
+            tagManagerStage = new Stage();
+            tagManagerStage.setTitle("Tag Manager");
+            tagManagerStage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+
+            Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+
+            tagManagerStage.initModality(Modality.APPLICATION_MODAL); //secret sauce
+            tagManagerStage.setScene(scene);
+        }
+        catch(IOException er) { er.printStackTrace(); }
+    }
+
     //table column context menus
     @FXML private void nameColHide() { nameColumn.setVisible(false); }
     @FXML private void typeColHide() { typeColumn.setVisible(false); }
@@ -149,7 +167,7 @@ public class MainController
         FileChooser fc = new FileChooser();
         fc.setTitle("Add Files");
         fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Files", "*.png", "*.jpg", "*.bmp", "*.gif", "*.mp4", "*.m4v", "*.mp3", "*.wav", "*.aif", "*.aiff"));
-        List<File> files = fc.showOpenMultipleDialog(Main.mainScene.getWindow());
+        List<File> files = fc.showOpenMultipleDialog(Main.stage);
 
         if(files != null)
         {
@@ -317,13 +335,12 @@ public class MainController
         try //necessary?
         {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/myself/projects/mygallery/view-window.fxml"));
-            Parent root = loader.load();
 
             Stage stage = new Stage();
             stage.setTitle(viewItem.getName() + "." + viewItem.getType());
             stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
 
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(loader.load());
             scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
 
             stage.setScene(scene);
@@ -337,9 +354,11 @@ public class MainController
     }
 
     @FXML
-    private void close() { Main.close(); }
+    private void showTagManager() { tagManagerStage.showAndWait(); }
 
     @FXML
+    private void close() { Main.close(); }
+
     private void test()
     {
         ObservableList<String> tags = FXCollections.observableArrayList();
@@ -350,7 +369,6 @@ public class MainController
 
         SQLConnector.insertTags(tags);
     }
-    @FXML
     private void test2()
     {
         String[] itemNames = new String[3];

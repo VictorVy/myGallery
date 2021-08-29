@@ -12,12 +12,12 @@ public class Alerts
     public static Alert createRemovalAlert(ObservableList<ViewItem> selectedItems)
     {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-
         alert.setTitle("Confirm Removal");
         alert.setHeaderText(null);
         alert.setContentText("Remove " + selectedItems.size() + " item(s)?");
         alert.setResizable(false);
         ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Alerts.class.getResource("/myself/projects/mygallery/images/bin.png").toString()));
+//        alert.initOwner(Main.stage);
 
         //creating and setting expandable content
         StringBuilder names = new StringBuilder("Items: \n");
