@@ -1,13 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.TagManagerController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.TagManagerController">
    <center>
-      <Label text="sup" BorderPane.alignment="CENTER" />
+      <ListView fx:id="tagListView" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+         </BorderPane.margin>
+      </ListView>
    </center>
+   <top>
+      <HBox spacing="10.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#createTag" text="+">
+               <tooltip>
+                  <Tooltip text="Create tag" />
+               </tooltip></Button>
+            <Button mnemonicParsing="false" onAction="#deleteTag" text="-">
+               <tooltip>
+                  <Tooltip text="Remove tag" />
+               </tooltip></Button>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
+      </HBox>
+   </top>
 </BorderPane>

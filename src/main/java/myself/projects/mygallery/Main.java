@@ -30,8 +30,8 @@ public class Main extends Application
         mainController = loader.getController();
         mainController.init(); //regular initialize doesn't work...
 
-        Scene mainScene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
-        mainScene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+        Scene scene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
+        scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
 
         Main.stage = stage;
         stage.setTitle("myGallery");
@@ -41,7 +41,7 @@ public class Main extends Application
             e.consume();
             close();
         });
-        stage.setScene(mainScene);
+        stage.setScene(scene);
         stage.show();
     }
 

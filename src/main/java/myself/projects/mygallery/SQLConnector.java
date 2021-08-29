@@ -76,7 +76,8 @@ public class SQLConnector
         try
         {
             for(String t : tags)
-                if(!containsTag(t)) statement.execute("INSERT INTO tags(name) VALUES('" + t + "')");
+                if(!containsTag(t))
+                    statement.execute("INSERT INTO tags(name) VALUES('" + t + "')");
         }
         catch (SQLException e) { e.printStackTrace(); }
 
@@ -111,15 +112,29 @@ public class SQLConnector
         }
         catch (SQLException e) { e.printStackTrace(); }
     }
+    public static void removeTags(ObservableList<String> tags)
+    {
+        try
+        {
+            PreparedStatement deletePS = connection.prepareStatement("DELETE FROM tags WHERE name = ?;");
 
-    //returns a list of all the items in the db
-    public static ObservableList<ViewItem> getDBItems()
+            for (String t : tags)
+            {
+                deletePS.setString(1, t);
+                deletePS.execute();
+            }
+        }
+        catch(SQLException e) { e.printStackTrace(); }
+    }
+
+    //getters related to the 'files' table
+    public static ObservableList<ViewItem> getFiles()
     {
         try
         {
             ObservableList<ViewItem> viewItems = FXCollections.observableArrayList();
 
-            if(statement != null)
+            if(statement != null) //I think necessary due to early calls in initializers
             {
                 ResultSet rs = statement.executeQuery("SELECT * FROM files ORDER BY " + Main.mainController.sortBy + " " + (Main.mainController.ascending ? "ASC" : "DESC"));
 
@@ -136,7 +151,6 @@ public class SQLConnector
         }
         catch (SQLException e) { e.printStackTrace(); return null; }
     }
-
     public static int getFileId(String path)
     {
         try
@@ -148,6 +162,25 @@ public class SQLConnector
         }
         catch(SQLException e) { e.printStackTrace(); return -1; }
     }
+    //getters related to the 'tags' table
+    public static ObservableList<String> getTags()
+    {
+        try
+        {
+            ObservableList<String> tags = FXCollections.observableArrayList();
+
+            if(statement != null)
+            {
+                ResultSet rs = statement.executeQuery("SELECT name FROM tags");
+
+                while(rs.next())
+                    tags.add(rs.getString("name"));
+            }
+
+            return tags;
+        }
+        catch(SQLException e) { e.printStackTrace(); return null; }
+    }
     public static int getTagId(String name)
     {
         try
@@ -155,10 +188,12 @@ public class SQLConnector
             ResultSet rs = statement.executeQuery("SELECT tagID FROM tags WHERE name LIKE '" + name + "'");
             if(rs.next())
                 return rs.getInt("tagID");
-            return -10;
+            return -1;
         }
         catch(SQLException e) { e.printStackTrace(); return -1; }
     }
+
+    // ---- UTILITY METHODS ---- //
 
     //checks if a file exists in the db
     private static boolean containsFile(ViewItem vi) throws SQLException

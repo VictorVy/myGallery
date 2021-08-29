@@ -83,10 +83,10 @@ public class MainController
         sortDirImg.setFitHeight(16); //hmm...
         sortDirBtn.setGraphic(sortDirImg);
 
-        tagManagerInit();
         SQLConnector.initialize();
         MediaUtils.initialize();
         SelectionHandler.initialize();
+        tagManagerInit();
         updateViews();
     }
     private void detailsViewInit()
@@ -144,8 +144,11 @@ public class MainController
             tagManagerStage.setTitle("Tag Manager");
             tagManagerStage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
 
-            Scene scene = new Scene(loader.load());
+            Scene scene = new Scene(loader.load(), 275, 400);
             scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+
+            TagManagerController tagManagerController = loader.getController();
+            tagManagerController.init();
 
             tagManagerStage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             tagManagerStage.setScene(scene);
@@ -194,12 +197,12 @@ public class MainController
     }
 
     @FXML
-    private void removeAll() { remove(SQLConnector.getDBItems()); }
+    private void removeAll() { remove(SQLConnector.getFiles()); }
     private void remove(ObservableList<ViewItem> items)
     {
         if(items.size() > 0)
         {
-            Alert alert = Alerts.createRemovalAlert(items);
+            Alert alert = Alerts.createFileRemovalAlert(items);
 
             //removing selected items after alerting users
             if(alert.showAndWait().orElse(null) == ButtonType.OK)
@@ -213,10 +216,10 @@ public class MainController
     @FXML
     private void syncFiles()
     {
-        if(Objects.requireNonNull(SQLConnector.getDBItems()).size() > 0)
+        if(Objects.requireNonNull(SQLConnector.getFiles()).size() > 0)
         {
             //checking if items in the db exist; if not, remove them
-            ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
+            ObservableList<ViewItem> viewItems = SQLConnector.getFiles();
             ObservableList<ViewItem> toRemove = FXCollections.observableArrayList();
 
             for(ViewItem vi : viewItems)
@@ -301,7 +304,7 @@ public class MainController
 
     public void updateGalleryView()
     {
-        ObservableList<ViewItem> viewItems = SQLConnector.getDBItems();
+        ObservableList<ViewItem> viewItems = SQLConnector.getFiles();
         galleryView.getChildren().clear();
         galleryView.setAlignment(Pos.BASELINE_LEFT);
 
@@ -328,7 +331,7 @@ public class MainController
     @FXML
     private void galleryContextMenuRequested(ContextMenuEvent e) { if(galleryHover) e.consume(); }
 
-    private void updateDetailsView() { detailsView.setItems(SQLConnector.getDBItems()); }
+    private void updateDetailsView() { detailsView.setItems(SQLConnector.getFiles()); }
 
     public void showItem(ViewItem viewItem)
     {
@@ -359,29 +362,20 @@ public class MainController
     @FXML
     private void close() { Main.close(); }
 
-    private void test()
-    {
-        ObservableList<String> tags = FXCollections.observableArrayList();
-
-        tags.add("test1");
-        tags.add("test2");
-        tags.add("test3");
-
-        SQLConnector.insertTags(tags);
-    }
-    private void test2()
-    {
-        String[] itemNames = new String[3];
-        String[] tagNames = new String[3];
-
-        itemNames[0] = "D:\\Pictures\\Saved Pictures\\GitHub.png";
-        itemNames[1] = "D:\\Pictures\\Saved Pictures\\gOn.PNG";
-        itemNames[2] = "D:\\Pictures\\Saved Pictures\\kirito.PNG";
-
-        tagNames[0] = "test1";
-        tagNames[1] = "test2";
-        tagNames[2] = "test3";
-
-        SQLConnector.insertXRef(itemNames, tagNames);
-    }
+//    @FXML
+//    private void test2()
+//    {
+//        String[] itemNames = new String[3];
+//        String[] tagNames = new String[3];
+//
+//        itemNames[0] = "D:\\Pictures\\Saved Pictures\\GitHub.png";
+//        itemNames[1] = "D:\\Pictures\\Saved Pictures\\gOn.PNG";
+//        itemNames[2] = "D:\\Pictures\\Saved Pictures\\kirito.PNG";
+//
+//        tagNames[0] = "test1";
+//        tagNames[1] = "test2";
+//        tagNames[2] = "test3";
+//
+//        SQLConnector.insertXRef(itemNames, tagNames);
+//    }
 }
