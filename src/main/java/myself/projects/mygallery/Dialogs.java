@@ -1,22 +1,21 @@
 package myself.projects.mygallery;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class Alerts
+public class Dialogs
 {
     //returns an alert to confirm item removal with user
-    public static Alert createRemovalAlert(String[] toRemove)
+    public static Alert createRemovalAlert(ObservableList<String> toRemove)
     {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm Removal");
         alert.setHeaderText(null);
-        alert.setContentText("Remove " + toRemove.length + " item(s)?");
+        alert.setContentText("Remove " + toRemove.size() + " item(s)?");
         alert.setResizable(false);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Alerts.class.getResource("/myself/projects/mygallery/images/bin.png").toString()));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Dialogs.class.getResource("/myself/projects/mygallery/images/bin.png").toString()));
 //        alert.initOwner(Main.stage);
 
         //creating and setting expandable content
@@ -48,7 +47,7 @@ public class Alerts
         alert.setHeaderText(null);
         alert.setContentText("Unsupported file format!");
         alert.setResizable(false);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Alerts.class.getResource("/myself/projects/mygallery/images/bin.png").toString()));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Dialogs.class.getResource("/myself/projects/mygallery/images/bin.png").toString()));
 
         //creating and setting expandable content
         StringBuilder names = new StringBuilder("Items: \n");
@@ -70,9 +69,15 @@ public class Alerts
         return alert;
     }
 
-    //returns a tag creation dialog box
-//    public static Alert createTagAlert()
-//    {
-//
-//    }
+    //returns a dialog for user text input
+    public static TextInputDialog createTextInputDialog()
+    {
+        TextInputDialog dialog = new TextInputDialog();
+
+        dialog.setTitle("Create Tags");
+        dialog.setHeaderText("Enter tag name(s):");
+
+
+        return dialog;
+    }
 }

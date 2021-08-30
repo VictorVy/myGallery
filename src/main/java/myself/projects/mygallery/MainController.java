@@ -153,7 +153,7 @@ public class MainController
             TagManagerController tagManagerController = loader.getController();
             tagManagerController.init();
 
-            manageTagsMenuItem.setOnAction(e -> stage.showAndWait());
+            manageTagsMenuItem.setOnAction(e -> stage.show() /*yet to figure out why showAndWait doesn't work*/);
         }
         catch(IOException e) { e.printStackTrace(); }
     }
@@ -204,12 +204,12 @@ public class MainController
     {
         if(!items.isEmpty())
         {
-            String[] names = new String[items.size()];
+            ObservableList<String> names = FXCollections.observableArrayList();
 
-            for(int i = 0; i < items.size(); i++)
-                names[i] = items.get(i).getName() + "." + items.get(i).getType();
+            for(ViewItem vi : items)
+                names.add(vi.getName() + "." + vi.getType());
 
-            Alert alert = Alerts.createRemovalAlert(names);
+            Alert alert = Dialogs.createRemovalAlert(names);
 
             //removing selected items after alerting users
             if(alert.showAndWait().orElse(null) == ButtonType.OK)
@@ -298,7 +298,7 @@ public class MainController
             updateViews();
         }
         else
-            Alerts.createDragAlert(MediaUtils.wrongFiles(dragFiles)).showAndWait();
+            Dialogs.createDragAlert(MediaUtils.wrongFiles(dragFiles)).showAndWait();
     }
 
     //updates the view

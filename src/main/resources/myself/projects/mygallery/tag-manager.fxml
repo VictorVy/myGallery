@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -18,11 +19,11 @@
    <top>
       <HBox spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" onAction="#createTag" text="+">
+            <Button mnemonicParsing="false" onAction="#createTags" text="+">
                <tooltip>
                   <Tooltip text="Create tag" />
                </tooltip></Button>
-            <Button mnemonicParsing="false" onAction="#deleteTag" text="-">
+            <Button mnemonicParsing="false" onAction="#deleteTags" text="-">
                <tooltip>
                   <Tooltip text="Remove tag" />
                </tooltip></Button>

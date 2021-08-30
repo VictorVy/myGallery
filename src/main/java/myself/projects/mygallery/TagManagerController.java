@@ -3,14 +3,10 @@ package myself.projects.mygallery;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import java.util.Optional;
 
 public class TagManagerController
 {
@@ -29,22 +25,30 @@ public class TagManagerController
         tagListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
-    public void show() { stage.showAndWait(); }
-
     @FXML
-    private void createTag()
+    private void createTags()
     {
+        TextInputDialog dialog = Dialogs.createTextInputDialog();
 
+        Optional<String> input = dialog.showAndWait();
+
+        if(input.isPresent())
+        {
+            String[] newTags = input.get().split(" ");
+
+            SQLConnector.insertTags(FXCollections.observableArrayList(newTags));
+            tagListView.getItems().addAll(newTags);
+        }
     }
 
     @FXML
-    private void deleteTag()
+    private void deleteTags()
     {
         ObservableList<String> toRemove = tagListView.getSelectionModel().getSelectedItems();
 
         if(!toRemove.isEmpty())
         {
-            Alert alert = Alerts.createRemovalAlert((String[]) toRemove.toArray()); //remember to TEST REMOVAL
+            Alert alert = Dialogs.createRemovalAlert(toRemove);
 
             //removing selected tags after alerting users
             if(alert.showAndWait().orElse(null) == ButtonType.OK)
@@ -54,16 +58,4 @@ public class TagManagerController
             }
         }
     }
-
-//    @FXML
-//    private void addTestTags()
-//    {
-//        ObservableList<String> tags = FXCollections.observableArrayList();
-//
-//        tags.add("test1");
-//        tags.add("test2");
-//        tags.add("test3");
-//
-//        SQLConnector.insertTags(tags);
-//    }
 }
