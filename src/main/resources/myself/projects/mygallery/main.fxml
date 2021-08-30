@@ -103,7 +103,7 @@
                           </items>
                         </Menu>
                         <MenuItem mnemonicParsing="false" onAction="#syncFiles" text="Sync Files" />
-                        <MenuItem mnemonicParsing="false" onAction="#showTagManager" text="Manage Tags" />
+                        <MenuItem fx:id="manageTagsMenuItem" mnemonicParsing="false" text="Manage Tags" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem mnemonicParsing="false" onAction="#close" text="Exit" />
                   </items>

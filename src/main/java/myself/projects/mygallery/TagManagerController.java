@@ -3,7 +3,14 @@ package myself.projects.mygallery;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class TagManagerController
 {
@@ -12,6 +19,8 @@ public class TagManagerController
 
     private ObservableList<String> tags = FXCollections.observableArrayList(); //ListView auto-updates! :)
 
+    private final Stage stage = new Stage();
+
     public void init()
     {
         tags = SQLConnector.getTags();
@@ -19,6 +28,8 @@ public class TagManagerController
         tagListView.setPlaceholder(new Label("No tags"));
         tagListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
+
+    public void show() { stage.showAndWait(); }
 
     @FXML
     private void createTag()
@@ -31,13 +42,12 @@ public class TagManagerController
     {
         ObservableList<String> toRemove = tagListView.getSelectionModel().getSelectedItems();
 
-        Alert alert = Alerts.createTagDeletionAlert(toRemove);
-
-        //removing selected tags after alerting users
-        if(alert.showAndWait().orElse(null) == ButtonType.OK)
+        if(!toRemove.isEmpty())
         {
+            Alert alert = Alerts.createRemovalAlert((String[]) toRemove.toArray()); //remember to TEST REMOVAL
 
-            if(!toRemove.isEmpty())
+            //removing selected tags after alerting users
+            if(alert.showAndWait().orElse(null) == ButtonType.OK)
             {
                 SQLConnector.removeTags(toRemove);
                 tags.removeAll(toRemove);

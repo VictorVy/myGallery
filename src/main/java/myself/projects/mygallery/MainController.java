@@ -28,7 +28,6 @@ import java.util.Objects;
 
 public class MainController
 {
-    //injecting controls
     @FXML
     private TabPane tabPane;
     @FXML
@@ -55,9 +54,10 @@ public class MainController
     private RadioMenuItem ascSortDir;
     public boolean ascending = true;
 
-    private final ImageView sortDirImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
+    @FXML
+    private MenuItem manageTagsMenuItem;
 
-    static Stage tagManagerStage;
+    private final ImageView sortDirImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
 
     public void init()
     {
@@ -138,22 +138,24 @@ public class MainController
     {
         try
         {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myself/projects/mygallery/tag-manager.fxml"));
+            FXMLLoader loader = new FXMLLoader(TagManagerController.class.getResource("/myself/projects/mygallery/tag-manager.fxml"));
 
-            tagManagerStage = new Stage();
-            tagManagerStage.setTitle("Tag Manager");
-            tagManagerStage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+            Stage stage = new Stage();
+            stage.setTitle("Tag Manager");
+            stage.getIcons().add(new Image(TagManagerController.class.getResource("/myself/projects/mygallery/images/gallery.png").toString()));
 
             Scene scene = new Scene(loader.load(), 275, 400);
-            scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+            scene.getStylesheets().add(TagManagerController.class.getResource("/myself/projects/mygallery/style.css").toString());
+
+            stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
+            stage.setScene(scene);
 
             TagManagerController tagManagerController = loader.getController();
             tagManagerController.init();
 
-            tagManagerStage.initModality(Modality.APPLICATION_MODAL); //secret sauce
-            tagManagerStage.setScene(scene);
+            manageTagsMenuItem.setOnAction(e -> stage.showAndWait());
         }
-        catch(IOException er) { er.printStackTrace(); }
+        catch(IOException e) { e.printStackTrace(); }
     }
 
     //table column context menus
@@ -200,9 +202,14 @@ public class MainController
     private void removeAll() { remove(SQLConnector.getFiles()); }
     private void remove(ObservableList<ViewItem> items)
     {
-        if(items.size() > 0)
+        if(!items.isEmpty())
         {
-            Alert alert = Alerts.createFileRemovalAlert(items);
+            String[] names = new String[items.size()];
+
+            for(int i = 0; i < items.size(); i++)
+                names[i] = items.get(i).getName() + "." + items.get(i).getType();
+
+            Alert alert = Alerts.createRemovalAlert(names);
 
             //removing selected items after alerting users
             if(alert.showAndWait().orElse(null) == ButtonType.OK)
@@ -355,9 +362,6 @@ public class MainController
         }
         catch(IOException e) { e.printStackTrace(); }
     }
-
-    @FXML
-    private void showTagManager() { tagManagerStage.showAndWait(); }
 
     @FXML
     private void close() { Main.close(); }
