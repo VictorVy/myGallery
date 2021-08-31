@@ -14,7 +14,6 @@ public class Dialogs
         alert.setTitle("Confirm Removal");
         alert.setHeaderText(null);
         alert.setContentText("Remove " + toRemove.size() + " item(s)?");
-        alert.setResizable(false);
         ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Dialogs.class.getResource("/myself/projects/mygallery/images/bin.png").toString()));
 //        alert.initOwner(Main.stage);
 
@@ -46,8 +45,7 @@ public class Dialogs
         alert.setTitle("Incorrect Filetype");
         alert.setHeaderText(null);
         alert.setContentText("Unsupported file format!");
-        alert.setResizable(false);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Dialogs.class.getResource("/myself/projects/mygallery/images/bin.png").toString()));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Dialogs.class.getResource("/myself/projects/mygallery/images/fileError.png").toString()));
 
         //creating and setting expandable content
         StringBuilder names = new StringBuilder("Items: \n");
@@ -74,9 +72,13 @@ public class Dialogs
     {
         TextInputDialog dialog = new TextInputDialog();
 
+        dialog.getDialogPane().setPrefWidth(250);
+        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Dialogs.class.getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+
         dialog.setTitle("Create Tags");
         dialog.setHeaderText("Enter tag name(s):");
-
+        dialog.setResizable(true);
+        dialog.setGraphic(null);
 
         return dialog;
     }

@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioMenuItem?>
@@ -22,8 +23,14 @@
          <contextMenu>
             <ContextMenu fx:id="tagListContextMenu">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#createTags" text="Create tag..." />
+                <MenuItem mnemonicParsing="false" onAction="#createTags" text="Create..." />
                   <MenuItem mnemonicParsing="false" onAction="#renameMenuItem" text="Rename..." />
+                  <Menu mnemonicParsing="false" text="Selection">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#selectAll" text="Select all" />
+                        <MenuItem mnemonicParsing="false" onAction="#clearSelection" text="Clear" />
+                    </items>
+                  </Menu>
                   <MenuItem mnemonicParsing="false" onAction="#deleteTags" text="Delete" />
               </items>
             </ContextMenu>
@@ -31,7 +38,7 @@
       </ListView>
    </center>
    <top>
-      <HBox spacing="10.0" BorderPane.alignment="CENTER">
+      <HBox prefHeight="0.0" prefWidth="0.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
             <Button mnemonicParsing="false" onAction="#createTags" text="+">
                <tooltip>
@@ -41,7 +48,7 @@
                <tooltip>
                   <Tooltip text="Remove tag" />
                </tooltip></Button>
-            <TextField fx:id="searchBar" promptText="Search..." />
+            <TextField fx:id="searchBar" promptText="Search..." HBox.hgrow="ALWAYS" />
             <MenuButton fx:id="sortBtn" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
                <items>
                   <RadioMenuItem fx:id="ascSort" mnemonicParsing="false" onAction="#toggleSort" selected="true" text="Ascending">

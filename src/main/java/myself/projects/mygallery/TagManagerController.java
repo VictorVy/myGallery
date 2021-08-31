@@ -80,7 +80,7 @@ public class TagManagerController
         if(e.getButton().equals(MouseButton.SECONDARY))
         {
             tagListContextMenu.getItems().get(1).setDisable(clickedCell.isEmpty() || tagListView.getSelectionModel().getSelectedItems().size() > 1);
-            tagListContextMenu.getItems().get(2).setDisable(clickedCell.isEmpty());
+            tagListContextMenu.getItems().get(3).setDisable(clickedCell.isEmpty());
         }
     }
 
@@ -133,4 +133,9 @@ public class TagManagerController
 
     @FXML
     private void toggleSort() { sortTags(); }
+
+    @FXML
+    private void selectAll() { tagListView.getSelectionModel().selectAll(); }
+    @FXML
+    private void clearSelection() { tagListView.getSelectionModel().clearSelection(); }
 }
