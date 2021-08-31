@@ -80,9 +80,6 @@ public class SQLConnector
                     statement.execute("INSERT INTO tags(name) VALUES('" + t + "')");
         }
         catch (SQLException e) { e.printStackTrace(); }
-
-//        try { statement.execute("DELETE FROM tags"); } catch(SQLException e) { e.printStackTrace(); }
-//        print();
     }
     //inserts entry into cross-reference table
     public static void insertXRef(String[] itemPaths, String[] tagNames)
