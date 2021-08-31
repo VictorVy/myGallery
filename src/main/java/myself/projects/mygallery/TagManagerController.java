@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.converter.DefaultStringConverter;
@@ -31,6 +32,10 @@ public class TagManagerController
 
     @FXML
     private ContextMenu tagListContextMenu;
+    @FXML
+    private MenuItem renameMenuItem, deleteMenuItem;
+    @FXML
+    private Menu selectionMenu;
 
     private final ImageView sortImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
 
@@ -43,13 +48,7 @@ public class TagManagerController
         tagListView.setCellFactory(lv ->
         {
             TextFieldListCell<String> cell = new TextFieldListCell<>(new DefaultStringConverter()); //editable cell
-
-            cell.setOnMouseClicked(e ->
-            {
-                clickedCell = cell;
-                tagListClicked(e);
-            });
-
+            cell.setOnMouseClicked(e -> clickedCell = cell);
             return cell;
         });
         //set up search bar
@@ -72,15 +71,27 @@ public class TagManagerController
 
     private void sortTags() { FXCollections.sort(tags, ascSort.isSelected() ? Comparator.naturalOrder() : Comparator.reverseOrder()); }
 
-    private void tagListClicked(MouseEvent e)
+    @FXML
+    private void tagListMouseClicked()
     {
-        if(clickedCell.isEmpty())
+        if(!tagListView.getItems().isEmpty() && clickedCell.isEmpty())
             tagListView.getSelectionModel().clearSelection();
+    }
 
-        if(e.getButton().equals(MouseButton.SECONDARY))
+    @FXML
+    private void tagListContextMenuRequested()
+    {
+        if(tagListView.getItems().isEmpty())
         {
-            tagListContextMenu.getItems().get(1).setDisable(clickedCell.isEmpty() || tagListView.getSelectionModel().getSelectedItems().size() > 1);
-            tagListContextMenu.getItems().get(3).setDisable(clickedCell.isEmpty());
+            renameMenuItem.setDisable(true);
+            selectionMenu.setDisable(true);
+            deleteMenuItem.setDisable(true);
+        }
+        else
+        {
+            renameMenuItem.setDisable(clickedCell.isEmpty() || tagListView.getSelectionModel().getSelectedItems().size() > 1);
+            selectionMenu.setDisable(false);
+            deleteMenuItem.setDisable(clickedCell.isEmpty());
         }
     }
 

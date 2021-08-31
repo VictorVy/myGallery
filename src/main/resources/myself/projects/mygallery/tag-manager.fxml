@@ -16,7 +16,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.TagManagerController">
    <center>
-      <ListView fx:id="tagListView" editable="true" onEditCommit="#renameTag" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
+      <ListView fx:id="tagListView" editable="true" onContextMenuRequested="#tagListContextMenuRequested" onEditCommit="#renameTag" onMouseClicked="#tagListMouseClicked" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
          </BorderPane.margin>
@@ -24,14 +24,14 @@
             <ContextMenu fx:id="tagListContextMenu">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#createTags" text="Create..." />
-                  <MenuItem mnemonicParsing="false" onAction="#renameMenuItem" text="Rename..." />
-                  <Menu mnemonicParsing="false" text="Selection">
+                  <MenuItem fx:id="renameMenuItem" mnemonicParsing="false" onAction="#renameMenuItem" text="Rename..." />
+                  <Menu fx:id="selectionMenu" mnemonicParsing="false" text="Selection">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#selectAll" text="Select all" />
                         <MenuItem mnemonicParsing="false" onAction="#clearSelection" text="Clear" />
                     </items>
                   </Menu>
-                  <MenuItem mnemonicParsing="false" onAction="#deleteTags" text="Delete" />
+                  <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#deleteTags" text="Delete" />
               </items>
             </ContextMenu>
          </contextMenu>
