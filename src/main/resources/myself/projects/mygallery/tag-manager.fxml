@@ -15,16 +15,16 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.TagManagerController">
    <center>
-      <ListView fx:id="tagListView" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
+      <ListView fx:id="tagListView" editable="true" onEditCommit="#renameTag" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
          </BorderPane.margin>
          <contextMenu>
-            <ContextMenu>
+            <ContextMenu fx:id="tagListContextMenu">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#createTags" text="Create tags..." />
-                  <MenuItem mnemonicParsing="false" text="Remove" />
-                  <MenuItem mnemonicParsing="false" text="Rename" />
+                <MenuItem mnemonicParsing="false" onAction="#createTags" text="Create tag..." />
+                  <MenuItem mnemonicParsing="false" onAction="#renameMenuItem" text="Rename..." />
+                  <MenuItem mnemonicParsing="false" onAction="#deleteTags" text="Delete" />
               </items>
             </ContextMenu>
          </contextMenu>

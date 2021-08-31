@@ -76,8 +76,8 @@ public class SQLConnector
         try
         {
             for(String t : tags)
-                if(!containsTag(t))
-                    statement.execute("INSERT INTO tags(name) VALUES('" + t + "')");
+                if(!t.isEmpty() && !containsTag(t))
+                    statement.execute("INSERT INTO tags(name) VALUES('" + t + "');");
         }
         catch (SQLException e) { e.printStackTrace(); }
     }
@@ -87,7 +87,7 @@ public class SQLConnector
         try
         {
             for(int i = 0; i < itemPaths.length; i++)
-                statement.execute("INSERT INTO fileTagXRef VALUES('" + getFileId(itemPaths[i]) + "', '" + getTagId(tagNames[i]) + "')");
+                statement.execute("INSERT INTO fileTagXRef VALUES('" + getFileId(itemPaths[i]) + "', '" + getTagId(tagNames[i]) + "');");
         }
         catch (SQLException e) { e.printStackTrace(); }
 
@@ -120,6 +120,15 @@ public class SQLConnector
                 deletePS.setString(1, t);
                 deletePS.execute();
             }
+        }
+        catch(SQLException e) { e.printStackTrace(); }
+    }
+
+    public static void renameTag(String oldName, String newName)
+    {
+        try
+        {
+            statement.execute("UPDATE tags SET name = '" + newName + "' WHERE name LIKE '" + oldName + "';");
         }
         catch(SQLException e) { e.printStackTrace(); }
     }
