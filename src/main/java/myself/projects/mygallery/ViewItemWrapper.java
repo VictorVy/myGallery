@@ -3,7 +3,6 @@ package myself.projects.mygallery;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
@@ -15,18 +14,11 @@ public class ViewItemWrapper extends StackPane
 {
     private final ViewItem viewItem;
 
-    private final ContextMenu contextMenu = new ContextMenu();
-
     private static final PseudoClass SELECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("selected");
 
     public ViewItemWrapper(ViewItem vi)
     {
         viewItem = vi;
-
-        MenuItem removeMenuItem = new MenuItem("Remove");
-        removeMenuItem.setOnAction(e -> Main.mainController.removeFiles());
-        contextMenu.getItems().add(removeMenuItem);
-        setOnContextMenuRequested(e -> contextMenu.show(this, e.getScreenX(), e.getScreenY()));
 
         ImageView imageView = new ImageView("file:" + viewItem.getThumb());
         getChildren().add(imageView);

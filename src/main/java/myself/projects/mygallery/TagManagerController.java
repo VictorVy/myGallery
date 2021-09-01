@@ -20,7 +20,7 @@ public class TagManagerController
 {
     @FXML
     private ListView<String> tagListView;
-    private ObservableList<String> tags = FXCollections.observableArrayList(); //ListView auto-updates! :)
+    private final ObservableList<String> tags = FXCollections.observableArrayList(); //ListView auto-updates! :)
     private TextFieldListCell<String> clickedCell;
 
     @FXML
@@ -30,8 +30,6 @@ public class TagManagerController
     @FXML
     private RadioMenuItem ascSort;
 
-    @FXML
-    private ContextMenu tagListContextMenu;
     @FXML
     private MenuItem renameMenuItem, deleteMenuItem;
     @FXML
