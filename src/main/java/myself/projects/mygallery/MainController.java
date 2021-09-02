@@ -38,7 +38,6 @@ public class MainController
     @FXML
     private FlowPane galleryView;
     private final Label lblEmpty = new Label("Drag and drop or press \"+\"");
-    private ViewItem clickedViewItem;
     public boolean galleryHover;
 
     @FXML
@@ -47,7 +46,7 @@ public class MainController
     private TableColumn<ViewItem, String> nameColumn, typeColumn, pathColumn, cDateColumn, aDateColumn;
     private TableRow<ViewItem> clickedDetailsRow;
 
-    private MenuItem removeMenuItem;
+    private MenuItem openMenuItem, viewInfoMenuItem, removeMenuItem;
     private Menu selectionMenu;
 
     @FXML
@@ -123,6 +122,9 @@ public class MainController
     }
     private void viewContextMenuInit()
     {
+        openMenuItem = new MenuItem("Open");
+        openMenuItem.setOnAction(e -> showItems(galleryTab.isSelected() ? SelectionHandler.getSelected() : detailsView.getSelectionModel().getSelectedItems()));
+
         MenuItem addMenuItem = new MenuItem("Add...");
         addMenuItem.setOnAction(e -> addFiles());
 
@@ -133,10 +135,13 @@ public class MainController
         clearSelection.setOnAction(e -> clearSelection());
         selectionMenu.getItems().addAll(selectAll, clearSelection);
 
+        viewInfoMenuItem = new MenuItem("View info");
+        viewInfoMenuItem.setOnAction(e -> showInfos(galleryTab.isSelected() ? SelectionHandler.getSelected() : detailsView.getSelectionModel().getSelectedItems()));
+
         removeMenuItem = new MenuItem("Remove");
         removeMenuItem.setOnAction(e -> removeFiles());
 
-        ContextMenu viewContextMenu = new ContextMenu(addMenuItem, selectionMenu, removeMenuItem);
+        ContextMenu viewContextMenu = new ContextMenu(openMenuItem, addMenuItem, selectionMenu, viewInfoMenuItem, removeMenuItem);
         galleryScroll.setContextMenu(viewContextMenu);
         detailsView.setContextMenu(viewContextMenu);
     }
@@ -144,14 +149,14 @@ public class MainController
     {
         try
         {
-            FXMLLoader loader = new FXMLLoader(TagManagerController.class.getResource("/myself/projects/mygallery/tag-manager.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myself/projects/mygallery/tag-manager.fxml"));
 
             Stage stage = new Stage();
             stage.setTitle("Tag Manager");
-            stage.getIcons().add(new Image(TagManagerController.class.getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+            stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
 
             Scene scene = new Scene(loader.load(), 275, 400);
-            scene.getStylesheets().add(TagManagerController.class.getResource("/myself/projects/mygallery/style.css").toString());
+            scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             stage.setScene(scene);
@@ -297,31 +302,20 @@ public class MainController
     {
         if(galleryView.getChildren().isEmpty() || detailsView.getItems().isEmpty())
         {
+            openMenuItem.setDisable(true);
             selectionMenu.setDisable(true);
+            viewInfoMenuItem.setDisable(true);
             removeMenuItem.setDisable(true);
         }
         else
         {
-            selectionMenu.setDisable(false);
-            removeMenuItem.setDisable(!galleryHover || (detailsTab.isSelected() && clickedDetailsRow.isEmpty()));
-        }
+            boolean isNotLegit = (galleryTab.isSelected() && !galleryHover) || (detailsTab.isSelected() && clickedDetailsRow.isEmpty());
 
-//        //messy if-elses... temporary!!
-//        if(e.getButton().equals(MouseButton.PRIMARY))
-//        {
-//            if(!row.isEmpty())
-//            {
-//                if(e.getClickCount() == 2)
-//                    showItem(row.getItem());
-//            }
-//            else
-//                detailsView.getSelectionModel().clearSelection();
-//        }
-//        else if(e.getButton().equals(MouseButton.SECONDARY))
-//        {
-////                    if(row.isEmpty()) galleryContextMenu.show(detailsView, e.getScreenX(), e.getScreenY());
-////                    else contextMenu.show(row, e.getScreenX(), e.getScreenY());
-//        }
+            openMenuItem.setDisable(isNotLegit);
+            selectionMenu.setDisable(false);
+            viewInfoMenuItem.setDisable(isNotLegit);
+            removeMenuItem.setDisable(isNotLegit);
+        }
     }
 
     //handling dragging files into view
@@ -407,6 +401,31 @@ public class MainController
         }
         catch(IOException e) { e.printStackTrace(); }
     }
+    private void showItems(ObservableList<ViewItem> items) { for(ViewItem vi : items) showItem(vi); }
+
+    private void showInfo(ViewItem viewItem) //TODO: reduce redundancy with showItem
+    {
+        try
+        {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myself/projects/mygallery/item-info.fxml"));
+
+            Stage stage = new Stage();
+            stage.setTitle(viewItem.getName() + "." + viewItem.getType());
+            stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+
+            Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+
+            stage.setScene(scene);
+
+            ItemInfoController itemInfoController = loader.getController();
+            itemInfoController.init();
+
+            stage.show();
+        }
+        catch(IOException e) { e.printStackTrace(); }
+    }
+    private void showInfos(ObservableList<ViewItem> items) { for(ViewItem vi : items) showInfo(vi); }
 
     @FXML
     private void close() { Main.close(); }
