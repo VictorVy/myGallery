@@ -135,9 +135,18 @@ public class TagManagerController
     private void renameTag(ListView.EditEvent e)
     {
         String oldName = tagListView.getItems().get(e.getIndex()), newName = e.getNewValue().toString().trim().replace(' ', '_');
-        SQLConnector.renameTag(oldName, newName);
-        updateTags();
-        tagListView.getSelectionModel().select(newName);
+
+        if(!tagListView.getItems().contains(newName))
+        {
+            SQLConnector.renameTag(oldName, newName);
+            updateTags();
+            tagListView.getSelectionModel().select(newName);
+        }
+        else
+        {
+            e.consume();
+            tagListView.getSelectionModel().select(oldName);
+        }
     }
     @FXML
     private void renameMenuItem() { clickedCell.startEdit(); }
