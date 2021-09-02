@@ -103,11 +103,13 @@ public class TagManagerController
         if(input.isPresent())
         {
             //a regexp would probably work here, but streams are fun :)
-            SQLConnector.insertTags(
-                    FXCollections.observableArrayList(
-                            Arrays.stream(input.get().split(" ")).map(String::trim).toArray(String[]::new)));
+            String[] newTags = Arrays.stream(input.get().split(" ")).map(String::trim).toArray(String[]::new);
+
+            SQLConnector.insertTags(FXCollections.observableArrayList(newTags));
 
             updateTags();
+            //select new tags
+            for(String t : newTags) tagListView.getSelectionModel().select(t);
         }
     }
 

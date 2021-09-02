@@ -187,12 +187,20 @@ public class MainController
 
         if(files != null)
         {
+            ObservableList<ViewItem> addedItems = MediaUtils.filesToViewItems(files);
+
             //inserts items into the db
-            SQLConnector.insertFiles(MediaUtils.filesToViewItems(files));
-            //generating thumbnails
-            MediaUtils.createThumbs(MediaUtils.filesToViewItems(files), 150);
+            SQLConnector.insertFiles(addedItems);
+            //generates thumbnails
+            MediaUtils.createThumbs(addedItems, 150);
 
             updateViews();
+
+            //selects newly added items TODO: create method
+            SelectionHandler.findAndSelect(addedItems);
+
+            detailsView.getSelectionModel().clearSelection();
+            for(ViewItem vi : addedItems) detailsView.getSelectionModel().select(ViewItem.indexOf(getViewItems(), vi));
         }
     }
 
@@ -289,13 +297,13 @@ public class MainController
     @FXML
     private void detailsClicked(MouseEvent e)
     {
-        //messy if statements... clean up later?
-
-        if(!detailsView.getItems().isEmpty() && clickedDetailsRow.isEmpty())
-            clearSelection();
-
-        if(!clickedDetailsRow.isEmpty() && e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2)
-            showItem(clickedDetailsRow.getItem());
+        if(!detailsView.getItems().isEmpty())
+        {
+            if(clickedDetailsRow.isEmpty())
+                clearSelection();
+            else if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2)
+                showItem(clickedDetailsRow.getItem());
+        }
     }
     @FXML
     private void viewContextMenuRequested()
@@ -419,7 +427,7 @@ public class MainController
             stage.setScene(scene);
 
             ItemInfoController itemInfoController = loader.getController();
-            itemInfoController.init();
+            itemInfoController.init(viewItem);
 
             stage.show();
         }

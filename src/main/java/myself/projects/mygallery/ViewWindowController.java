@@ -26,7 +26,7 @@ import javafx.util.Duration;
 
 public class ViewWindowController
 {
-    ViewItem viewItem;
+    private ViewItem viewItem;
 
     @FXML
     private ImageView imageView;

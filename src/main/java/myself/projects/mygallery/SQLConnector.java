@@ -92,7 +92,7 @@ public class SQLConnector
         catch (SQLException e) { e.printStackTrace(); }
 
 //        try { statement.execute("DELETE FROM fileTagXRef"); } catch(SQLException e) { e.printStackTrace(); }
-//        print();
+        print();
     }
 
     public static void removeFiles(ObservableList<ViewItem> viewItems)
@@ -240,18 +240,15 @@ public class SQLConnector
 //        }
 //        catch(Exception e) { }
 
-//        try
-//        {
-//            ResultSet rs = statement.executeQuery("SELECT * FROM tags");
-//            while(rs.next())
-//                System.out.println(rs.getString("name"));
-//            rs = statement.executeQuery("SELECT * FROM fileTagXRef");
-//            while(rs.next())
-//                System.out.println(rs.getInt("fileID") + " : " + rs.getInt("tagID"));
-//        }
-//        catch(SQLException e)
-//        {
-//            e.printStackTrace();
-//        }
+        try
+        {
+            ResultSet rs = statement.executeQuery("SELECT * FROM fileTagXRef");
+            while(rs.next())
+                System.out.println(rs.getInt("fileID") + " : " + rs.getInt("tagID"));
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
     }
 }
