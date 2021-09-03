@@ -39,7 +39,7 @@
     -fx-alignment: CENTER;
 }
 
-#tabPane .tab-header-background
+#viewTabPane .tab-header-background
 {
     -fx-background-color: #f4f4f4;
 }

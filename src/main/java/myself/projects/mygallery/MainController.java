@@ -29,7 +29,7 @@ import java.util.Objects;
 public class MainController
 {
     @FXML
-    private TabPane tabPane;
+    private TabPane viewTabPane;
     @FXML
     private Tab galleryTab, detailsTab;
 
@@ -46,7 +46,7 @@ public class MainController
     private TableColumn<ViewItem, String> nameColumn, typeColumn, pathColumn, cDateColumn, aDateColumn;
     private TableRow<ViewItem> clickedDetailsRow;
 
-    private MenuItem openMenuItem, viewInfoMenuItem, removeMenuItem;
+    private MenuItem openMenuItem, viewInfoMenuItem, editTagsMenuItem, removeMenuItem;
     private Menu selectionMenu;
 
     @FXML
@@ -69,7 +69,7 @@ public class MainController
         viewContextMenuInit();
 
         //updates/synchronizes selections between views
-        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> //better than onSelectionChanged
+        viewTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> //better than onSelectionChanged
         {
             if(newValue.equals(galleryTab) && !detailsView.getSelectionModel().getSelectedItems().isEmpty())
                 SelectionHandler.findAndSelect(detailsView.getSelectionModel().getSelectedItems());
@@ -138,10 +138,13 @@ public class MainController
         viewInfoMenuItem = new MenuItem("View info");
         viewInfoMenuItem.setOnAction(e -> showInfos(galleryTab.isSelected() ? SelectionHandler.getSelected() : detailsView.getSelectionModel().getSelectedItems()));
 
+        editTagsMenuItem = new MenuItem("Edit tags");
+        editTagsMenuItem.setOnAction(e -> showTagInfos(galleryTab.isSelected() ? SelectionHandler.getSelected() : detailsView.getSelectionModel().getSelectedItems()));
+
         removeMenuItem = new MenuItem("Remove");
         removeMenuItem.setOnAction(e -> removeFiles());
 
-        ContextMenu viewContextMenu = new ContextMenu(openMenuItem, addMenuItem, selectionMenu, viewInfoMenuItem, removeMenuItem);
+        ContextMenu viewContextMenu = new ContextMenu(openMenuItem, addMenuItem, selectionMenu, viewInfoMenuItem, editTagsMenuItem, removeMenuItem);
         galleryScroll.setContextMenu(viewContextMenu);
         detailsView.setContextMenu(viewContextMenu);
     }
@@ -155,7 +158,7 @@ public class MainController
             stage.setTitle("Tag Manager");
             stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
 
-            Scene scene = new Scene(loader.load(), 275, 400);
+            Scene scene = new Scene(loader.load(), 350, 500);
             scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
@@ -411,7 +414,7 @@ public class MainController
     }
     private void showItems(ObservableList<ViewItem> items) { for(ViewItem vi : items) showItem(vi); }
 
-    private void showInfo(ViewItem viewItem) //TODO: reduce redundancy with showItem
+    private void showInfo(ViewItem viewItem) //TODO: somehow reduce redundancy with showItem
     {
         try
         {
@@ -421,7 +424,7 @@ public class MainController
             stage.setTitle(viewItem.getName() + "." + viewItem.getType());
             stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
 
-            Scene scene = new Scene(loader.load());
+            Scene scene = new Scene(loader.load(), 300, 450);
             scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
 
             stage.setScene(scene);
@@ -434,6 +437,31 @@ public class MainController
         catch(IOException e) { e.printStackTrace(); }
     }
     private void showInfos(ObservableList<ViewItem> items) { for(ViewItem vi : items) showInfo(vi); }
+
+    private void showTagInfo(ViewItem viewItem) //TODO: somehow reduce redundancy with showItem and showInfo
+    {
+        try
+        {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myself/projects/mygallery/item-info.fxml"));
+
+            Stage stage = new Stage();
+            stage.setTitle(viewItem.getName() + "." + viewItem.getType());
+            stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+
+            Scene scene = new Scene(loader.load(), 300, 450);
+            scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+
+            stage.setScene(scene);
+
+            ItemInfoController itemInfoController = loader.getController();
+            itemInfoController.init(viewItem);
+            itemInfoController.editTags();
+
+            stage.show();
+        }
+        catch(IOException e) { e.printStackTrace(); }
+    }
+    private void showTagInfos(ObservableList<ViewItem> items) { for(ViewItem vi : items) showTagInfo(vi); }
 
     @FXML
     private void close() { Main.close(); }

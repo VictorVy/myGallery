@@ -24,7 +24,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.MainController">
    <center>
-      <TabPane fx:id="tabPane" onDragDropped="#dragDropView" onDragOver="#dragOverView" prefHeight="0.0" prefWidth="0.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+      <TabPane fx:id="viewTabPane" onDragDropped="#dragDropView" onDragOver="#dragOverView" prefHeight="0.0" prefWidth="0.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
          <tabs>
             <Tab fx:id="galleryTab" closable="false" text="Gallery">
                <content>

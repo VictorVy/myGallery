@@ -82,17 +82,20 @@ public class SQLConnector
         catch (SQLException e) { e.printStackTrace(); }
     }
     //inserts entry into cross-reference table
-    public static void insertXRef(String[] itemPaths, String[] tagNames)
+    public static void insertXRef(int fileID, ObservableList<String> tagNames)
     {
         try
         {
-            for(int i = 0; i < itemPaths.length; i++)
-                statement.execute("INSERT INTO fileTagXRef VALUES('" + getFileId(itemPaths[i]) + "', '" + getTagId(tagNames[i]) + "');");
+            for(String tn : tagNames)
+            {
+                if(!statement.executeQuery("SELECT * FROM fileTagXRef WHERE fileID LIKE '" + fileID + "' AND tagID LIKE '" + getTagId(tn) + "';").next())
+                    statement.execute("INSERT INTO fileTagXRef VALUES('" + fileID + "', '" + getTagId(tn) + "');");
+            }
         }
         catch (SQLException e) { e.printStackTrace(); }
 
 //        try { statement.execute("DELETE FROM fileTagXRef"); } catch(SQLException e) { e.printStackTrace(); }
-        print();
+//        print();
     }
 
     public static void removeFiles(ObservableList<ViewItem> viewItems)
@@ -120,6 +123,15 @@ public class SQLConnector
                 deletePS.setString(1, t);
                 deletePS.execute();
             }
+        }
+        catch(SQLException e) { e.printStackTrace(); }
+    }
+    public static void removeXRef(int fileID, ObservableList<String> tagName)
+    {
+        try
+        {
+            for(String tn : tagName)
+                 statement.execute("DELETE FROM fileTagXRef WHERE fileID LIKE '" + fileID + "' AND tagID LIKE '" + getTagId(tn)+ "';");
         }
         catch(SQLException e) { e.printStackTrace(); }
     }
@@ -181,6 +193,27 @@ public class SQLConnector
 
                 while(rs.next())
                     tags.add(rs.getString("name"));
+            }
+
+            return tags;
+        }
+        catch(SQLException e) { e.printStackTrace(); return null; }
+    }
+    public static ObservableList<String> getItemTags(ViewItem vi, boolean exclude)
+    {
+        try
+        {
+            ObservableList<String> tags = FXCollections.observableArrayList();
+
+            if(statement != null)
+            {
+                ResultSet rs = statement.executeQuery("SELECT tags.name AS tagName " +
+                                                          "FROM tags, fileTagXRef " +
+                                                          "WHERE fileTagXRef.fileID " + (exclude ? "NOT " : "") + "LIKE '" + vi.getId() + "';");
+
+                if(!rs.next()) return (exclude ? getTags() : FXCollections.observableArrayList());
+
+                tags.add(rs.getString("tagName"));
             }
 
             return tags;
@@ -250,5 +283,13 @@ public class SQLConnector
         {
             e.printStackTrace();
         }
+    }
+    public static void testDelete()
+    {
+        try
+        {
+            statement.execute("DELETE FROM fileTagXRef");
+        }
+        catch(SQLException e) { e.printStackTrace(); }
     }
 }
