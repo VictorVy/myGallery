@@ -29,23 +29,23 @@ public class SQLConnector
         ResultSet check = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'files';");
         if (!check.next())
             statement.execute("CREATE TABLE files (fileID INTEGER PRIMARY KEY," +
-                                                      "name VARCHAR(256)," +
-                                                      "type VARCHAR(64)," +
-                                                      "path VARCHAR(256)," +
-                                                      "cDate VARCHAR(64)," +
-                                                      "aDate VARCHAR(64));");
+                                                  "name VARCHAR(256)," +
+                                                  "type VARCHAR(64)," +
+                                                  "path VARCHAR(256)," +
+                                                  "cDate VARCHAR(64)," +
+                                                  "aDate VARCHAR(64));");
         //checking tags table
         check = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'tags';");
         if (!check.next())
             statement.execute("CREATE TABLE tags (tagID INTEGER PRIMARY KEY," +
-                                                     "name VARCHAR(128));");
+                                                  "name VARCHAR(128));");
 
         //checking associative entity (cross-reference) table
         check = statement.executeQuery("SELECT * FROM sqlite_master WHERE type = 'table' AND name = 'fileTagXRef';");
         if (!check.next())
             statement.execute("CREATE TABLE fileTagXRef (fileID INTEGER," +
-                                                            "tagID INTEGER," +
-                                                            "PRIMARY KEY (fileID, tagID));");
+                                                        "tagID INTEGER," +
+                                                        "PRIMARY KEY (fileID, tagID));");
     }
 
     //inserts files into db
@@ -59,6 +59,7 @@ public class SQLConnector
             {
                 if (!containsFile(vi))
                 {
+                    //kind of bulky... replace with statement.execute(...)?
                     insertPS.setString(1, vi.getName());
                     insertPS.setString(2, vi.getType());
                     insertPS.setString(3, vi.getPath());
@@ -76,8 +77,10 @@ public class SQLConnector
         try
         {
             for(String t : tags)
+            {
                 if(!t.isEmpty() && !containsTag(t))
                     statement.execute("INSERT INTO tags(name) VALUES('" + t + "');");
+            }
         }
         catch (SQLException e) { e.printStackTrace(); }
     }
@@ -88,26 +91,21 @@ public class SQLConnector
         {
             for(String tn : tagNames)
             {
-                if(!statement.executeQuery("SELECT * FROM fileTagXRef WHERE fileID LIKE '" + fileID + "' AND tagID LIKE '" + getTagId(tn) + "';").next())
+                if(!containsXRef(fileID, tn)) //diff from others... needs validation... why?
                     statement.execute("INSERT INTO fileTagXRef VALUES('" + fileID + "', '" + getTagId(tn) + "');");
             }
         }
         catch (SQLException e) { e.printStackTrace(); }
-
-//        try { statement.execute("DELETE FROM fileTagXRef"); } catch(SQLException e) { e.printStackTrace(); }
-//        print();
     }
 
     public static void removeFiles(ObservableList<ViewItem> viewItems)
     {
         try
         {
-            PreparedStatement deletePS = connection.prepareStatement("DELETE FROM files WHERE path = ?;");
-
             for (ViewItem vi : viewItems)
             {
-                deletePS.setString(1, vi.getPath());
-                deletePS.execute();
+                statement.execute("DELETE FROM fileTagXRef WHERE fileID LIKE '" + vi.getId() + "';"); //remove xref entries
+                statement.execute("DELETE FROM files WHERE path = '" + vi.getPath() + "';"); //then remove file
             }
         }
         catch (SQLException e) { e.printStackTrace(); }
@@ -116,12 +114,16 @@ public class SQLConnector
     {
         try
         {
-            PreparedStatement deletePS = connection.prepareStatement("DELETE FROM tags WHERE name = ?;");
-
             for (String t : tags)
             {
-                deletePS.setString(1, t);
-                deletePS.execute();
+                //took 2 hours to figure out that SQLite doesn't support delete joins... TODO: learn sql transactions
+//                statement.execute("DELETE FROM tags t " +
+//                                  "LEFT JOIN fileTagXRef AS x " +
+//                                  "ON t.tagID = x.tagID " +
+//                                  "WHERE t.name = '" + t + "';");
+
+                statement.execute("DELETE FROM fileTagXRef WHERE tagID LIKE '" + getTagId(t) + "';"); //remove xref entries
+                statement.execute("DELETE FROM tags WHERE name LIKE '" + t + "';"); //then remove tag
             }
         }
         catch(SQLException e) { e.printStackTrace(); }
@@ -207,13 +209,14 @@ public class SQLConnector
 
             if(statement != null)
             {
-                ResultSet rs = statement.executeQuery("SELECT tags.name AS tagName " +
-                                                          "FROM tags, fileTagXRef " +
-                                                          "WHERE fileTagXRef.fileID " + (exclude ? "NOT " : "") + "LIKE '" + vi.getId() + "';");
+                ResultSet rs = statement.executeQuery("SELECT name AS tagName FROM tags WHERE tagName " + (exclude ? "NOT " : "") + "IN (" +
+                                                      "SELECT t.name FROM tags t JOIN fileTagXRef x ON t.tagID = x.tagID " +
+                                                      "WHERE x.fileID LIKE '" + vi.getId() + "');");
 
-                if(!rs.next()) return (exclude ? getTags() : FXCollections.observableArrayList());
+                while(rs.next())
+                    tags.add(rs.getString("tagName"));
 
-                tags.add(rs.getString("tagName"));
+                if(tags.isEmpty() && exclude) return getTags();
             }
 
             return tags;
@@ -225,8 +228,7 @@ public class SQLConnector
         try
         {
             ResultSet rs = statement.executeQuery("SELECT tagID FROM tags WHERE name LIKE '" + name + "'");
-            if(rs.next())
-                return rs.getInt("tagID");
+            if(rs.next()) return rs.getInt("tagID");
             return -1;
         }
         catch(SQLException e) { e.printStackTrace(); return -1; }
@@ -234,26 +236,12 @@ public class SQLConnector
 
     // ---- UTILITY METHODS ---- //
 
-    //checks if a file exists in the db
-    private static boolean containsFile(ViewItem vi) throws SQLException
-    {
-        ResultSet rs = statement.executeQuery("SELECT path FROM files");
-
-        while(rs.next())
-            if(rs.getString("path").equals(vi.getPath())) return true;
-
-        return false;
-    }
+    //checks if a file exists
+    private static boolean containsFile(ViewItem vi) throws SQLException { return statement.executeQuery("SELECT path FROM files WHERE path LIKE '" + vi.getPath() + "';").next(); }
     //checks if a tag exists in the db
-    private static boolean containsTag(String t) throws SQLException
-    {
-        ResultSet rs = statement.executeQuery("SELECT name FROM tags");
-
-        while(rs.next())
-            if(rs.getString("name").equals(t)) return true;
-
-        return false;
-    }
+    private static boolean containsTag(String t) throws SQLException { return statement.executeQuery("SELECT name FROM tags WHERE name LIKE '" + t + "';").next(); }
+    //checks if an xref entry exists
+    private static boolean containsXRef(int fileID, String t) throws SQLException { return statement.executeQuery("SELECT * FROM fileTagXRef WHERE fileID LIKE '" + fileID + "' AND tagID LIKE '" + getTagId(t) + "';").next(); }
 
     public static void close()
     {
@@ -261,35 +249,17 @@ public class SQLConnector
         catch (SQLException e) { e.printStackTrace(); }
     }
 
-    public static void print()
+    public static void testPrint()
     {
-//        try
-//        {
-//            ResultSet rs = statement.executeQuery("SELECT f.name AS fileName, t.name AS tagName " +
-//                                                      "FROM files f, tags t, fileTagXRef x " +
-//                                                      "WHERE f.fileID = x.fileID AND x.tagID = t.tagID");
-//            while(rs.next())
-//                System.out.println(rs.getString("fileName") + " : " + rs.getString("tagName"));
-//        }
-//        catch(Exception e) { }
-
         try
         {
             ResultSet rs = statement.executeQuery("SELECT * FROM fileTagXRef");
-            while(rs.next())
-                System.out.println(rs.getInt("fileID") + " : " + rs.getInt("tagID"));
+
+            while(rs.next()) System.out.println(rs.getInt("fileID") + " to " + rs.getInt("tagID"));
         }
         catch(SQLException e)
         {
             e.printStackTrace();
         }
-    }
-    public static void testDelete()
-    {
-        try
-        {
-            statement.execute("DELETE FROM fileTagXRef");
-        }
-        catch(SQLException e) { e.printStackTrace(); }
     }
 }

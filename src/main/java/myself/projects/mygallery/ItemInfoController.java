@@ -35,7 +35,7 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
     @FXML
     private ListView<String> tagListView;
     private final ObservableList<String> tags = FXCollections.observableArrayList(); //ListView auto-updates! :)
-    private TextFieldListCell<String> clickedCell;
+    private TextFieldListCell<String> clickedCell = new TextFieldListCell<>();
 
     @FXML
     private TextField searchBar;
