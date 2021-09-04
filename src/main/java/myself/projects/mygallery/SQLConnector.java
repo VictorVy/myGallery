@@ -215,8 +215,6 @@ public class SQLConnector
 
                 while(rs.next())
                     tags.add(rs.getString("tagName"));
-
-                if(tags.isEmpty() && exclude) return getTags();
             }
 
             return tags;
@@ -249,17 +247,29 @@ public class SQLConnector
         catch (SQLException e) { e.printStackTrace(); }
     }
 
-    public static void testPrint()
-    {
-        try
-        {
-            ResultSet rs = statement.executeQuery("SELECT * FROM fileTagXRef");
-
-            while(rs.next()) System.out.println(rs.getInt("fileID") + " to " + rs.getInt("tagID"));
-        }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
-    }
+//    public static void testPrint()
+//    {
+//        try
+//        {
+//            ResultSet rs = statement.executeQuery("SELECT * FROM fileTagXRef");
+//
+//            while(rs.next()) System.out.println(rs.getInt("fileID") + " to " + rs.getInt("tagID"));
+//        }
+//        catch(SQLException e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public static void testDelete()
+//    {
+//        try
+//        {
+//            statement.execute("DELETE FROM tags");
+//        }
+//        catch(SQLException e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
 }

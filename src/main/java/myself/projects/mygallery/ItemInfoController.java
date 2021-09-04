@@ -1,6 +1,8 @@
 package myself.projects.mygallery;
 
+import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
@@ -74,7 +76,11 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
 
     private void tagsTabInit()
     {
+        ListChangeListener<? super String> listener = (ListChangeListener<String>) c -> updateTags(); //listening for real-time updates
+        Main.mainController.tagManagerController.tags.addListener(listener); //adding listener
+        tabPane.getScene().getWindow().setOnCloseRequest(e -> Main.mainController.tagManagerController.tags.removeListener(listener)); //removing listener
 
+        //prepare list view
         tagListView.setPlaceholder(new Label("No tags"));
         tagListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         tagListView.setCellFactory(lv ->
@@ -129,7 +135,7 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
             stage.setScene(scene);
 
             AttachTagsDialogController attachTagsDialogController = loader.getController();
-            attachTagsDialogController.init(viewItem, stage);
+            attachTagsDialogController.init(viewItem);
 
             stage.showAndWait();
 

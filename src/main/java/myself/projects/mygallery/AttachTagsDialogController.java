@@ -1,12 +1,14 @@
 package myself.projects.mygallery;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.util.Comparator;
@@ -15,6 +17,9 @@ public class AttachTagsDialogController
 {
     private ViewItem viewItem;
     private Stage stage;
+
+    @FXML
+    private BorderPane borderPane;
 
     @FXML
     private ListView<String> tagListView;
@@ -33,10 +38,14 @@ public class AttachTagsDialogController
 
     private final ImageView sortImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
 
-    public void init(ViewItem viewItem, Stage stage)
+    public void init(ViewItem viewItem)
     {
         this.viewItem = viewItem;
-        this.stage = stage;
+        stage = (Stage) borderPane.getScene().getWindow();
+
+        ListChangeListener<? super String> listener = (ListChangeListener<String>) c -> updateTags(); //listening for real-time updates
+        Main.mainController.tagManagerController.tags.addListener(listener); //adding listener
+        stage.setOnCloseRequest(e -> Main.mainController.tagManagerController.tags.removeListener(listener)); //removing listener
 
         updateTags();
         //prepare list view
@@ -107,8 +116,5 @@ public class AttachTagsDialogController
     private void attachCancel() { stage.close(); }
 
     @FXML
-    private void manageTags()
-    {
-
-    }
+    private void manageTags() { Main.mainController.tagManagerController.show(); }
 }

@@ -17,7 +17,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-
 <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.ItemInfoController">
    <tabs>
       <Tab closable="false" text="General">
@@ -70,12 +69,12 @@
                      <children>
                         <Button mnemonicParsing="false" onAction="#attachTags" text="+">
                            <tooltip>
-                              <Tooltip text="Create tag" />
+                              <Tooltip text="Attach tags" />
                            </tooltip>
                         </Button>
                         <Button mnemonicParsing="false" onAction="#removeTags" text="-">
                            <tooltip>
-                              <Tooltip text="Remove tag" />
+                              <Tooltip text="Remove tags" />
                            </tooltip>
                         </Button>
                         <TextField fx:id="searchBar" promptText="Search..." HBox.hgrow="ALWAYS" />

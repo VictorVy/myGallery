@@ -56,10 +56,9 @@ public class MainController
     private MenuButton sortDirBtn;
     @FXML
     private RadioMenuItem ascSortDir;
-    public boolean ascending = true;
+    boolean ascending = true;
 
-    @FXML
-    private MenuItem manageTagsMenuItem;
+    public TagManagerController tagManagerController;
 
     private final ImageView sortDirImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
 
@@ -164,13 +163,13 @@ public class MainController
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             stage.setScene(scene);
 
-            TagManagerController tagManagerController = loader.getController();
-            tagManagerController.init();
-
-            manageTagsMenuItem.setOnAction(e -> stage.show() /*yet to figure out why showAndWait doesn't work*/);
+            tagManagerController = loader.getController();
+            tagManagerController.init(stage);
         }
         catch(IOException e) { e.printStackTrace(); }
     }
+    @FXML
+    void manageTags() { tagManagerController.show(); }
 
     //table column context menus
     @FXML private void nameColHide() { nameColumn.setVisible(false); }
@@ -465,21 +464,4 @@ public class MainController
 
     @FXML
     private void close() { Main.close(); }
-
-//    @FXML
-//    private void test2()
-//    {
-//        String[] itemNames = new String[3];
-//        String[] tagNames = new String[3];
-//
-//        itemNames[0] = "D:\\Pictures\\Saved Pictures\\GitHub.png";
-//        itemNames[1] = "D:\\Pictures\\Saved Pictures\\gOn.PNG";
-//        itemNames[2] = "D:\\Pictures\\Saved Pictures\\kirito.PNG";
-//
-//        tagNames[0] = "test1";
-//        tagNames[1] = "test2";
-//        tagNames[2] = "test3";
-//
-//        SQLConnector.insertXRef(itemNames, tagNames);
-//    }
 }

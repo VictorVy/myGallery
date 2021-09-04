@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import javafx.util.converter.DefaultStringConverter;
 
 import java.util.Arrays;
@@ -15,9 +16,11 @@ import java.util.Optional;
 
 public class TagManagerController
 {
+    private Stage stage;
+
     @FXML
     private ListView<String> tagListView;
-    private final ObservableList<String> tags = FXCollections.observableArrayList(); //ListView auto-updates! :)
+    public final ObservableList<String> tags = FXCollections.observableArrayList(); //ListView auto-updates! :)
     private TextFieldListCell<String> clickedCell;
 
     @FXML
@@ -34,8 +37,9 @@ public class TagManagerController
 
     private final ImageView sortImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
 
-    public void init()
+    public void init(Stage stage)
     {
+        this.stage = stage;
         updateTags();
         //prepare list view
         tagListView.setPlaceholder(new Label("No tags"));
@@ -56,6 +60,8 @@ public class TagManagerController
 
         tagListView.setItems(filteredTags);
     }
+
+    void show() { stage.show(); }
 
     private void updateTags()
     {
