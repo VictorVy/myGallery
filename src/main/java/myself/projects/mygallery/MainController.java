@@ -12,10 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -24,7 +21,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 public class MainController
 {
@@ -50,6 +46,15 @@ public class MainController
     private Menu selectionMenu;
 
     @FXML
+    private TextField searchBar;
+    @FXML
+    private SplitMenuButton searchBtn;
+    @FXML
+    private CheckBox searchAll;
+    @FXML
+    public CheckBox searchName, searchType, searchTags;
+
+    @FXML
     private ToggleGroup sortToggleGroup;
     public String sortBy = "aDate";
     @FXML
@@ -60,13 +65,11 @@ public class MainController
 
     public TagManagerController tagManagerController;
 
-    private final ImageView sortDirImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
+    private final ImageView sortDirImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString()),
+                            searchImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/search.png").toString());
 
     public void init()
     {
-        detailsViewInit();
-        viewContextMenuInit();
-
         //updates/synchronizes selections between views
         viewTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> //better than onSelectionChanged
         {
@@ -82,10 +85,17 @@ public class MainController
         });
 
         //controls
+        searchImg.setPreserveRatio(true);
+        searchImg.setFitHeight(16); //hmm...
+        searchBtn.setGraphic(searchImg);
+
         sortDirImg.setPreserveRatio(true);
         sortDirImg.setFitHeight(16); //hmm...
         sortDirBtn.setGraphic(sortDirImg);
 
+        //initializers
+        detailsViewInit();
+        viewContextMenuInit();
         SQLConnector.initialize();
         MediaUtils.initialize();
         SelectionHandler.initialize();
@@ -219,7 +229,7 @@ public class MainController
         remove(selectedItems);
     }
     @FXML
-    private void removeAll() { remove(SQLConnector.getFiles()); }
+    private void removeAll() { remove(SQLConnector.searchFiles(searchBar.getText())); }
     private void remove(ObservableList<ViewItem> items)
     {
         if(!items.isEmpty())
@@ -242,9 +252,29 @@ public class MainController
     }
 
     @FXML
+    private void search() { updateViews(); }
+    @FXML
+    private void searchKeyPressed(KeyEvent e) { if(e.getCode().equals(KeyCode.ENTER)) search(); }
+    @FXML
+    private void searchByAll()
+    {
+        boolean all = searchAll.isSelected();
+        searchName.setSelected(all);
+        searchType.setSelected(all);
+        searchTags.setSelected(all);
+        search();
+    }
+    @FXML
+    private void searchBy()
+    {
+        searchAll.setSelected(searchName.isSelected() && searchType.isSelected() && searchTags.isSelected());
+        search();
+    }
+
+    @FXML
     private void syncFiles()
     {
-        if(Objects.requireNonNull(SQLConnector.getFiles()).size() > 0)
+        if(SQLConnector.getFiles().size() > 0)
         {
             //checking if items in the db exist; if not, remove them
             ObservableList<ViewItem> viewItems = SQLConnector.getFiles();
@@ -362,7 +392,7 @@ public class MainController
 
     public void updateGalleryView()
     {
-        ObservableList<ViewItem> viewItems = SQLConnector.getFiles();
+        ObservableList<ViewItem> viewItems = SQLConnector.searchFiles(searchBar.getText());
         galleryView.getChildren().clear();
         galleryView.setAlignment(Pos.BASELINE_LEFT);
 
@@ -377,7 +407,7 @@ public class MainController
             galleryView.setAlignment(Pos.CENTER);
         }
     }
-    private void updateDetailsView() { detailsView.setItems(SQLConnector.getFiles()); }
+    private void updateDetailsView() { detailsView.setItems(SQLConnector.searchFiles(searchBar.getText())); }
 
     public ObservableList<ViewItem> getViewItems()
     {

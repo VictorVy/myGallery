@@ -38,7 +38,7 @@ public class SQLConnector
         check = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'tags';");
         if (!check.next())
             statement.execute("CREATE TABLE tags (tagID INTEGER PRIMARY KEY," +
-                                                  "name VARCHAR(128));");
+                                                 "name VARCHAR(128));");
 
         //checking associative entity (cross-reference) table
         check = statement.executeQuery("SELECT * FROM sqlite_master WHERE type = 'table' AND name = 'fileTagXRef';");
@@ -170,6 +170,60 @@ public class SQLConnector
             return viewItems;
         }
         catch (SQLException e) { e.printStackTrace(); return null; }
+    }
+    public static ObservableList<ViewItem> searchFiles(String raw)
+    {
+        if(raw == null || raw.isEmpty()) return getFiles();
+
+        try
+        {
+            ObservableList<ViewItem> viewItems = FXCollections.observableArrayList();
+            String[] tokens = raw.split("\\s+");
+
+            if(statement != null)
+            {
+                boolean name = Main.mainController.searchName.isSelected(), type = Main.mainController.searchType.isSelected(), tags = Main.mainController.searchTags.isSelected();
+                //TODO: replace convoluted string manipulation with sqlite fts5 functionality
+                StringBuilder query = new StringBuilder("SELECT files.fileID, files.name, files.type, files.path, files.aDate, files.cDate FROM files ");
+                StringBuilder builder = new StringBuilder();
+
+                for(int i = 0; i < tokens.length; i++)
+                    builder.append(i == 0 ? "" : "AND ").append("files.name LIKE '%").append(tokens[i]).append("%' ");
+
+                if(name)
+                {
+                    query.append("WHERE ").append(builder);
+
+                    if(type) query.append("OR ").append(builder.toString().replaceAll("name", "type"));
+                }
+                else if(type) query.append("WHERE ").append(builder.toString().replaceAll("name", "type"));
+
+                if(tags)
+                {
+                    String tagsQuery = "SELECT DISTINCT files.fileID, files.name, files.type, files.path, files.aDate, files.cDate FROM files, tags, fileTagXRef " +
+                                                        "WHERE files.fileID = fileTagXRef.fileID AND fileTagXRef.tagID = tags.tagID " +
+                                                        "AND (" + builder.toString().replaceAll("files", "tags").replaceAll("AND", "OR") + ") ";
+                    //AND (fileID -> tagID1 OR fileID -> tagID2 AND ...) /\/\ (f.fID = x.fID AND (x.tID = t.tID1 && t.tID2))
+                    if(name || type)
+                        query.append("UNION ").append(tagsQuery);
+                    else
+                        query = new StringBuilder(tagsQuery);
+                }
+                System.out.println(query);
+                ResultSet rs = statement.executeQuery(query.append("ORDER BY ").append(Main.mainController.sortBy).append(" ").append(Main.mainController.ascending ? "ASC" : "DESC").toString());
+
+                while (rs.next())
+                    viewItems.add(new ViewItem(rs.getInt("fileID"),
+                                               rs.getString("name"),
+                                               rs.getString("type"),
+                                               rs.getString("path"),
+                                               rs.getString("cDate").substring(0, rs.getString("cDate").indexOf('T')),
+                                               rs.getString("aDate").substring(0, rs.getString("cDate").indexOf('T'))));
+            }
+            System.out.println(viewItems.size());
+            return viewItems;
+        }
+        catch(SQLException e) { e.printStackTrace(); return null; }
     }
     public static int getFileId(String path)
     {

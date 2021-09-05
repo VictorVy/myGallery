@@ -105,8 +105,7 @@ public class TagManagerController
 
         if(input.isPresent())
         {
-            //a regexp would probably work here, but streams are fun :)
-            String[] newTags = Arrays.stream(input.get().split(" ")).map(String::trim).toArray(String[]::new);
+            String[] newTags = input.get().split("\\s+"); //swapped stream for regex :)
 
             SQLConnector.insertTags(FXCollections.observableArrayList(newTags));
 

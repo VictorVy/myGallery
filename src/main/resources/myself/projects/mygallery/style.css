@@ -60,7 +60,7 @@
     -fx-background-radius: 10em;
 }
 
-#rateMenuItem:focused, #expandMenuItem:focused
+#rateMenuItem:focused, #expandMenuItem:focused, #searchAllMI:focused, #searchNameMI:focused, #searchTypeMI:focused, #searchTagsMI:focused
 {
     -fx-background: white;
     -fx-background-color: -fx-background;

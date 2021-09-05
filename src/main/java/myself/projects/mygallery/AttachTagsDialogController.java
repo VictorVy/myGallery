@@ -31,7 +31,9 @@ public class AttachTagsDialogController
     @FXML
     private MenuButton sortBtn;
     @FXML
-    private RadioMenuItem ascSort, showAttachedSort;
+    private RadioMenuItem ascSort;
+    @FXML
+    private CheckMenuItem showAttachedSort;
 
     @FXML
     private Menu selectionMenu;

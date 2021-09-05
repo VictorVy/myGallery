@@ -253,4 +253,17 @@ public class MediaUtils
 
         return min + ":" + (sec < 10 ? "0" + sec : sec);
     }
+
+//    public static String parseSearch(String in)
+//    {
+//        if(in == null || in.isEmpty()) return in;
+//
+//
+//
+//        StringBuilder out = new StringBuilder();
+//        for(String t : tokens)
+//            out.append("'%").append(t).append("%',");
+//
+//        return out.deleteCharAt(out.length() - 1).toString();
+//    }
 }
