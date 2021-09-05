@@ -152,22 +152,34 @@
                      <items>
                         <CustomMenuItem id="searchAllMI" fx:id="searchAllMI" hideOnClick="false" mnemonicParsing="false">
                           <content>
-                            <CheckBox fx:id="searchAll" onAction="#searchByAll" text="All" />
+                            <CheckBox fx:id="searchAll" onAction="#searchByAll" text="All">
+                                 <tooltip>
+                                    <Tooltip text="Search by all" />
+                                 </tooltip></CheckBox>
                           </content>
                         </CustomMenuItem>
                         <CustomMenuItem id="searchNameMI" hideOnClick="false" mnemonicParsing="false">
                            <content>
-                              <CheckBox fx:id="searchName" onAction="#searchBy" selected="true" text="Name" />
+                              <CheckBox fx:id="searchName" onAction="#searchBy" selected="true" text="Name">
+                                 <tooltip>
+                                    <Tooltip text="Search by name" />
+                                 </tooltip></CheckBox>
                            </content>
                         </CustomMenuItem>
                         <CustomMenuItem id="searchTypeMI" hideOnClick="false" mnemonicParsing="false">
                            <content>
-                              <CheckBox fx:id="searchType" onAction="#searchBy" text="Type" />
+                              <CheckBox fx:id="searchType" onAction="#searchBy" text="Type">
+                                 <tooltip>
+                                    <Tooltip text="Search by type" />
+                                 </tooltip></CheckBox>
                            </content>
                         </CustomMenuItem>
                         <CustomMenuItem id="searchTagsMI" hideOnClick="false" mnemonicParsing="false">
                            <content>
-                              <CheckBox fx:id="searchTags" onAction="#searchBy" text="Tags" />
+                              <CheckBox fx:id="searchTags" onAction="#searchBy" text="Tags">
+                                 <tooltip>
+                                    <Tooltip text="Search by tags" />
+                                 </tooltip></CheckBox>
                            </content>
                         </CustomMenuItem>
                      </items>

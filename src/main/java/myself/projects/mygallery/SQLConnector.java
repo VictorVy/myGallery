@@ -178,7 +178,7 @@ public class SQLConnector
         try
         {
             ObservableList<ViewItem> viewItems = FXCollections.observableArrayList();
-            String[] tokens = raw.split("\\s+");
+            String[] tokens = raw.trim().split("\\s+");
             boolean single = tokens.length == 1;
 
             if(statement != null)
@@ -195,10 +195,10 @@ public class SQLConnector
                 {
                     query.append("WHERE (").append(builder).append(") ");
 
-                    if(type)
+                    if(type || tags)
                     {
                         query = new StringBuilder(query.toString().replaceAll("AND", "OR"));
-                        query.append(single ? "OR (" : "AND (").append(builder.toString().replaceAll("name", "type").replaceAll("AND", "OR")).append(") ");
+                        if(type) query.append(single ? "OR (" : "AND (").append(builder.toString().replaceAll("name", "type").replaceAll("AND", "OR")).append(") ");
                     }
                 }
                 else if(type) query.append("WHERE (").append(builder.toString().replaceAll("name", "type")).append(") ");
@@ -213,11 +213,11 @@ public class SQLConnector
                         tagsQuery.append(i == 0 ? "" : (name || type ? "OR " : "AND ")).append("files.fileID IN (SELECT fileTagXRef.fileID from fileTagXRef, tags WHERE fileTagXRef.tagID = tags.tagID AND tags.name LIKE '%").append(tokens[i]).append("%') ");
                     tagsQuery.append(") ");
 
-                    if(name || type) query.append("UNION ").append(tagsQuery);
+                    if(name || type) query.append("INTERSECT ").append(tagsQuery);
                     else query = tagsQuery;
                 }
                 String check = query.append("ORDER BY ").append(Main.mainController.sortBy).append(" ").append(Main.mainController.ascending ? "ASC" : "DESC").toString();
-                System.out.println(check);
+//                System.out.println(check);
                 ResultSet rs = statement.executeQuery(check);
 
                 while (rs.next())
@@ -228,7 +228,7 @@ public class SQLConnector
                                                rs.getString("cDate").substring(0, rs.getString("cDate").indexOf('T')),
                                                rs.getString("aDate").substring(0, rs.getString("cDate").indexOf('T'))));
             }
-            System.out.println(viewItems.size());
+
             return viewItems;
         }
         catch(SQLException e) { e.printStackTrace(); return null; }
