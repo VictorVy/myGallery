@@ -152,7 +152,7 @@
                      <items>
                         <CustomMenuItem id="searchAllMI" fx:id="searchAllMI" hideOnClick="false" mnemonicParsing="false">
                           <content>
-                            <CheckBox fx:id="searchAll" onAction="#searchByAll" selected="true" text="All" />
+                            <CheckBox fx:id="searchAll" onAction="#searchByAll" text="All" />
                           </content>
                         </CustomMenuItem>
                         <CustomMenuItem id="searchNameMI" hideOnClick="false" mnemonicParsing="false">
@@ -162,12 +162,12 @@
                         </CustomMenuItem>
                         <CustomMenuItem id="searchTypeMI" hideOnClick="false" mnemonicParsing="false">
                            <content>
-                              <CheckBox fx:id="searchType" onAction="#searchBy" selected="true" text="Type" />
+                              <CheckBox fx:id="searchType" onAction="#searchBy" text="Type" />
                            </content>
                         </CustomMenuItem>
                         <CustomMenuItem id="searchTagsMI" hideOnClick="false" mnemonicParsing="false">
                            <content>
-                              <CheckBox fx:id="searchTags" onAction="#searchBy" selected="true" text="Tags" />
+                              <CheckBox fx:id="searchTags" onAction="#searchBy" text="Tags" />
                            </content>
                         </CustomMenuItem>
                      </items>

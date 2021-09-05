@@ -179,6 +179,7 @@ public class SQLConnector
         {
             ObservableList<ViewItem> viewItems = FXCollections.observableArrayList();
             String[] tokens = raw.split("\\s+");
+            boolean single = tokens.length == 1;
 
             if(statement != null)
             {
@@ -192,25 +193,32 @@ public class SQLConnector
 
                 if(name)
                 {
-                    query.append("WHERE ").append(builder);
+                    query.append("WHERE (").append(builder).append(") ");
 
-                    if(type) query.append("OR ").append(builder.toString().replaceAll("name", "type"));
+                    if(type)
+                    {
+                        query = new StringBuilder(query.toString().replaceAll("AND", "OR"));
+                        query.append(single ? "OR (" : "AND (").append(builder.toString().replaceAll("name", "type").replaceAll("AND", "OR")).append(") ");
+                    }
                 }
-                else if(type) query.append("WHERE ").append(builder.toString().replaceAll("name", "type"));
+                else if(type) query.append("WHERE (").append(builder.toString().replaceAll("name", "type")).append(") ");
 
                 if(tags)
                 {
-                    String tagsQuery = "SELECT DISTINCT files.fileID, files.name, files.type, files.path, files.aDate, files.cDate FROM files, tags, fileTagXRef " +
-                                                        "WHERE files.fileID = fileTagXRef.fileID AND fileTagXRef.tagID = tags.tagID " +
-                                                        "AND (" + builder.toString().replaceAll("files", "tags").replaceAll("AND", "OR") + ") ";
-                    //AND (fileID -> tagID1 OR fileID -> tagID2 AND ...) /\/\ (f.fID = x.fID AND (x.tID = t.tID1 && t.tID2))
-                    if(name || type)
-                        query.append("UNION ").append(tagsQuery);
-                    else
-                        query = new StringBuilder(tagsQuery);
+
+                    StringBuilder tagsQuery = new StringBuilder("SELECT DISTINCT files.fileID, files.name, files.type, files.path, files.aDate, files.cDate FROM files, tags, fileTagXRef " +
+                                                                "WHERE files.fileID = fileTagXRef.fileID AND fileTagXRef.tagID = tags.tagID AND (");
+
+                    for(int i = 0; i < tokens.length; i++)
+                        tagsQuery.append(i == 0 ? "" : (name || type ? "OR " : "AND ")).append("files.fileID IN (SELECT fileTagXRef.fileID from fileTagXRef, tags WHERE fileTagXRef.tagID = tags.tagID AND tags.name LIKE '%").append(tokens[i]).append("%') ");
+                    tagsQuery.append(") ");
+
+                    if(name || type) query.append("UNION ").append(tagsQuery);
+                    else query = tagsQuery;
                 }
-                System.out.println(query);
-                ResultSet rs = statement.executeQuery(query.append("ORDER BY ").append(Main.mainController.sortBy).append(" ").append(Main.mainController.ascending ? "ASC" : "DESC").toString());
+                String check = query.append("ORDER BY ").append(Main.mainController.sortBy).append(" ").append(Main.mainController.ascending ? "ASC" : "DESC").toString();
+                System.out.println(check);
+                ResultSet rs = statement.executeQuery(check);
 
                 while (rs.next())
                     viewItems.add(new ViewItem(rs.getInt("fileID"),
