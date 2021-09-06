@@ -19,7 +19,7 @@ public class ViewItem
         this.path = path;
         this.cDate = cDate;
         this.aDate = aDate;
-        thumb = MediaUtils.getUserDataDirectory() + name + (type.equals("gif") ? ".gif" : ".png");
+        thumb = MiscUtils.getUserDataDirectory() + name + (type.equals("gif") ? ".gif" : ".png");
     }
 
     public static int indexOf(ObservableList<ViewItem> list, ViewItem vi)

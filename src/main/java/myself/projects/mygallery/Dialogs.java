@@ -8,27 +8,17 @@ import javafx.stage.Stage;
 public class Dialogs
 {
     //returns an alert to confirm item removal with user
-    public static Alert createRemovalAlert(ObservableList<String> toRemove)
+    public static Alert createRemovalAlert(ObservableList<String> toRemove, String title, String content)
     {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Removal");
+        alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText("Remove " + toRemove.size() + " item(s)?");
+        alert.setContentText(content);
         ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Dialogs.class.getResource("/myself/projects/mygallery/images/bin.png").toString()));
 //        alert.initOwner(Main.stage);
 
-        //creating and setting expandable content
-        StringBuilder names = new StringBuilder("Items: \n");
-
-        String prefix = "";
-        for(String s : toRemove)
-        {
-            names.append(prefix);
-            prefix = ", ";
-            names.append(s);
-        }
-
-        Label itemNames = new Label(names.toString() + '.');
+        //setting expandable content
+        Label itemNames = new Label(MiscUtils.toListString(toRemove));
         itemNames.setWrapText(true);
 
         alert.getDialogPane().setExpandableContent(itemNames);

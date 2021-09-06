@@ -10,7 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.converter.DefaultStringConverter;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Optional;
 
@@ -122,7 +121,7 @@ public class TagManagerController
 
         if(!toRemove.isEmpty())
         {
-            Alert alert = Dialogs.createRemovalAlert(toRemove);
+            Alert alert = Dialogs.createRemovalAlert(toRemove, "Confirm Deletion", "Delete " + toRemove.size() + " tag(s)");
 
             //removing selected tags after alerting users
             if(alert.showAndWait().orElse(null) == ButtonType.OK)

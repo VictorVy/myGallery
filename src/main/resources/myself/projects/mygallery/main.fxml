@@ -108,25 +108,30 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
-                        <MenuItem mnemonicParsing="false" onAction="#addFiles" text="Add..." />
-                        <Menu mnemonicParsing="false" text="Remove">
+                        <MenuItem mnemonicParsing="false" onAction="#addFiles" text="Add Items..." />
+                        <Menu mnemonicParsing="false" text="Remove Items">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#removeFiles" text="Selected" />
                               <MenuItem mnemonicParsing="false" onAction="#removeAll" text="All" />
                           </items>
                         </Menu>
-                        <MenuItem mnemonicParsing="false" onAction="#syncFiles" text="Sync Files" />
                         <MenuItem mnemonicParsing="false" onAction="#manageTags" text="Manage Tags" />
+                        <MenuItem mnemonicParsing="false" onAction="#syncFiles" text="Sync Files" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem mnemonicParsing="false" onAction="#close" text="Exit" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
+                <Menu mnemonicParsing="false" text="Selection">
                      <items>
                         <MenuItem mnemonicParsing="false" onAction="#selectAll" text="Select All" />
                         <MenuItem mnemonicParsing="false" onAction="#clearSelection" text="Clear Selection" />
                      </items>
                 </Menu>
+                  <Menu mnemonicParsing="false" text="View">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#viewThumbnails" text="Thumbnails" />
+                    </items>
+                  </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                   <items>
                     <MenuItem mnemonicParsing="false" text="About" />
@@ -138,16 +143,16 @@
                <children>
                   <Button mnemonicParsing="false" onAction="#addFiles" text="+">
                      <tooltip>
-                        <Tooltip text="Add files" />
+                        <Tooltip text="Add items" />
                      </tooltip></Button>
                   <Button mnemonicParsing="false" onAction="#removeFiles" text="-">
                      <tooltip>
-                        <Tooltip text="Remove files" />
+                        <Tooltip text="Remove items" />
                      </tooltip></Button>
                   <TextField fx:id="searchBar" onKeyPressed="#searchKeyPressed" promptText="Search..." HBox.hgrow="ALWAYS" />
                   <SplitMenuButton fx:id="searchBtn" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#search">
                      <tooltip>
-                        <Tooltip text="Search" />
+                        <Tooltip text="Search items" />
                      </tooltip>
                      <items>
                         <CustomMenuItem id="searchAllMI" fx:id="searchAllMI" hideOnClick="false" mnemonicParsing="false">
@@ -196,7 +201,7 @@
                         <RadioMenuItem fx:id="cDateSort" mnemonicParsing="false" onAction="#sortToggle" text="Creation Date" toggleGroup="$sortToggleGroup" />
                      </items>
                      <tooltip>
-                        <Tooltip text="Sort by value" />
+                        <Tooltip text="Sort items" />
                      </tooltip>
                   </MenuButton>
                   <MenuButton fx:id="sortDirBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="24.0" minHeight="0.0" mnemonicParsing="false">

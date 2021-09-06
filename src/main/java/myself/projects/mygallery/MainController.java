@@ -8,7 +8,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -18,8 +21,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class MainController
@@ -42,7 +47,7 @@ public class MainController
     private TableColumn<ViewItem, String> nameColumn, typeColumn, pathColumn, cDateColumn, aDateColumn;
     private TableRow<ViewItem> clickedDetailsRow;
 
-    private MenuItem openMenuItem, viewInfoMenuItem, editTagsMenuItem, removeMenuItem;
+    private MenuItem openMenuItem, viewInfoMenuItem, removeMenuItem;
     private Menu selectionMenu;
 
     @FXML
@@ -97,7 +102,7 @@ public class MainController
         detailsViewInit();
         viewContextMenuInit();
         SQLConnector.initialize();
-        MediaUtils.initialize();
+        MiscUtils.initialize();
         SelectionHandler.initialize();
         tagManagerInit();
         updateViews();
@@ -105,7 +110,6 @@ public class MainController
     private void detailsViewInit()
     {
         detailsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        detailsView.setPlaceholder(new Label("Drag files or press Add"));
         //setting cell values
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
@@ -120,7 +124,7 @@ public class MainController
 
             //prepares context menus
             ContextMenu contextMenu = new ContextMenu();
-            MenuItem removeMenuItem = new MenuItem("Remove");
+            MenuItem removeMenuItem = new MenuItem("Remove Items");
             removeMenuItem.setOnAction(e -> Main.mainController.removeFiles());
             contextMenu.getItems().add(removeMenuItem);
             //handles clicks
@@ -134,20 +138,20 @@ public class MainController
         openMenuItem = new MenuItem("Open");
         openMenuItem.setOnAction(e -> showItems(galleryTab.isSelected() ? SelectionHandler.getSelected() : detailsView.getSelectionModel().getSelectedItems()));
 
-        MenuItem addMenuItem = new MenuItem("Add...");
+        MenuItem addMenuItem = new MenuItem("Add Items...");
         addMenuItem.setOnAction(e -> addFiles());
 
         selectionMenu = new Menu("Selection");
-        MenuItem selectAll = new MenuItem("Select all");
+        MenuItem selectAll = new MenuItem("Select All");
         selectAll.setOnAction(e -> selectAll());
-        MenuItem clearSelection = new MenuItem("Clear");
+        MenuItem clearSelection = new MenuItem("Deselect");
         clearSelection.setOnAction(e -> clearSelection());
         selectionMenu.getItems().addAll(selectAll, clearSelection);
 
-        viewInfoMenuItem = new MenuItem("View info");
+        viewInfoMenuItem = new MenuItem("View Info");
         viewInfoMenuItem.setOnAction(e -> showInfos(galleryTab.isSelected() ? SelectionHandler.getSelected() : detailsView.getSelectionModel().getSelectedItems()));
 
-        editTagsMenuItem = new MenuItem("Edit tags");
+        MenuItem editTagsMenuItem = new MenuItem("Edit Tags");
         editTagsMenuItem.setOnAction(e -> showTagInfos(galleryTab.isSelected() ? SelectionHandler.getSelected() : detailsView.getSelectionModel().getSelectedItems()));
 
         removeMenuItem = new MenuItem("Remove");
@@ -199,12 +203,12 @@ public class MainController
 
         if(files != null)
         {
-            ObservableList<ViewItem> addedItems = MediaUtils.filesToViewItems(files);
+            ObservableList<ViewItem> addedItems = MiscUtils.filesToViewItems(files);
 
             //inserts items into the db
             SQLConnector.insertFiles(addedItems);
             //generates thumbnails
-            MediaUtils.createThumbs(addedItems, 150);
+            MiscUtils.createThumbs(addedItems, 150);
 
             updateViews();
 
@@ -239,13 +243,13 @@ public class MainController
             for(ViewItem vi : items)
                 names.add(vi.getName() + "." + vi.getType());
 
-            Alert alert = Dialogs.createRemovalAlert(names);
+            Alert alert = Dialogs.createRemovalAlert(names, "Confirm Removal", "Remove " + names.size() + " item(s)?");
 
             //removing selected items after alerting users
             if(alert.showAndWait().orElse(null) == ButtonType.OK)
             {
                 SQLConnector.removeFiles(items);
-                MediaUtils.removeThumbs(items);
+                MiscUtils.removeThumbs(items);
                 updateViews();
             }
         }
@@ -286,7 +290,7 @@ public class MainController
             if(toRemove.size() > 0)
             {
                 SQLConnector.removeFiles(toRemove);
-                MediaUtils.removeThumbs(toRemove);
+                MiscUtils.removeThumbs(toRemove);
             }
 
             updateViews();
@@ -340,7 +344,7 @@ public class MainController
     @FXML
     private void viewContextMenuRequested()
     {
-        if(galleryView.getChildren().isEmpty() || detailsView.getItems().isEmpty())
+        if(galleryView.getChildren().contains(lblEmpty) || detailsView.getItems().isEmpty())
         {
             openMenuItem.setDisable(true);
             selectionMenu.setDisable(true);
@@ -371,21 +375,23 @@ public class MainController
     {
         List<File> dragFiles = event.getDragboard().getFiles();
 
-        if(MediaUtils.wrongFiles(dragFiles).size() == 0)
+        if(MiscUtils.wrongFiles(dragFiles).size() == 0)
         {
-            SQLConnector.insertFiles(MediaUtils.filesToViewItems(dragFiles));
-            MediaUtils.createThumbs(MediaUtils.filesToViewItems(dragFiles), 150);
+            SQLConnector.insertFiles(MiscUtils.filesToViewItems(dragFiles));
+            MiscUtils.createThumbs(MiscUtils.filesToViewItems(dragFiles), 150);
 
             updateViews();
         }
         else
-            Dialogs.createDragAlert(MediaUtils.wrongFiles(dragFiles)).showAndWait();
+            Dialogs.createDragAlert(MiscUtils.wrongFiles(dragFiles)).showAndWait();
     }
 
     //updates the view
 
     public void updateViews()
     {
+        lblEmpty.setText(SQLConnector.getFiles().isEmpty() ? "Drag and drop or press \"+\"" : "No items found");
+        detailsView.setPlaceholder(new Label(lblEmpty.getText()));
         updateGalleryView();
         updateDetailsView();
     }
@@ -412,6 +418,7 @@ public class MainController
     public ObservableList<ViewItem> getViewItems()
     {
         ObservableList<ViewItem> items = FXCollections.observableArrayList();
+        if(galleryView.getChildren().contains(lblEmpty)) return items;
 
         for(int i = 0; i < galleryView.getChildren().size(); i++)
             items.add(((ViewItemWrapper) galleryView.getChildren().get(i)).getViewItem());
@@ -491,6 +498,16 @@ public class MainController
         catch(IOException e) { e.printStackTrace(); }
     }
     private void showTagInfos(ObservableList<ViewItem> items) { for(ViewItem vi : items) showTagInfo(vi); }
+
+    @FXML
+    private void viewThumbnails()
+    {
+        try
+        {
+            Desktop.getDesktop().browse(Paths.get(MiscUtils.getUserDataDirectory()).toUri()); //bizarre error: [9884:ShellIpcClient] simple_message_loop.cc:127:Run Run called on MessageLoop that's already been Quit!
+        }
+        catch(IOException e) { e.printStackTrace(); }
+    }
 
     @FXML
     private void close() { Main.close(); }

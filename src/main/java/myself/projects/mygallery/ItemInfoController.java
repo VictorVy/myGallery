@@ -149,7 +149,7 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
         if(!tagListView.getSelectionModel().getSelectedItems().isEmpty())
         {
             ObservableList<String> toRemove = tagListView.getSelectionModel().getSelectedItems();
-            Alert alert = Dialogs.createRemovalAlert(toRemove);
+            Alert alert = Dialogs.createRemovalAlert(toRemove, "Confirm Removal", "Remove " + toRemove.size() + " tag(s)?");
 
             //removing selected items after alerting users
             if(alert.showAndWait().orElse(null) == ButtonType.OK)

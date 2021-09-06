@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane fx:id="stage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.TagManagerController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.TagManagerController">
    <center>
       <ListView fx:id="tagListView" editable="true" onContextMenuRequested="#tagListContextMenuRequested" onEditCommit="#renameTag" onMouseClicked="#tagListMouseClicked" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -46,7 +46,7 @@
                </tooltip></Button>
             <Button mnemonicParsing="false" onAction="#deleteTags" text="-">
                <tooltip>
-                  <Tooltip text="Remove tags" />
+                  <Tooltip text="Delete tags" />
                </tooltip></Button>
             <TextField fx:id="searchBar" promptText="Search..." HBox.hgrow="ALWAYS" />
             <MenuButton fx:id="sortBtn" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
@@ -58,7 +58,7 @@
                   <RadioMenuItem mnemonicParsing="false" onAction="#toggleSort" text="Descending" toggleGroup="$sortToggleGroup" />
                </items>
                <tooltip>
-                  <Tooltip text="Choose sort" />
+                  <Tooltip text="Sort tags" />
                </tooltip>
             </MenuButton>
          </children>

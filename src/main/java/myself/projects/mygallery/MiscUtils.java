@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
-public class MediaUtils
+public class MiscUtils
 {
     public static void initialize()
     {
@@ -37,10 +37,7 @@ public class MediaUtils
                 Files.createDirectory(Paths.get(System.getProperty("user.home") + File.separator + "myGallery" + File.separator));
                 Files.createDirectory(Paths.get(getUserDataDirectory()));
             }
-            catch(IOException e)
-            {
-                e.printStackTrace();
-            }
+            catch(IOException e) { e.printStackTrace(); }
         }
     }
 
@@ -50,14 +47,14 @@ public class MediaUtils
         {
             for(ViewItem vi : viewItems)
             {
-                if(MediaUtils.isImage(vi.getType()))
-                    MediaUtils.createImageThumb(vi, sizeLimit);
+                if(MiscUtils.isImage(vi.getType()))
+                    MiscUtils.createImageThumb(vi, sizeLimit);
                 else if(vi.getType().equals("gif"))
-                    MediaUtils.createGifThumb(vi, sizeLimit);
-                else if(MediaUtils.isVideo(vi.getType()))
-                    MediaUtils.createVideoThumb(vi, sizeLimit);
-                else if(MediaUtils.isAudio(vi.getType()))
-                    MediaUtils.createAudioThumb(vi);
+                    MiscUtils.createGifThumb(vi, sizeLimit);
+                else if(MiscUtils.isVideo(vi.getType()))
+                    MiscUtils.createVideoThumb(vi, sizeLimit);
+                else if(MiscUtils.isAudio(vi.getType()))
+                    MiscUtils.createAudioThumb(vi);
             }
         }
         catch(JCodecException | IOException e) { e.printStackTrace(); }
@@ -91,7 +88,7 @@ public class MediaUtils
         for(Map.Entry<BufferedImage, Integer> entry : entrySet)
             newFrames.put(Thumbnails.of(entry.getKey()).size(sizeLimit, sizeLimit).asBufferedImage(), entry.getValue());
 
-        encodeGif(newFrames,getUserDataDirectory() + vi.getName() + ".gif");
+        encodeGif(newFrames, getUserDataDirectory() + vi.getName() + ".gif");
     }
 
     //returns a map of all the frames and delay times
@@ -183,9 +180,7 @@ public class MediaUtils
 
     private static void createAudioThumb(ViewItem vi) throws IOException
     {
-        ImageIO.write(ImageIO.read(Objects.requireNonNull(MediaUtils.class.getResource("/myself/projects/mygallery/images/music.png"))),
-            "png",
-                       new File(getUserDataDirectory() + vi.getName() + ".png"));
+        ImageIO.write(ImageIO.read(Objects.requireNonNull(MiscUtils.class.getResource("/myself/projects/mygallery/images/music.png"))), "png", new File(getUserDataDirectory() + vi.getName() + ".png"));
     }
 
     public static void removeThumbs(ObservableList<ViewItem> selectedItems)
@@ -233,19 +228,6 @@ public class MediaUtils
     public static Boolean isVideo(String type) { return type.equals("mp4") || type.equals("m4v") || type.equals("flv"); }
     public static Boolean isAudio(String type) { return type.equals("mp3") || type.equals("wav")|| type.equals("aif") || type.equals("aiff"); }
 
-//    public static InnerShadow hoverEffect() //disused
-//    {
-//        InnerShadow effect = new InnerShadow();
-//
-//        effect.setBlurType(BlurType.GAUSSIAN);
-//        effect.setColor(new Color(0, 0.663, 0.969, 0.8));
-//        effect.setWidth(50);
-//        effect.setHeight(50);
-//        effect.setRadius(42);
-//
-//        return effect;
-//    }
-
     public static String millisToStamp(int millis)
     {
         int min = (int) (millis * 0.001 / 60);
@@ -254,16 +236,16 @@ public class MediaUtils
         return min + ":" + (sec < 10 ? "0" + sec : sec);
     }
 
-//    public static String parseSearch(String in)
-//    {
-//        if(in == null || in.isEmpty()) return in;
-//
-//
-//
-//        StringBuilder out = new StringBuilder();
-//        for(String t : tokens)
-//            out.append("'%").append(t).append("%',");
-//
-//        return out.deleteCharAt(out.length() - 1).toString();
-//    }
+    public static String toListString(ObservableList<String> items)
+    {
+        StringBuilder list = new StringBuilder();
+        String prefix = "";
+        for(String s  : items)
+        {
+            list.append(prefix);
+            prefix = ", ";
+            list.append(s);
+        }
+        return list.append('.').toString();
+    }
 }

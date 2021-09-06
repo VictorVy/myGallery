@@ -86,18 +86,18 @@ public class ViewWindowController
 
         //prepares viewport according to media type
         Node node;
-        if(MediaUtils.isImage(viewItem.getType()) || viewItem.getType().equals("gif"))
+        if(MiscUtils.isImage(viewItem.getType()) || viewItem.getType().equals("gif"))
         {
             overlay.getChildren().remove(controls); //removes irrelevant media controls
             imageViewInit(new Image("file:" + viewItem.getPath()));
             node = imageView;
         }
-        else if(MediaUtils.isVideo(viewItem.getType()))
+        else if(MiscUtils.isVideo(viewItem.getType()))
         {
             mediaViewInit();
             node = mediaView;
         }
-        else if(MediaUtils.isAudio(viewItem.getType()))
+        else if(MiscUtils.isAudio(viewItem.getType()))
         {
             imageViewInit(new Image(getClass().getResource("/myself/projects/mygallery/images/music.png").toString()));
             audioPlayerInit();
@@ -271,7 +271,7 @@ public class ViewWindowController
         //progressBar listener for timestamp + tooltip
         progressBar.valueProperty().addListener((observable, oldValue, newValue) ->
         {
-            String timestamp = MediaUtils.millisToStamp(newValue.intValue()) + " / " + MediaUtils.millisToStamp((int) progressBar.getMax());
+            String timestamp = MiscUtils.millisToStamp(newValue.intValue()) + " / " + MiscUtils.millisToStamp((int) progressBar.getMax());
             lblTime.setText(timestamp);
             progressTooltip.setText(timestamp.substring(0, timestamp.indexOf(' ')));
         });
