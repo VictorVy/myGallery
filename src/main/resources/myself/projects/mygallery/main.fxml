@@ -115,7 +115,7 @@
                               <MenuItem mnemonicParsing="false" onAction="#removeAll" text="All" />
                           </items>
                         </Menu>
-                        <MenuItem mnemonicParsing="false" onAction="#manageTags" text="Manage Tags" />
+                        <MenuItem mnemonicParsing="false" onAction="#updateViews" text="Refresh View" />
                         <MenuItem mnemonicParsing="false" onAction="#syncFiles" text="Sync Files" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem mnemonicParsing="false" onAction="#close" text="Exit" />
@@ -129,12 +129,16 @@
                 </Menu>
                   <Menu mnemonicParsing="false" text="View">
                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#manageTags" text="Tag Manager" />
                       <MenuItem mnemonicParsing="false" onAction="#viewThumbnails" text="Thumbnails" />
                     </items>
                   </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
+                    <MenuItem mnemonicParsing="false" onAction="#helpHelp" text="Help" />
+                        <MenuItem mnemonicParsing="false" onAction="#helpSrcCode" text="Source Code" />
+                        <MenuItem mnemonicParsing="false" onAction="#helpReleases" text="Releases" />
+                        <MenuItem mnemonicParsing="false" onAction="#helpAbout" text="About" />
                   </items>
                 </Menu>
               </menus>

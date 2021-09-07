@@ -15,9 +15,11 @@ import org.jcodec.api.JCodecException;
 import org.jcodec.api.awt.AWTFrameGrab;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -250,5 +252,24 @@ public class MiscUtils
             list.append(s);
         }
         return list.append('.').toString();
+    }
+
+    public static void openThumbsDirectory()
+    {
+        try
+        {
+            Desktop.getDesktop().open(new File(MiscUtils.getUserDataDirectory()));
+//            Desktop.getDesktop().browse(Paths.get(MiscUtils.getUserDataDirectory()).toUri()); //bizarre error: [9884:ShellIpcClient] simple_message_loop.cc:127:Run Run called on MessageLoop that's already been Quit!
+        }
+        catch(IOException e) { e.printStackTrace(); }
+    }
+
+    public static void openBrowserTo(String uri)
+    {
+        try
+        {
+            Desktop.getDesktop().browse(URI.create(uri));
+        }
+        catch(IOException e) { e.printStackTrace(); }
     }
 }

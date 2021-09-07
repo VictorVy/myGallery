@@ -388,7 +388,7 @@ public class MainController
     }
 
     //updates the view
-
+    @FXML
     public void updateViews()
     {
         lblEmpty.setText(SQLConnector.getFiles().isEmpty() ? "Drag and drop or press \"+\"" : "No items found");
@@ -501,15 +501,16 @@ public class MainController
     private void showTagInfos(ObservableList<ViewItem> items) { for(ViewItem vi : items) showTagInfo(vi); }
 
     @FXML
-    private void viewThumbnails()
-    {
-        try
-        {
-            Desktop.getDesktop().open(new File(MiscUtils.getUserDataDirectory()));
-//            Desktop.getDesktop().browse(Paths.get(MiscUtils.getUserDataDirectory()).toUri()); //bizarre error: [9884:ShellIpcClient] simple_message_loop.cc:127:Run Run called on MessageLoop that's already been Quit!
-        }
-        catch(IOException e) { e.printStackTrace(); }
-    }
+    private void viewThumbnails() { MiscUtils.openThumbsDirectory(); }
+
+    @FXML
+    private void helpHelp() { MiscUtils.openBrowserTo("https://github.com/VictorVy/myGallery/wiki"); }
+    @FXML
+    private void helpSrcCode() { MiscUtils.openBrowserTo("https://github.com/VictorVy/myGallery"); }
+    @FXML
+    private void helpReleases() { MiscUtils.openBrowserTo("https://github.com/VictorVy/myGallery/releases"); }
+    @FXML
+    private void helpAbout() { MiscUtils.openBrowserTo("https://github.com/VictorVy/myGallery/wiki"); }
 
     @FXML
     private void close() { Main.close(); }
