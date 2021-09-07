@@ -9,35 +9,61 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 
-<TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.ItemInfoController">
+<TabPane fx:id="tabPane" prefWidth="300" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.ItemInfoController">
    <tabs>
       <Tab closable="false" text="General">
          <content>
-            <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0">
+            <GridPane hgap="10.0" vgap="10.0">
+               <columnConstraints>
+                  <ColumnConstraints fillWidth="false" halignment="LEFT" hgrow="NEVER" minWidth="-Infinity" />
+                  <ColumnConstraints fillWidth="false" halignment="LEFT" hgrow="ALWAYS" />
+                  <ColumnConstraints fillWidth="false" halignment="CENTER" hgrow="NEVER" minWidth="-Infinity" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints minHeight="-Infinity" valignment="TOP" vgrow="ALWAYS" />
+                  <RowConstraints valignment="BASELINE" vgrow="ALWAYS" />
+               </rowConstraints>
                <children>
-                  <Label text="Tags:" />
-                  <Label fx:id="tagsLbl" />
-                  <Button mnemonicParsing="false" onAction="#editTags" text="Edit">
-                     <HBox.margin>
-                        <Insets right="-5.0" />
-                     </HBox.margin>
+                  <Label text="Name:" />
+                  <Label fx:id="nameLbl" GridPane.columnIndex="1" />
+                  <Label text="Type:" GridPane.rowIndex="1" />
+                  <Label fx:id="typeLbl" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Separator prefWidth="${tabPane.width}" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                  <Label text="Path:" GridPane.rowIndex="3" />
+                  <Label fx:id="pathLbl" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label text="Created:" GridPane.rowIndex="4" />
+                  <Label fx:id="cDateLbl" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Separator prefWidth="${tabPane.width}" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                  <Label text="Tags:" GridPane.rowIndex="6" />
+                  <Label fx:id="tagsLbl" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <Button mnemonicParsing="false" onAction="#editTags" text="Edit" GridPane.columnIndex="2" GridPane.rowIndex="6">
                      <tooltip>
                         <Tooltip text="Attach tags" />
                      </tooltip>
                   </Button>
                </children>
                <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </padding>
-            </HBox>
+            </GridPane>
          </content>
       </Tab>
       <Tab fx:id="tagsTab" closable="false" text="Tags">

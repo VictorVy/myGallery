@@ -186,7 +186,10 @@ public class MiscUtils
     public static void removeThumbs(ObservableList<ViewItem> selectedItems)
     {
         for(ViewItem vi : selectedItems)
-            new File(getUserDataDirectory() + vi.getName() + (vi.getType().equals("gif") ? "gif" : "png")).delete();
+        {
+            File toDelete = new File(getUserDataDirectory() + vi.getName() + (vi.getType().equals("gif") ? ".gif" : ".png"));
+            toDelete.delete();
+        }
     }
 
     //PROPERLY gets the folder where the thumbnails are stored

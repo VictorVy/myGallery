@@ -1,6 +1,5 @@
 package myself.projects.mygallery;
 
-import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -30,7 +29,7 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
     /* ---- GENERAL TAB ---- */
 
     @FXML
-    private Label tagsLbl;
+    private Label nameLbl, typeLbl, pathLbl, cDateLbl, tagsLbl;
 
     /* ---- TAGS TAB ---- */
 
@@ -64,14 +63,11 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
 
     private void generalTabInit()
     {
-        ObservableList<String> tagsList = SQLConnector.getItemTags(viewItem, false);
-
-        StringBuilder label = new StringBuilder();
-
-        for(String t : tagsList)
-            label.append(label + " ");
-
-        tagsLbl.setText(label.toString().trim());
+        nameLbl.setText(viewItem.getName());
+        typeLbl.setText(viewItem.getType());
+        pathLbl.setText(viewItem.getPath());
+        cDateLbl.setText(viewItem.getCDate());
+        tagsLbl.setWrapText(true);
     }
 
     private void tagsTabInit()
@@ -113,6 +109,7 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
         tags.clear();
         tags.addAll(SQLConnector.getItemTags(viewItem, false));
         sortTags();
+        tagsLbl.setText(tags.isEmpty() ? "No tags." : MiscUtils.toListString(tags));
     }
 
     private void sortTags() { FXCollections.sort(tags, ascSort.isSelected() ? Comparator.naturalOrder() : Comparator.reverseOrder()); }

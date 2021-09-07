@@ -24,7 +24,6 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 
 public class MainController
@@ -47,7 +46,7 @@ public class MainController
     private TableColumn<ViewItem, String> nameColumn, typeColumn, pathColumn, cDateColumn, aDateColumn;
     private TableRow<ViewItem> clickedDetailsRow;
 
-    private MenuItem openMenuItem, viewInfoMenuItem, removeMenuItem;
+    private MenuItem openMenuItem, viewInfoMenuItem, editTagsMenuItem, removeMenuItem;
     private Menu selectionMenu;
 
     @FXML
@@ -151,7 +150,7 @@ public class MainController
         viewInfoMenuItem = new MenuItem("View Info");
         viewInfoMenuItem.setOnAction(e -> showInfos(galleryTab.isSelected() ? SelectionHandler.getSelected() : detailsView.getSelectionModel().getSelectedItems()));
 
-        MenuItem editTagsMenuItem = new MenuItem("Edit Tags");
+        editTagsMenuItem = new MenuItem("Edit Tags");
         editTagsMenuItem.setOnAction(e -> showTagInfos(galleryTab.isSelected() ? SelectionHandler.getSelected() : detailsView.getSelectionModel().getSelectedItems()));
 
         removeMenuItem = new MenuItem("Remove");
@@ -349,6 +348,7 @@ public class MainController
             openMenuItem.setDisable(true);
             selectionMenu.setDisable(true);
             viewInfoMenuItem.setDisable(true);
+            editTagsMenuItem.setDisable(true);
             removeMenuItem.setDisable(true);
         }
         else
@@ -358,6 +358,7 @@ public class MainController
             openMenuItem.setDisable(isNotLegit);
             selectionMenu.setDisable(false);
             viewInfoMenuItem.setDisable(isNotLegit);
+            editTagsMenuItem.setDisable(isNotLegit);
             removeMenuItem.setDisable(isNotLegit);
         }
     }
@@ -504,7 +505,8 @@ public class MainController
     {
         try
         {
-            Desktop.getDesktop().browse(Paths.get(MiscUtils.getUserDataDirectory()).toUri()); //bizarre error: [9884:ShellIpcClient] simple_message_loop.cc:127:Run Run called on MessageLoop that's already been Quit!
+            Desktop.getDesktop().open(new File(MiscUtils.getUserDataDirectory()));
+//            Desktop.getDesktop().browse(Paths.get(MiscUtils.getUserDataDirectory()).toUri()); //bizarre error: [9884:ShellIpcClient] simple_message_loop.cc:127:Run Run called on MessageLoop that's already been Quit!
         }
         catch(IOException e) { e.printStackTrace(); }
     }
