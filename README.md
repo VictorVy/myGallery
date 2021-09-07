@@ -1,5 +1,5 @@
 # myGallery
-Gallery project for Capstone.
+Gallery project for learning purposes.
 Written in Java, using JavaFX and an embedded database (SQLite).
 Work-in-progress.
 
