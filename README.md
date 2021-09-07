@@ -1,6 +1,6 @@
 # myGallery
 Gallery project for learning purposes.
-Written in Java, using JavaFX and an embedded database (SQLite).
+Written in Java 8, using JavaFX and an SQLite embedded database.
 Work-in-progress.
 
 All icons sourced from:
