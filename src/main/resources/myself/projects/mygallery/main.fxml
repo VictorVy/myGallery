@@ -115,7 +115,7 @@
                               <MenuItem mnemonicParsing="false" onAction="#removeAll" text="All" />
                           </items>
                         </Menu>
-                        <MenuItem mnemonicParsing="false" onAction="#updateViews" text="Refresh View" />
+                        <MenuItem mnemonicParsing="false" onAction="#updateViews" text="Refresh" />
                         <MenuItem mnemonicParsing="false" onAction="#syncFiles" text="Sync Files" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem mnemonicParsing="false" onAction="#close" text="Exit" />
