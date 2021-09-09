@@ -29,6 +29,9 @@ public class ViewWindowController
     private ViewItem viewItem;
 
     @FXML
+    private BorderPane borderPane;
+
+    @FXML
     private ImageView imageView;
     @FXML
     private MediaView mediaView;
@@ -208,8 +211,8 @@ public class ViewWindowController
     private void mediaControlsInit()
     {
         //prepares fade transitions
-        fadeOutControls.setNode(controls);
-        fadeInControls.setNode(controls);
+        fadeOutControls.setNode(overlay);
+        fadeInControls.setNode(overlay);
         fadeOutControls.setToValue(0);
         fadeInControls.setToValue(1);
         //transition easing (i wonder why there isn't a simple ease() function for animations)
@@ -219,8 +222,8 @@ public class ViewWindowController
             protected double curve(double t) { return Math.pow(t, 2); }
         });
         //sets fade transition listeners
-        overlay.setOnMouseMoved(e -> { if(controls.getOpacity() != 1) fadeInControls(); });
-        overlay.getScene().setOnMouseExited(e -> { if(controls.getOpacity() != 0 && !rateMenuBtn.isShowing()) fadeOutControls(); });
+        borderPane.setOnMouseMoved(e -> { if(overlay.getOpacity() != 1) fadeInControls(); });
+        borderPane.getScene().setOnMouseExited(e -> { if(overlay.getOpacity() != 0 && !rateMenuBtn.isShowing()) fadeOutControls(); });
         rateMenuBtn.showingProperty().addListener((observable, oldValue, newValue) -> { if(oldValue && !overlay.isHover()) fadeOutControls(); });
 
         //aligning media controls (extremely primitive...)
@@ -312,6 +315,16 @@ public class ViewWindowController
     }
 
     @FXML
+    private void windowClicked()
+    {
+        if(!controls.isHover())
+        {
+            if(overlay.getOpacity() != 1) fadeInControls();
+            else if(overlay.getOpacity() != 0) fadeOutControls();
+        }
+    }
+
+    @FXML
     private void btnPlay()
     {
         if(mediaAtEnd() || progressBarAtEnd()) //workaround for irrational media status at end
@@ -398,15 +411,21 @@ public class ViewWindowController
     private void fadeOutControls()
     {
         fadeInControls.stop();
-        fadeOutControls.setDuration(Duration.millis(fadeOutTime * controls.getOpacity()));
+        fadeOutControls.setDuration(Duration.millis(fadeOutTime * overlay.getOpacity()));
         fadeOutControls.play();
     }
     private void fadeInControls()
     {
         fadeOutControls.stop();
-        fadeInControls.setDuration(Duration.millis(fadeInTime - fadeInTime * controls.getOpacity()));
+        fadeInControls.setDuration(Duration.millis(fadeInTime - fadeInTime * overlay.getOpacity()));
         fadeInControls.play();
     }
 
     ChangeListener<Number> workaround = (observable, oldValue, newValue) -> mediaPlayer.pause(); //listener used in workaround
+
+    @FXML
+    private void test()
+    {
+        System.out.println("testing");
+    }
 }
