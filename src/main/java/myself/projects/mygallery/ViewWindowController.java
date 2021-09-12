@@ -1,6 +1,9 @@
 package myself.projects.mygallery;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.*;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
@@ -80,6 +83,10 @@ public class ViewWindowController
     int fadeOutTime = 500, fadeInTime = 100;
     FadeTransition fadeOutControls = new FadeTransition(),
                    fadeInControls = new FadeTransition();
+
+    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture<?> future;
+    private static final long fadeDelay = 500;
 
     public void init(ViewItem viewItem, Stage stage)
     {
@@ -216,14 +223,20 @@ public class ViewWindowController
         fadeOutControls.setToValue(0);
         fadeInControls.setToValue(1);
         //transition easing (i wonder why there isn't a simple ease() function for animations)
-        fadeOutControls.setInterpolator(new Interpolator()
-        {
-            @Override
-            protected double curve(double t) { return Math.pow(t, 2); }
-        });
+        fadeOutControls.setInterpolator(new Interpolator() { @Override protected double curve(double t) { return Math.pow(t, 2); }});
         //sets fade transition listeners
-        borderPane.setOnMouseMoved(e -> { if(overlay.getOpacity() != 1) fadeInControls(); });
-        borderPane.getScene().setOnMouseExited(e -> { if(overlay.getOpacity() != 0 && !rateMenuBtn.isShowing()) fadeOutControls(); });
+        borderPane.setOnMouseMoved(e ->
+        {
+            if(overlay.getOpacity() != 1) fadeInControls();
+            //set fade scheduler
+            if(future != null) future.cancel(false);
+            future = executor.schedule(this::fadeOutControls, fadeDelay, TimeUnit.MILLISECONDS);
+        });
+        borderPane.getScene().setOnMouseExited(e ->
+        {
+            if(overlay.getOpacity() != 0 && !rateMenuBtn.isShowing()) fadeOutControls();
+            if(future != null) future.cancel(false);
+        });
         rateMenuBtn.showingProperty().addListener((observable, oldValue, newValue) -> { if(oldValue && !overlay.isHover()) fadeOutControls(); });
 
         //aligning media controls (extremely primitive...)
@@ -422,10 +435,4 @@ public class ViewWindowController
     }
 
     ChangeListener<Number> workaround = (observable, oldValue, newValue) -> mediaPlayer.pause(); //listener used in workaround
-
-    @FXML
-    private void test()
-    {
-        System.out.println("testing");
-    }
 }
