@@ -1,8 +1,6 @@
 package myself.projects.mygallery;
 
 import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.*;
 
 import javafx.animation.FadeTransition;
@@ -10,6 +8,7 @@ import javafx.animation.Interpolator;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -426,12 +425,14 @@ public class ViewWindowController
         fadeInControls.stop();
         fadeOutControls.setDuration(Duration.millis(fadeOutTime * overlay.getOpacity()));
         fadeOutControls.play();
+        borderPane.setCursor(Cursor.NONE);
     }
     private void fadeInControls()
     {
         fadeOutControls.stop();
         fadeInControls.setDuration(Duration.millis(fadeInTime - fadeInTime * overlay.getOpacity()));
         fadeInControls.play();
+        borderPane.setCursor(Cursor.DEFAULT);
     }
 
     ChangeListener<Number> workaround = (observable, oldValue, newValue) -> mediaPlayer.pause(); //listener used in workaround
