@@ -111,7 +111,7 @@ public class ViewWindowController
             if(overlay.getOpacity() != 1) fadeInControls();
             //set fade scheduler
             if(future != null) future.cancel(false);
-            future = executor.schedule(this::fadeOutControls, fadeDelay, TimeUnit.MILLISECONDS);
+            future = executor.schedule(() -> { if(!controls.isHover()) fadeOutControls(); }, fadeDelay, TimeUnit.MILLISECONDS);
         });
         borderPane.getScene().setOnMouseExited(e ->
         {
@@ -346,7 +346,7 @@ public class ViewWindowController
     {
         if(e.getClickCount() == 2)
             stage.setFullScreen(!stage.isFullScreen());
-        else if(!controls.isHover())
+        else //if(!controls.isHover())
         {
             if(overlay.getOpacity() != 1) fadeInControls();
             else if(overlay.getOpacity() != 0) fadeOutControls();
