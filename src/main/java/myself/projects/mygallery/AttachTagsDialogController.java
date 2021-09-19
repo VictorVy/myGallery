@@ -38,7 +38,7 @@ public class AttachTagsDialogController
     @FXML
     private Menu selectionMenu;
 
-    private final ImageView sortImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
+    private final ImageView sortImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/sortDir.png")));
 
     public void init(ViewItem viewItem)
     {
@@ -88,13 +88,7 @@ public class AttachTagsDialogController
     }
 
     @FXML
-    private void tagListContextMenuRequested()
-    {
-        if(tagListView.getItems().isEmpty())
-            selectionMenu.setDisable(true);
-        else
-            selectionMenu.setDisable(false);
-    }
+    private void tagListContextMenuRequested() { selectionMenu.setDisable(tagListView.getItems().isEmpty()); }
 
     @FXML
     private void toggleSort() { sortTags(); }

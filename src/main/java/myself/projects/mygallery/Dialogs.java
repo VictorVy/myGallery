@@ -14,7 +14,7 @@ public class Dialogs
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Dialogs.class.getResource("/myself/projects/mygallery/images/bin.png").toString()));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(String.valueOf(Dialogs.class.getResource("/myself/projects/mygallery/images/bin.png"))));
 //        alert.initOwner(Main.stage);
 
         //setting expandable content
@@ -35,7 +35,7 @@ public class Dialogs
         alert.setTitle("Incorrect Filetype");
         alert.setHeaderText(null);
         alert.setContentText("Unsupported file format!");
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Dialogs.class.getResource("/myself/projects/mygallery/images/fileError.png").toString()));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(String.valueOf(Dialogs.class.getResource("/myself/projects/mygallery/images/fileError.png"))));
 
         //creating and setting expandable content
         StringBuilder names = new StringBuilder("Items: \n");
@@ -63,7 +63,7 @@ public class Dialogs
         TextInputDialog dialog = new TextInputDialog();
 
         dialog.getDialogPane().setPrefWidth(250);
-        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Dialogs.class.getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(String.valueOf(Dialogs.class.getResource("/myself/projects/mygallery/images/gallery.png"))));
 
         dialog.setTitle("Create Tags");
         dialog.setHeaderText("Enter tag name(s):");

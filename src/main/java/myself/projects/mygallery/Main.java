@@ -31,11 +31,11 @@ public class Main extends Application
         mainController.init(); //regular initialize doesn't work...
 
         Scene scene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
-        scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+        scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
 
         Main.stage = stage;
         stage.setTitle("myGallery");
-        stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+        stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
         stage.setOnCloseRequest(e ->
         {
             e.consume();

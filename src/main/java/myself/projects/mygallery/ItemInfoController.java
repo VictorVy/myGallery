@@ -50,7 +50,7 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
     @FXML
     private Menu selectionMenu;
 
-    private final ImageView sortImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
+    private final ImageView sortImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/sortDir.png")));
 
     public void init(ViewItem viewItem)
     {
@@ -123,10 +123,10 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
 
             Stage stage = new Stage();
             stage.setTitle("Attach tags");
-            stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+            stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 350, 350);
-            scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             stage.setScene(scene);

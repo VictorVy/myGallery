@@ -21,7 +21,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -69,8 +68,8 @@ public class MainController
 
     public TagManagerController tagManagerController;
 
-    private final ImageView sortDirImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString()),
-                            searchImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/search.png").toString());
+    private final ImageView sortDirImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/sortDir.png"))),
+                            searchImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/search.png")));
 
     public void init()
     {
@@ -168,10 +167,10 @@ public class MainController
 
             Stage stage = new Stage();
             stage.setTitle("Tag Manager");
-            stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+            stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 350, 500);
-            scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             stage.setScene(scene);
@@ -435,10 +434,10 @@ public class MainController
 
             Stage stage = new Stage();
             stage.setTitle(viewItem.getName() + "." + viewItem.getType());
-            stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+            stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
 
             stage.setScene(scene);
 
@@ -459,10 +458,10 @@ public class MainController
 
             Stage stage = new Stage();
             stage.setTitle(viewItem.getName() + "." + viewItem.getType());
-            stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+            stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 300, 450);
-            scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
 
             stage.setScene(scene);
 
@@ -483,10 +482,10 @@ public class MainController
 
             Stage stage = new Stage();
             stage.setTitle(viewItem.getName() + "." + viewItem.getType());
-            stage.getIcons().add(new Image(getClass().getResource("/myself/projects/mygallery/images/gallery.png").toString()));
+            stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 300, 450);
-            scene.getStylesheets().add(getClass().getResource("/myself/projects/mygallery/style.css").toString());
+            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
 
             stage.setScene(scene);
 

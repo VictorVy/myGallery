@@ -15,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -46,7 +47,7 @@ public class ViewWindowController
     @FXML
     private Slider progressBar, volumeSlider, rateSlider;
     @FXML
-    private Button btnPlay;
+    private Button btnPlay, btnFullScreen;
     @FXML
     private HBox leftControls, rightControls, rCornerControls;
     @FXML
@@ -61,14 +62,16 @@ public class ViewWindowController
     @FXML
     private Tooltip progressTooltip, playTooltip, volumeTooltip, muteTooltip;
 
-    ImageView pauseImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/pause.png").toString()),
-              playImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/play.png").toString()),
-              loopImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/loop.png").toString()),
-              volMuteImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/volMute.png").toString()),
-              volLImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/volL.png").toString()),
-              volMImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/volM.png").toString()),
-              volHImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/volH.png").toString()),
-              rateImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/rate.png").toString());
+    ImageView pauseImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/pause.png"))),
+              playImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/play.png"))),
+              loopImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/loop.png"))),
+              volMuteImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/volMute.png"))),
+              volLImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/volL.png"))),
+              volMImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/volM.png"))),
+              volHImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/volH.png"))),
+              rateImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/rate.png"))),
+              fullScreenImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/fullScreen.png"))),
+              normalScreenImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/normalScreen.png")));
 
     double maxHeight = Main.screenHeight * 0.75, maxWidth = Main.screenWidth * 0.75;
     Stage stage;
@@ -83,7 +86,7 @@ public class ViewWindowController
     FadeTransition fadeOutControls = new FadeTransition(),
                    fadeInControls = new FadeTransition();
 
-    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture<?> future;
     private static final long fadeDelay = 500;
 
@@ -92,6 +95,29 @@ public class ViewWindowController
         this.viewItem = viewItem;
         this.stage = stage;
         stage.setOnCloseRequest(e -> close());
+        stage.setFullScreenExitHint("");
+        borderPane.setCursor(Cursor.DEFAULT);
+
+        //prepares fade transitions
+        fadeOutControls.setNode(overlay);
+        fadeInControls.setNode(overlay);
+        fadeOutControls.setToValue(0);
+        fadeInControls.setToValue(1);
+        //transition easing (i wonder why there isn't a simple ease() function for animations)
+        fadeOutControls.setInterpolator(new Interpolator() { @Override protected double curve(double t) { return Math.pow(t, 2); }});
+        //sets fade transition listeners
+        borderPane.setOnMouseMoved(e ->
+        {
+            if(overlay.getOpacity() != 1) fadeInControls();
+            //set fade scheduler
+            if(future != null) future.cancel(false);
+            future = executor.schedule(this::fadeOutControls, fadeDelay, TimeUnit.MILLISECONDS);
+        });
+        borderPane.getScene().setOnMouseExited(e ->
+        {
+            if(overlay.getOpacity() != 0 && !rateMenuBtn.isShowing()) fadeOutControls();
+            if(future != null) future.cancel(false);
+        });
 
         //prepares viewport according to media type
         Node node;
@@ -108,7 +134,7 @@ public class ViewWindowController
         }
         else if(MiscUtils.isAudio(viewItem.getType()))
         {
-            imageViewInit(new Image(getClass().getResource("/myself/projects/mygallery/images/music.png").toString()));
+            imageViewInit(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/music.png"))));
             audioPlayerInit();
             node = imageView;
         }
@@ -190,6 +216,7 @@ public class ViewWindowController
     {
         btnPlay.setPrefHeight(btnSize);
         btnPlay.setPrefWidth(btnSize);
+        stage.fullScreenProperty().addListener((observable, oldValue, newValue) -> btnFullScreen.setGraphic(newValue ? normalScreenImg: fullScreenImg));
 
         mediaPlayer = new MediaPlayer(new Media(new File(viewItem.getPath()).toURI().toString()));
         mediaPlayer.setAutoPlay(true);
@@ -216,26 +243,7 @@ public class ViewWindowController
 
     private void mediaControlsInit()
     {
-        //prepares fade transitions
-        fadeOutControls.setNode(overlay);
-        fadeInControls.setNode(overlay);
-        fadeOutControls.setToValue(0);
-        fadeInControls.setToValue(1);
-        //transition easing (i wonder why there isn't a simple ease() function for animations)
-        fadeOutControls.setInterpolator(new Interpolator() { @Override protected double curve(double t) { return Math.pow(t, 2); }});
-        //sets fade transition listeners
-        borderPane.setOnMouseMoved(e ->
-        {
-            if(overlay.getOpacity() != 1) fadeInControls();
-            //set fade scheduler
-            if(future != null) future.cancel(false);
-            future = executor.schedule(this::fadeOutControls, fadeDelay, TimeUnit.MILLISECONDS);
-        });
-        borderPane.getScene().setOnMouseExited(e ->
-        {
-            if(overlay.getOpacity() != 0 && !rateMenuBtn.isShowing()) fadeOutControls();
-            if(future != null) future.cancel(false);
-        });
+        //fixing fade bug regarding menu button
         rateMenuBtn.showingProperty().addListener((observable, oldValue, newValue) -> { if(oldValue && !overlay.isHover()) fadeOutControls(); });
 
         //aligning media controls (extremely primitive...)
@@ -279,6 +287,13 @@ public class ViewWindowController
         rateImg.setFitHeight(btnSize * 0.5);
         rateImg.setFitWidth(btnSize * 0.5);
         rateMenuBtn.setGraphic(rateImg);
+        //btnFullScreen graphics
+        fullScreenImg.setFitHeight(graphicRatio);
+        fullScreenImg.setFitWidth(graphicRatio);
+        normalScreenImg.setFitHeight(graphicRatio);
+        normalScreenImg.setFitWidth(graphicRatio);
+//        btnFullScreen.setPadding(new Insets(3, 4, 3, 4)); //TODO: fix padding
+        btnFullScreen.setGraphic(fullScreenImg);
 
         //progressBar slider
         progressBar.setMax(mediaPlayer.getTotalDuration().toMillis());
@@ -323,13 +338,15 @@ public class ViewWindowController
         });
 
         //prepares rest of media controls
-        mediaPlayer.setOnReady(() -> mediaControlsInit());
+        mediaPlayer.setOnReady(this::mediaControlsInit);
     }
 
     @FXML
-    private void windowClicked()
+    private void windowClicked(MouseEvent e)
     {
-        if(!controls.isHover())
+        if(e.getClickCount() == 2)
+            stage.setFullScreen(!stage.isFullScreen());
+        else if(!controls.isHover())
         {
             if(overlay.getOpacity() != 1) fadeInControls();
             else if(overlay.getOpacity() != 0) fadeOutControls();
@@ -352,6 +369,8 @@ public class ViewWindowController
         else
             mediaPlayer.play();
     }
+    @FXML
+    private void btnFullScreen() { stage.setFullScreen(!stage.isFullScreen()); }
 
     @FXML
     private void sliderClicked() { seek(progressBar.getValue()); }

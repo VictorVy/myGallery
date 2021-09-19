@@ -34,7 +34,7 @@ public class TagManagerController
     @FXML
     private Menu selectionMenu;
 
-    private final ImageView sortImg = new ImageView(getClass().getResource("/myself/projects/mygallery/images/sortDir.png").toString());
+    private final ImageView sortImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/sortDir.png")));
 
     public void init(Stage stage)
     {

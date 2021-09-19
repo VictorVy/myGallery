@@ -308,30 +308,4 @@ public class SQLConnector
         try { connection.close(); }
         catch (SQLException e) { e.printStackTrace(); }
     }
-
-//    public static void testPrint()
-//    {
-//        try
-//        {
-//            ResultSet rs = statement.executeQuery("SELECT * FROM fileTagXRef");
-//
-//            while(rs.next()) System.out.println(rs.getInt("fileID") + " to " + rs.getInt("tagID"));
-//        }
-//        catch(SQLException e)
-//        {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public static void testDelete()
-//    {
-//        try
-//        {
-//            statement.execute("DELETE FROM tags");
-//        }
-//        catch(SQLException e)
-//        {
-//            e.printStackTrace();
-//        }
-//    }
 }
