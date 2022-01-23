@@ -2,14 +2,16 @@ package myself.projects.mygallery;
 
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.BorderPane;
 
-public class ViewItemWrapper extends StackPane
+public class ViewItemWrapper extends BorderPane
 {
     private final ViewItem viewItem;
 
@@ -20,8 +22,14 @@ public class ViewItemWrapper extends StackPane
         viewItem = vi;
 
         ImageView imageView = new ImageView("file:" + viewItem.getThumb());
-        getChildren().add(imageView);
-        setAlignment(Pos.CENTER);
+        setCenter(imageView);
+        setBottom(new Label(viewItem.getName() + "." + viewItem.getType()));
+        ((Label) getBottom()).setMaxWidth(Main.mainController.thumbSizeLimit);
+        ((Label) getBottom()).setWrapText(true);
+        ((Label) getBottom()).setAlignment(Pos.CENTER);
+
+        setAlignment(getCenter(), Pos.BOTTOM_CENTER);
+        setMargin(getBottom(), new Insets(4, 0, 0, 0));
         setOnMouseClicked(this::mouseClicked);
 
         getStyleClass().add("view-item-wrapper");

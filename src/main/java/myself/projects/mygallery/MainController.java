@@ -71,6 +71,8 @@ public class MainController
     private final ImageView sortDirImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/sortDir.png"))),
                             searchImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/search.png")));
 
+    public int thumbSizeLimit = 150;
+
     public void init()
     {
         //updates/synchronizes selections between views
@@ -123,7 +125,7 @@ public class MainController
             //prepares context menus
             ContextMenu contextMenu = new ContextMenu();
             MenuItem removeMenuItem = new MenuItem("Remove Items");
-            removeMenuItem.setOnAction(e -> Main.mainController.removeFiles());
+            removeMenuItem.setOnAction(e -> removeFiles());
             contextMenu.getItems().add(removeMenuItem);
             //handles clicks
             row.setOnMouseClicked(e -> clickedDetailsRow = row);
@@ -206,7 +208,7 @@ public class MainController
             //inserts items into the db
             SQLConnector.insertFiles(addedItems);
             //generates thumbnails
-            MiscUtils.createThumbs(addedItems, 150);
+            MiscUtils.createThumbs(addedItems, thumbSizeLimit);
 
             updateViews();
 
@@ -378,7 +380,7 @@ public class MainController
         if(MiscUtils.wrongFiles(dragFiles).size() == 0)
         {
             SQLConnector.insertFiles(MiscUtils.filesToViewItems(dragFiles));
-            MiscUtils.createThumbs(MiscUtils.filesToViewItems(dragFiles), 150);
+            MiscUtils.createThumbs(MiscUtils.filesToViewItems(dragFiles), thumbSizeLimit);
 
             updateViews();
         }
