@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<TabPane fx:id="tabPane" prefWidth="300" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.ItemInfoController">
+   <tabs>
+      <Tab closable="false" text="General">
+         <content>
+            <GridPane hgap="10.0" vgap="10.0">
+               <columnConstraints>
+                  <ColumnConstraints fillWidth="false" halignment="LEFT" hgrow="NEVER" minWidth="-Infinity" />
+                  <ColumnConstraints fillWidth="false" halignment="LEFT" hgrow="ALWAYS" />
+                  <ColumnConstraints fillWidth="false" halignment="CENTER" hgrow="NEVER" minWidth="-Infinity" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints minHeight="-Infinity" valignment="TOP" vgrow="ALWAYS" />
+                  <RowConstraints valignment="BASELINE" vgrow="ALWAYS" />
+               </rowConstraints>
+               <children>
+                  <Label text="Name:" />
+                  <Label fx:id="nameLbl" GridPane.columnIndex="1" />
+                  <Label text="Type:" GridPane.rowIndex="1" />
+                  <Label fx:id="typeLbl" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Separator prefWidth="${tabPane.width}" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                  <Label text="Path:" GridPane.rowIndex="3" />
+                  <Label fx:id="pathLbl" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label text="Created:" GridPane.rowIndex="4" />
+                  <Label fx:id="cDateLbl" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Separator prefWidth="${tabPane.width}" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                  <Label text="Tags:" GridPane.rowIndex="6" />
+                  <Label fx:id="tagsLbl" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <Button mnemonicParsing="false" onAction="#editTags" text="Edit" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                     <tooltip>
+                        <Tooltip text="Attach tags" />
+                     </tooltip>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+            </GridPane>
+         </content>
+      </Tab>
+      <Tab fx:id="tagsTab" closable="false" text="Tags">
+         <content>
+            <BorderPane>
+               <center>
+                  <ListView fx:id="tagListView" editable="true" onContextMenuRequested="#tagListContextMenuRequested" onMouseClicked="#tagListMouseClicked" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+                     </BorderPane.margin>
+                     <contextMenu>
+                        <ContextMenu fx:id="tagListContextMenu">
+                           <items>
+                              <MenuItem mnemonicParsing="false" onAction="#attachTags" text="Attach..." />
+                              <Menu fx:id="selectionMenu" mnemonicParsing="false" text="Selection">
+                                 <items>
+                                    <MenuItem mnemonicParsing="false" onAction="#selectAll" text="Select all" />
+                                    <MenuItem mnemonicParsing="false" onAction="#clearSelection" text="Clear" />
+                                 </items>
+                              </Menu>
+                              <MenuItem fx:id="removeMenuItem" mnemonicParsing="false" onAction="#removeTags" text="Remove" />
+                           </items>
+                        </ContextMenu>
+                     </contextMenu>
+                  </ListView>
+               </center>
+               <top>
+                  <HBox prefHeight="0.0" prefWidth="0.0" spacing="10.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#attachTags" text="+">
+                           <tooltip>
+                              <Tooltip text="Attach tags" />
+                           </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#removeTags" text="-">
+                           <tooltip>
+                              <Tooltip text="Remove tags" />
+                           </tooltip>
+                        </Button>
+                        <TextField fx:id="searchBar" promptText="Search..." HBox.hgrow="ALWAYS" />
+                        <MenuButton fx:id="sortBtn" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+                           <items>
+                              <RadioMenuItem fx:id="ascSort" mnemonicParsing="false" onAction="#toggleSort" selected="true" text="Ascending">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="sortToggleGroup" />
+                                 </toggleGroup>
+                              </RadioMenuItem>
+                              <RadioMenuItem mnemonicParsing="false" onAction="#toggleSort" text="Descending" toggleGroup="$sortToggleGroup" />
+                           </items>
+                           <tooltip>
+                              <Tooltip text="Sort tags" />
+                           </tooltip>
+                        </MenuButton>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+                     </BorderPane.margin>
+                  </HBox>
+               </top>
+            </BorderPane>
+         </content>
+      </Tab>
+   </tabs>
+</TabPane>

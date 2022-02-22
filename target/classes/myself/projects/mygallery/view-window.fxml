@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.CustomMenuItem?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.media.MediaView?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="borderPane" onMouseClicked="#windowClicked" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.ViewWindowController">
+   <center>
+      <StackPane BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="imageView" disable="true" pickOnBounds="true" preserveRatio="true" visible="false">
+               <viewport>
+                  <Rectangle2D />
+               </viewport></ImageView>
+            <MediaView fx:id="mediaView" disable="true" visible="false">
+               <viewport>
+                  <Rectangle2D />
+               </viewport></MediaView>
+            <BorderPane fx:id="overlay">
+               <bottom>
+                  <VBox fx:id="controls" alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Slider fx:id="progressBar" minHeight="0.0" onMouseClicked="#sliderClicked" onMouseDragged="#sliderDragged" onMousePressed="#sliderPressed" onMouseReleased="#sliderReleased" prefHeight="0.0" VBox.vgrow="NEVER">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </VBox.margin>
+                           <tooltip>
+                              <Tooltip fx:id="progressTooltip" text="0:00" />
+                           </tooltip></Slider>
+                        <AnchorPane fx:id="controlAnchor">
+                           <children>
+                              <HBox fx:id="leftControls" alignment="CENTER_RIGHT" nodeOrientation="RIGHT_TO_LEFT" prefHeight="${btnPlay.height}" spacing="15.0" AnchorPane.bottomAnchor="0.0">
+                                 <children>
+                                    <ToggleButton fx:id="loopToggle" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#toggleLoop">
+                                       <tooltip>
+                                          <Tooltip text="Toggle repeat" />
+                                       </tooltip></ToggleButton>
+                                    <Label fx:id="lblTime" alignment="CENTER" contentDisplay="TEXT_ONLY" text="0:00" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
+                                 </children>
+                              </HBox>
+                              <Button fx:id="btnPlay" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#btnPlay" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <tooltip>
+                                    <Tooltip fx:id="playTooltip" text="Play" />
+                                 </tooltip>
+                              </Button>
+                              <HBox fx:id="rightControls" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="${btnPlay.height}" spacing="15.0" AnchorPane.bottomAnchor="0.0">
+                                 <children>
+                                    <ToggleButton fx:id="muteToggle" contentDisplay="GRAPHIC_ONLY" maxHeight="10.0" maxWidth="10.0" mnemonicParsing="false" onAction="#toggleMute">
+                                       <HBox.margin>
+                                          <Insets right="-5.0" />
+                                       </HBox.margin>
+                                       <tooltip>
+                                          <Tooltip fx:id="muteTooltip" text="Mute" />
+                                       </tooltip>
+                                    </ToggleButton>
+                                    <Slider fx:id="volumeSlider" blockIncrement="0.01" max="1.0" prefWidth="100.0" value="1.0" HBox.hgrow="NEVER">
+                                       <tooltip>
+                                          <Tooltip fx:id="volumeTooltip" text="100" />
+                                       </tooltip></Slider>
+                                 </children></HBox>
+                              <HBox fx:id="rCornerControls" alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="${btnPlay.height}" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" prefWidth="25.0">
+                                       <children>
+                                          <Label fx:id="lblRate" contentDisplay="TEXT_ONLY" text="1.0" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                       <HBox.margin>
+                                          <Insets right="-8.0" />
+                                       </HBox.margin>
+                                    </HBox>
+                                    <MenuButton fx:id="rateMenuBtn" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP">
+                                      <items>
+                                          <CustomMenuItem fx:id="expandMenuItem" hideOnClick="false" mnemonicParsing="false">
+                                            <content>
+                                              <CheckBox fx:id="expandCheckBox" onAction="#rateExpand" text="Expand Range" />
+                                            </content>
+                                          </CustomMenuItem>
+                                          <CustomMenuItem fx:id="rateMenuItem" hideOnClick="false" mnemonicParsing="false">
+                                             <content>
+                                                <Slider fx:id="rateSlider" blockIncrement="0.05" majorTickUnit="0.5" max="2.0" minorTickCount="1" prefWidth="125.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
+                                             </content>
+                                          </CustomMenuItem>
+                                      </items>
+                                       <font>
+                                          <Font name="Monospaced Regular" size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Adjust play speed" />
+                                       </tooltip>
+                                    </MenuButton>
+                                    <Button fx:id="btnFullScreen" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#btnFullScreen" />
+                                 </children>
+                              </HBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </AnchorPane>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <BorderPane.margin>
+                        <Insets bottom="10.0" />
+                     </BorderPane.margin>
+                  </VBox>
+               </bottom>
+            </BorderPane>
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>

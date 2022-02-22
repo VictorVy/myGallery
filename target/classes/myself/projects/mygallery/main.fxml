@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.CustomMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="myself.projects.mygallery.MainController">
+   <center>
+      <TabPane fx:id="viewTabPane" onDragDropped="#dragDropView" onDragOver="#dragOverView" prefHeight="0.0" prefWidth="0.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+         <tabs>
+            <Tab fx:id="galleryTab" closable="false" text="Gallery">
+               <content>
+                  <ScrollPane fx:id="galleryScroll" hbarPolicy="NEVER" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefViewportHeight="296.0" prefViewportWidth="560.0" prefWidth="0.0">
+                     <content>
+                        <FlowPane fx:id="galleryView" focusTraversable="true" hgap="20.0" onContextMenuRequested="#viewContextMenuRequested" onMouseClicked="#galleryClicked" prefHeight="${galleryScroll.height}" prefWrapLength="${galleryScroll.width}" vgap="20.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </FlowPane>
+                     </content>
+                  </ScrollPane>
+               </content>
+               <tooltip>
+                  <Tooltip text="Gallery view" />
+               </tooltip></Tab>
+            <Tab fx:id="detailsTab" closable="false" text="Details">
+               <content>
+                  <TableView fx:id="detailsView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" minWidth="10.0" onContextMenuRequested="#viewContextMenuRequested" onMouseClicked="#detailsClicked" tableMenuButtonVisible="true">
+                     <columns>
+                        <TableColumn fx:id="nameColumn" maxWidth="1000.0" prefWidth="100.0" sortable="false" text="Name">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#nameColHide" text="Hide" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></TableColumn>
+                        <TableColumn fx:id="typeColumn" editable="false" maxWidth="1000.0" prefWidth="75.0" sortable="false" text="Type">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#typeColHide" text="Hide" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></TableColumn>
+                        <TableColumn fx:id="pathColumn" editable="false" maxWidth="1000.0" prefWidth="175.0" sortable="false" text="Path">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#pathColHide" text="Hide" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></TableColumn>
+                        <TableColumn fx:id="cDateColumn" editable="false" maxWidth="1000.0" prefWidth="125.0" sortable="false" text="Creation Date">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#cDateColHide" text="Hide" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></TableColumn>
+                        <TableColumn fx:id="aDateColumn" editable="false" maxWidth="1000.0" prefWidth="125.0" sortable="false" text="Date Added" visible="false">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#aDateColHide" text="Hide" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></TableColumn>
+                     </columns>
+                  </TableView>
+               </content>
+               <tooltip>
+                  <Tooltip text="Details view" />
+               </tooltip>
+            </Tab>
+         </tabs>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </BorderPane.margin>
+      </TabPane>
+   </center>
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                        <MenuItem mnemonicParsing="false" onAction="#addFiles" text="Add Items..." />
+                        <Menu mnemonicParsing="false" text="Remove Items">
+                          <items>
+                            <MenuItem mnemonicParsing="false" onAction="#removeFiles" text="Selected" />
+                              <MenuItem mnemonicParsing="false" onAction="#removeAll" text="All" />
+                          </items>
+                        </Menu>
+                        <MenuItem mnemonicParsing="false" onAction="#updateViews" text="Refresh" />
+                        <MenuItem mnemonicParsing="false" onAction="#syncFiles" text="Sync Files" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem mnemonicParsing="false" onAction="#close" text="Exit" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Selection">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#selectAll" text="Select All" />
+                        <MenuItem mnemonicParsing="false" onAction="#clearSelection" text="Clear Selection" />
+                     </items>
+                </Menu>
+                  <Menu mnemonicParsing="false" text="View">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#manageTags" text="Tag Manager" />
+                      <MenuItem mnemonicParsing="false" onAction="#viewThumbnails" text="Thumbnails" />
+                    </items>
+                  </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#helpHelp" text="Help" />
+                        <MenuItem mnemonicParsing="false" onAction="#helpSrcCode" text="Source Code" />
+                        <MenuItem mnemonicParsing="false" onAction="#helpReleases" text="Releases" />
+                        <MenuItem mnemonicParsing="false" onAction="#helpAbout" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <HBox spacing="10.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#addFiles" text="+">
+                     <tooltip>
+                        <Tooltip text="Add items" />
+                     </tooltip></Button>
+                  <Button mnemonicParsing="false" onAction="#removeFiles" text="-">
+                     <tooltip>
+                        <Tooltip text="Remove items" />
+                     </tooltip></Button>
+                  <TextField fx:id="searchBar" onKeyPressed="#searchKeyPressed" promptText="Search..." HBox.hgrow="ALWAYS" />
+                  <SplitMenuButton fx:id="searchBtn" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#search">
+                     <tooltip>
+                        <Tooltip text="Search items" />
+                     </tooltip>
+                     <items>
+                        <CustomMenuItem id="searchAllMI" fx:id="searchAllMI" hideOnClick="false" mnemonicParsing="false">
+                          <content>
+                            <CheckBox fx:id="searchAll" onAction="#searchByAll" text="All">
+                                 <tooltip>
+                                    <Tooltip text="Search by all" />
+                                 </tooltip></CheckBox>
+                          </content>
+                        </CustomMenuItem>
+                        <CustomMenuItem id="searchNameMI" hideOnClick="false" mnemonicParsing="false">
+                           <content>
+                              <CheckBox fx:id="searchName" onAction="#searchBy" selected="true" text="Name">
+                                 <tooltip>
+                                    <Tooltip text="Search by name" />
+                                 </tooltip></CheckBox>
+                           </content>
+                        </CustomMenuItem>
+                        <CustomMenuItem id="searchTypeMI" hideOnClick="false" mnemonicParsing="false">
+                           <content>
+                              <CheckBox fx:id="searchType" onAction="#searchBy" text="Type">
+                                 <tooltip>
+                                    <Tooltip text="Search by type" />
+                                 </tooltip></CheckBox>
+                           </content>
+                        </CustomMenuItem>
+                        <CustomMenuItem id="searchTagsMI" hideOnClick="false" mnemonicParsing="false">
+                           <content>
+                              <CheckBox fx:id="searchTags" onAction="#searchBy" text="Tags">
+                                 <tooltip>
+                                    <Tooltip text="Search by tags" />
+                                 </tooltip></CheckBox>
+                           </content>
+                        </CustomMenuItem>
+                     </items>
+                  </SplitMenuButton>
+                  <MenuButton fx:id="sortMenuBtn" contentDisplay="TEXT_ONLY" mnemonicParsing="false" text="Sort By">
+                     <items>
+                        <RadioMenuItem fx:id="aDateSort" mnemonicParsing="false" onAction="#sortToggle" selected="true" text="Recently Added">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="sortToggleGroup" />
+                           </toggleGroup>
+                        </RadioMenuItem>
+                        <RadioMenuItem fx:id="nameSort" mnemonicParsing="false" onAction="#sortToggle" text="Name" toggleGroup="$sortToggleGroup" />
+                        <RadioMenuItem fx:id="typeSort" mnemonicParsing="false" onAction="#sortToggle" text="Type" toggleGroup="$sortToggleGroup" />
+                        <RadioMenuItem fx:id="cDateSort" mnemonicParsing="false" onAction="#sortToggle" text="Creation Date" toggleGroup="$sortToggleGroup" />
+                     </items>
+                     <tooltip>
+                        <Tooltip text="Sort items" />
+                     </tooltip>
+                  </MenuButton>
+                  <MenuButton fx:id="sortDirBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="24.0" minHeight="0.0" mnemonicParsing="false">
+                    <items>
+                        <RadioMenuItem fx:id="ascSortDir" mnemonicParsing="false" onAction="#sortDirToggle" selected="true" text="Ascending">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="sortDirToggleGroup" />
+                           </toggleGroup>
+                        </RadioMenuItem>
+                        <RadioMenuItem mnemonicParsing="false" onAction="#sortDirToggle" text="Descending" toggleGroup="$sortDirToggleGroup" />
+                    </items>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <tooltip>
+                        <Tooltip text="Choose order" />
+                     </tooltip>
+                  </MenuButton>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+</BorderPane>
