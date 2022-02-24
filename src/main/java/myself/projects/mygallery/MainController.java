@@ -2,6 +2,8 @@ package myself.projects.mygallery;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -68,6 +70,8 @@ public class MainController
 
     public TagManagerController tagManagerController;
 
+//    AddFilesThread addFilesThread = new AddFilesThread();
+
     private final ImageView sortDirImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/sortDir.png"))),
                             searchImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/search.png")));
 
@@ -107,6 +111,7 @@ public class MainController
         tagManagerInit();
         updateViews();
     }
+
     private void detailsViewInit()
     {
         detailsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -204,26 +209,11 @@ public class MainController
         if(files != null)
         {
             ObservableList<ViewItem> addedItems = MiscUtils.filesToViewItems(files);
-
             addItems(addedItems, thumbSizeLimit);
-
-            detailsView.getSelectionModel().clearSelection();
-            for(ViewItem vi : addedItems) detailsView.getSelectionModel().select(ViewItem.indexOf(getViewItems(), vi));
         }
     }
 
-    private void addItems(ObservableList<ViewItem> items, int tsl)
-    {
-        //inserts items into the db
-        SQLConnector.insertFiles(items);
-        //generates thumbnails
-        MiscUtils.createThumbs(items, tsl);
-
-        updateViews();
-
-        //selects newly added items TODO: create method
-        SelectionHandler.findAndSelect(items);
-    }
+    private void addItems(ObservableList<ViewItem> items, int tsl) { new addItemsService(items, tsl).start(); }
 
     @FXML
     public void removeFiles()
@@ -518,4 +508,41 @@ public class MainController
 
     @FXML
     private void close() { Main.close(); }
+
+    private class addItemsService extends Service<Void>
+    {
+        ObservableList<ViewItem> items;
+        int tsl;
+
+        private addItemsService(ObservableList<ViewItem> items, int tsl)
+        {
+            this.items = items;
+            this.tsl = tsl;
+
+            setOnSucceeded(e ->
+            {
+                updateViews();
+                //selects newly added items TODO: create method
+                SelectionHandler.findAndSelect(items);
+            });
+        }
+
+        @Override
+        protected Task<Void> createTask()
+        {
+            return new Task<Void>()
+            {
+                @Override
+                protected Void call()
+                {
+                    //inserts items into the db
+                    SQLConnector.insertFiles(items);
+                    //generates thumbnails
+                    MiscUtils.createThumbs(items, tsl);
+
+                    return null;
+                }
+            };
+        }
+    }
 }
