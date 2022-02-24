@@ -205,19 +205,24 @@ public class MainController
         {
             ObservableList<ViewItem> addedItems = MiscUtils.filesToViewItems(files);
 
-            //inserts items into the db
-            SQLConnector.insertFiles(addedItems);
-            //generates thumbnails
-            MiscUtils.createThumbs(addedItems, thumbSizeLimit);
-
-            updateViews();
-
-            //selects newly added items TODO: create method
-            SelectionHandler.findAndSelect(addedItems);
+            addItems(addedItems, thumbSizeLimit);
 
             detailsView.getSelectionModel().clearSelection();
             for(ViewItem vi : addedItems) detailsView.getSelectionModel().select(ViewItem.indexOf(getViewItems(), vi));
         }
+    }
+
+    private void addItems(ObservableList<ViewItem> items, int tsl)
+    {
+        //inserts items into the db
+        SQLConnector.insertFiles(items);
+        //generates thumbnails
+        MiscUtils.createThumbs(items, tsl);
+
+        updateViews();
+
+        //selects newly added items TODO: create method
+        SelectionHandler.findAndSelect(items);
     }
 
     @FXML
@@ -379,10 +384,8 @@ public class MainController
 
         if(MiscUtils.wrongFiles(dragFiles).size() == 0)
         {
-            SQLConnector.insertFiles(MiscUtils.filesToViewItems(dragFiles));
-            MiscUtils.createThumbs(MiscUtils.filesToViewItems(dragFiles), thumbSizeLimit);
-
-            updateViews();
+            ObservableList<ViewItem> list = MiscUtils.filesToViewItems(dragFiles);
+            addItems(list, thumbSizeLimit);
         }
         else
             Dialogs.createDragAlert(MiscUtils.wrongFiles(dragFiles)).showAndWait();
