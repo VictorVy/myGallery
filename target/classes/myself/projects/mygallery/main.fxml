@@ -116,7 +116,9 @@
                           </items>
                         </Menu>
                         <MenuItem mnemonicParsing="false" onAction="#updateViews" text="Refresh" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#syncFiles" text="Sync Files" />
+                        <MenuItem mnemonicParsing="false" onAction="#showPrefs" text="Preferences" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem mnemonicParsing="false" onAction="#close" text="Exit" />
                   </items>
@@ -224,6 +226,7 @@
                         <Tooltip text="Choose order" />
                      </tooltip>
                   </MenuButton>
+                  <Button fx:id="showPrefsBtn" mnemonicParsing="false" onAction="#showPrefs" />
                </children>
                <VBox.margin>
                   <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />

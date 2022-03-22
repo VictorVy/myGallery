@@ -68,12 +68,17 @@ public class MainController
     private RadioMenuItem ascSortDir;
     boolean ascending = true;
 
+    @FXML
+    private Button showPrefsBtn;
+
     public TagManagerController tagManagerController;
+    public PreferencesController preferencesController;
 
 //    AddFilesThread addFilesThread = new AddFilesThread();
 
     private final ImageView sortDirImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/sortDir.png"))),
-                            searchImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/search.png")));
+                            searchImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/search.png"))),
+                            settingsImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/settings.png")));
 
     public int thumbSizeLimit = 150;
 
@@ -102,6 +107,10 @@ public class MainController
         sortDirImg.setFitHeight(16); //hmm...
         sortDirBtn.setGraphic(sortDirImg);
 
+        settingsImg.setPreserveRatio(true);
+        settingsImg.setFitHeight(16);
+        showPrefsBtn.setGraphic(settingsImg);
+
         //initializers
         detailsViewInit();
         viewContextMenuInit();
@@ -109,6 +118,7 @@ public class MainController
         MiscUtils.initialize();
         SelectionHandler.initialize();
         tagManagerInit();
+        preferencesInit();
         updateViews();
     }
 
@@ -188,7 +198,30 @@ public class MainController
         catch(IOException e) { e.printStackTrace(); }
     }
     @FXML
-    void manageTags() { tagManagerController.show(); }
+    private void manageTags() { tagManagerController.show(); }
+    private void preferencesInit()
+    {
+        try
+        {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myself/projects/mygallery/preferences.fxml"));
+
+            Stage stage = new Stage();
+            stage.setTitle("Preferences");
+            stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/settings.png"))));
+
+            Scene scene = new Scene(loader.load(), 800, 600);
+            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
+
+            stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
+            stage.setScene(scene);
+
+            preferencesController = loader.getController();
+            preferencesController.init(stage);
+        }
+        catch(IOException e) { e.printStackTrace(); }
+    }
+    @FXML
+    private void showPrefs() { preferencesController.show(); }
 
     //table column context menus
     @FXML private void nameColHide() { nameColumn.setVisible(false); }
