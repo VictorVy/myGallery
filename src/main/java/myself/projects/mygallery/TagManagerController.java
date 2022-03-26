@@ -58,6 +58,8 @@ public class TagManagerController
         sortBtn.setGraphic(sortImg);
 
         tagListView.setItems(filteredTags);
+
+        Main.allScenes.add(stage.getScene().getRoot());
     }
 
     void show() { stage.show(); }

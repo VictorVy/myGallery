@@ -46,6 +46,17 @@ public class SQLConnector
             statement.execute("CREATE TABLE fileTagXRef (fileID INTEGER," +
                                                         "tagID INTEGER," +
                                                         "PRIMARY KEY (fileID, tagID));");
+
+//        checking preferences table
+        check = statement.executeQuery("SELECT * FROM sqlite_master WHERE type = 'table' AND name = 'prefs';");
+        if (!check.next())
+        {
+            statement.execute("CREATE TABLE prefs (ID INTEGER PRIMARY KEY," +
+                                                  "font VARCHAR(64)," +
+                                                  "size INTEGER);");
+            //setting default prefs
+            statement.execute("INSERT INTO prefs (font, size) VALUES('System', 12);");
+        }
     }
 
     //inserts files into db

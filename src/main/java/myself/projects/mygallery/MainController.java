@@ -187,7 +187,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 350, 500);
-            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
+            scene.getStylesheets().add(Main.stylesheet);
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             stage.setScene(scene);
@@ -208,9 +208,10 @@ public class MainController
             Stage stage = new Stage();
             stage.setTitle("Preferences");
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/settings.png"))));
+            stage.setResizable(false);
 
-            Scene scene = new Scene(loader.load(), 800, 600);
-            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
+            Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(Main.stylesheet);
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             stage.setScene(scene);
@@ -465,7 +466,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
+            scene.getStylesheets().add(Main.stylesheet);
 
             stage.setScene(scene);
 
@@ -489,7 +490,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 300, 450);
-            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
+            scene.getStylesheets().add(Main.stylesheet);
 
             stage.setScene(scene);
 
@@ -513,7 +514,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 300, 450);
-            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
+            scene.getStylesheets().add(Main.stylesheet);
 
             stage.setScene(scene);
 

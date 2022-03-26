@@ -59,6 +59,8 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
         updateTags();
         generalTabInit();
         tagsTabInit();
+
+        Main.allScenes.add(tabPane.getScene().getRoot());
     }
 
     private void generalTabInit()

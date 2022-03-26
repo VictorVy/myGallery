@@ -1,6 +1,12 @@
 package myself.projects.mygallery;
 
+import com.sun.javafx.css.Rule;
+import com.sun.javafx.css.StyleManager;
+import com.sun.javafx.css.parser.CSSParser;
 import javafx.application.Application;
+import com.sun.javafx.css.Stylesheet;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,9 +22,11 @@ public class Main extends Application
 
     public static Stage stage;
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    public static ObservableList<Parent> allScenes = FXCollections.observableArrayList();
+
+    public static String stylesheet = String.valueOf(Main.class.getResource("/myself/projects/mygallery/style.css"));
+
+    public static void main(String[] args) { launch(args); }
 
     public void start(Stage stage) throws Exception
     {
@@ -31,7 +39,18 @@ public class Main extends Application
         mainController.init(); //regular initialize doesn't work...
 
         Scene scene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
-        scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
+        scene.getStylesheets().add(stylesheet);
+        allScenes.add(scene.getRoot());
+
+//        Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
+//        StyleManager.getInstance().addUserAgentStylesheet(stylesheet);
+
+//        CSSParser parser = new CSSParser();
+//        Stylesheet ss = parser.parse(getClass().getResource("/myself/projects/mygallery/style.css"));
+//        Rule rootRule = ss.getRules().get(0);
+//        rootRule.getDeclarations().stream().filter(d -> d.getProperty().equals("-fx-font-size")).map(d -> 10);
+//        ss.getRules().remove(0);
+//        rootRule.getDeclarations().get(0);
 
         Main.stage = stage;
         stage.setTitle("myGallery");

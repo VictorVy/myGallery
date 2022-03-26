@@ -146,6 +146,8 @@ public class ViewWindowController
         //selectively enables appropriate node
         node.setDisable(false);
         node.setVisible(true);
+
+        Main.allScenes.add(stage.getScene().getRoot());
     }
 
     private void imageViewInit(Image image)
