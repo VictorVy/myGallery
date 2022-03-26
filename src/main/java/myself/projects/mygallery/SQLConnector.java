@@ -165,7 +165,7 @@ public class SQLConnector
         {
             ObservableList<ViewItem> viewItems = FXCollections.observableArrayList();
 
-            if(statement != null) //I think necessary due to early calls in initializers
+            if(statement != null) //think this is necessary due to early calls in initializers :^(
             {
                 ResultSet rs = statement.executeQuery("SELECT * FROM files ORDER BY " + Main.mainController.sortBy + " " + (Main.mainController.ascending ? "ASC" : "DESC"));
 
@@ -313,6 +313,22 @@ public class SQLConnector
     private static boolean containsTag(String t) throws SQLException { return statement.executeQuery("SELECT name FROM tags WHERE name LIKE '" + t + "';").next(); }
     //checks if an xref entry exists
     private static boolean containsXRef(int fileID, String t) throws SQLException { return statement.executeQuery("SELECT * FROM fileTagXRef WHERE fileID LIKE '" + fileID + "' AND tagID LIKE '" + getTagId(t) + "';").next(); }
+
+    public static void updatePrefs(String font, Integer size)
+    {
+        try { statement.execute("UPDATE prefs SET font = '" + font + "', size = " + size + ";"); }
+        catch(SQLException e) { e.printStackTrace(); }
+    }
+
+    public static Object[] getPrefs()
+    {
+        try
+        {
+            ResultSet rs = statement.executeQuery("SELECT * FROM prefs;");
+            return new Object[] { rs.getString("font"), rs.getInt("size") };
+        }
+        catch(SQLException e) { e.printStackTrace(); return new Object[] { "System", 12 }; }
+    }
 
     public static void close()
     {

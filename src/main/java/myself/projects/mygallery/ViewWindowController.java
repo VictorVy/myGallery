@@ -148,6 +148,7 @@ public class ViewWindowController
         node.setVisible(true);
 
         Main.allScenes.add(stage.getScene().getRoot());
+        MiscUtils.updateStyles();
     }
 
     private void imageViewInit(Image image)

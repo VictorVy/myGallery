@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 //import javafx.scene.effect.*;
 //import javafx.scene.input.MouseEvent;
 //import javafx.scene.paint.Color;
+import javafx.scene.Parent;
 import net.coobird.thumbnailator.Thumbnails;
 import org.jcodec.api.JCodecException;
 import org.jcodec.api.awt.AWTFrameGrab;
@@ -271,5 +272,14 @@ public class MiscUtils
             Desktop.getDesktop().browse(URI.create(uri));
         }
         catch(IOException e) { e.printStackTrace(); }
+    }
+
+    public static void updateStyles()
+    {
+        Object[] prefs = SQLConnector.getPrefs();
+
+        for(Parent p : Main.allScenes)
+            p.setStyle("-fx-font-family: '" + prefs[0] + "';" +
+                       "-fx-font-size: " + prefs[1] + ";");
     }
 }

@@ -210,7 +210,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/settings.png"))));
             stage.setResizable(false);
 
-            Scene scene = new Scene(loader.load());
+            Scene scene = new Scene(loader.load(), 350, 300);
             scene.getStylesheets().add(Main.stylesheet);
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce

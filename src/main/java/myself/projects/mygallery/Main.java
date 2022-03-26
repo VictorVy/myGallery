@@ -45,13 +45,6 @@ public class Main extends Application
 //        Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
 //        StyleManager.getInstance().addUserAgentStylesheet(stylesheet);
 
-//        CSSParser parser = new CSSParser();
-//        Stylesheet ss = parser.parse(getClass().getResource("/myself/projects/mygallery/style.css"));
-//        Rule rootRule = ss.getRules().get(0);
-//        rootRule.getDeclarations().stream().filter(d -> d.getProperty().equals("-fx-font-size")).map(d -> 10);
-//        ss.getRules().remove(0);
-//        rootRule.getDeclarations().get(0);
-
         Main.stage = stage;
         stage.setTitle("myGallery");
         stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
@@ -62,6 +55,9 @@ public class Main extends Application
         });
         stage.setScene(scene);
         stage.show();
+
+        //update style according to prefs (can't be in MainController)
+        MiscUtils.updateStyles();
     }
 
     public static void close()
