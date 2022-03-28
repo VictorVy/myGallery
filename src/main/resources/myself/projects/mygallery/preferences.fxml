@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -30,8 +31,14 @@
                      <children>
                         <Label text="Text font:" />
                         <Label text="Text size:" GridPane.rowIndex="1" />
-                        <ChoiceBox fx:id="fontChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" />
-                        <ChoiceBox fx:id="sizeChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ChoiceBox fx:id="fontChoiceBox" prefWidth="150.0" GridPane.columnIndex="1">
+                           <tooltip>
+                              <Tooltip text="Select text font" />
+                           </tooltip></ChoiceBox>
+                        <ChoiceBox fx:id="sizeChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <tooltip>
+                              <Tooltip text="Select text size" />
+                           </tooltip></ChoiceBox>
                      </children>
                      <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
@@ -45,8 +52,14 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtn" text="Cancel" />
-            <Button fx:id="applyBtn" disable="true" mnemonicParsing="false" onAction="#applyBtn" text="Apply" />
+            <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#cancelBtn" text="Cancel">
+               <tooltip>
+                  <Tooltip text="Discard changes" />
+               </tooltip></Button>
+            <Button fx:id="applyBtn" disable="true" mnemonicParsing="false" onAction="#applyBtn" text="Apply">
+               <tooltip>
+                  <Tooltip text="Apply changes" />
+               </tooltip></Button>
          </children>
          <BorderPane.margin>
             <Insets />

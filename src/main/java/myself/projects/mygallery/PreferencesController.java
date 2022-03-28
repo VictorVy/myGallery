@@ -1,5 +1,6 @@
 package myself.projects.mygallery;
 
+import com.sun.javafx.css.StyleManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -27,14 +28,13 @@ public class PreferencesController
         sizeChoiceBox.getItems().addAll(10, 11, 12, 13, 14);
         sizeChoiceBox.setOnAction(e -> { if(applyBtn.isDisabled()) applyBtn.setDisable(false); });
 
-        updateChoiceBoxes();
-
         Main.allScenes.add(stage.getScene().getRoot());
     }
 
     public void show()
     {
         updateChoiceBoxes();
+        applyBtn.setDisable(true);
         stage.show();
     }
 

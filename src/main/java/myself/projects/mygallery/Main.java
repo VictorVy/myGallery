@@ -1,10 +1,7 @@
 package myself.projects.mygallery;
 
-import com.sun.javafx.css.Rule;
 import com.sun.javafx.css.StyleManager;
-import com.sun.javafx.css.parser.CSSParser;
 import javafx.application.Application;
-import com.sun.javafx.css.Stylesheet;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -24,7 +21,8 @@ public class Main extends Application
 
     public static ObservableList<Parent> allScenes = FXCollections.observableArrayList();
 
-    public static String stylesheet = String.valueOf(Main.class.getResource("/myself/projects/mygallery/style.css"));
+    public static String stylesheet = String.valueOf(Main.class.getResource("/myself/projects/mygallery/style.css")),
+                         stylesheetTest = String.valueOf(Main.class.getResource("/myself/projects/mygallery/style-test.css"));
 
     public static void main(String[] args) { launch(args); }
 
@@ -38,12 +36,13 @@ public class Main extends Application
         mainController = loader.getController();
         mainController.init(); //regular initialize doesn't work...
 
+//        Application.setUserAgentStylesheet();
+        StyleManager.getInstance().addUserAgentStylesheet(stylesheetTest);
+
+
         Scene scene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
         scene.getStylesheets().add(stylesheet);
         allScenes.add(scene.getRoot());
-
-//        Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
-//        StyleManager.getInstance().addUserAgentStylesheet(stylesheet);
 
         Main.stage = stage;
         stage.setTitle("myGallery");
