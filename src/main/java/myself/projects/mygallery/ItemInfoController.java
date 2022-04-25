@@ -61,6 +61,7 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
         tagsTabInit();
 
         Main.allScenes.add(tabPane.getScene().getRoot());
+        tabPane.getScene().getWindow().setOnCloseRequest(e -> Main.allScenes.remove(tabPane.getScene().getRoot()));
         MiscUtils.updateStyles();
     }
 
@@ -129,7 +130,7 @@ public class ItemInfoController //TODO: reduce alarming amount of redundancy wit
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 350, 350);
-            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style.css")));
+            scene.getStylesheets().add(String.valueOf(getClass().getResource("/myself/projects/mygallery/style-light.css")));
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             stage.setScene(scene);

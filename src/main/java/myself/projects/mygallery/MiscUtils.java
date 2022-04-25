@@ -1,6 +1,5 @@
 package myself.projects.mygallery;
 
-import com.sun.javafx.css.StyleManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 //import javafx.embed.swing.SwingFXUtils;
@@ -283,10 +282,10 @@ public class MiscUtils
         switch("" + prefs[2])
         {
             case "Light":
-                ss = Main.stylesheet;
+                ss = Main.stylesheet_light;
                 break;
             case "Dark":
-                ss = Main.stylesheetTest;
+                ss = Main.stylesheet_dark;
                 break;
         }
 
@@ -295,6 +294,7 @@ public class MiscUtils
             if(p.getStylesheets().size() > 0)
                 p.getStylesheets().remove(0);
             p.getStylesheets().add(ss);
+
             p.setStyle("-fx-font-family: '" + prefs[0] + "';" +
                        "-fx-font-size: " + prefs[1] + ";");
         }

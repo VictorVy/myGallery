@@ -1,6 +1,5 @@
 package myself.projects.mygallery;
 
-import com.sun.javafx.css.StyleManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
@@ -26,7 +25,6 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 public class MainController
@@ -76,8 +74,6 @@ public class MainController
     public TagManagerController tagManagerController;
     public PreferencesController preferencesController;
 
-//    AddFilesThread addFilesThread = new AddFilesThread();
-
     private final ImageView sortDirImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/sortDir.png"))),
                             searchImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/search.png"))),
                             settingsImg = new ImageView(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/settings.png")));
@@ -121,6 +117,7 @@ public class MainController
         SelectionHandler.initialize();
         tagManagerInit();
         preferencesInit();
+        syncFiles();
         updateViews();
     }
 
@@ -189,7 +186,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 350, 500);
-            scene.getRoot().getStylesheets().add(Main.stylesheetTest);
+            scene.getRoot().getStylesheets().add(Main.stylesheet_dark);
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             stage.setScene(scene);
@@ -213,7 +210,7 @@ public class MainController
             stage.setResizable(false);
 
             Scene scene = new Scene(loader.load(), 350, 300);
-            scene.getRoot().getStylesheets().add(Main.stylesheetTest);
+            scene.getRoot().getStylesheets().add(Main.stylesheet_dark);
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             stage.setScene(scene);
@@ -453,7 +450,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load());
-            scene.getRoot().getStylesheets().add(Main.stylesheetTest);
+            scene.getRoot().getStylesheets().add(Main.stylesheet_dark);
 
             stage.setScene(scene);
 
@@ -477,7 +474,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 300, 450);
-            scene.getRoot().getStylesheets().add(Main.stylesheetTest);
+            scene.getRoot().getStylesheets().add(Main.stylesheet_dark);
 
             stage.setScene(scene);
 
@@ -501,7 +498,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 300, 450);
-            scene.getRoot().getStylesheets().add(Main.stylesheetTest);
+            scene.getRoot().getStylesheets().add(Main.stylesheet_dark);
 
             stage.setScene(scene);
 

@@ -1,6 +1,5 @@
 package myself.projects.mygallery;
 
-import com.sun.javafx.css.StyleManager;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,8 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
-import java.util.Collections;
 
 public class Main extends Application
 {
@@ -23,8 +20,8 @@ public class Main extends Application
 
     public static ObservableList<Parent> allScenes = FXCollections.observableArrayList();
 
-    public static String stylesheet = String.valueOf(Main.class.getResource("/myself/projects/mygallery/style.css")),
-                         stylesheetTest = String.valueOf(Main.class.getResource("/myself/projects/mygallery/style-test.css"));
+    public static String stylesheet_light = String.valueOf(Main.class.getResource("/myself/projects/mygallery/style-light.css")),
+                         stylesheet_dark = String.valueOf(Main.class.getResource("/myself/projects/mygallery/style-dark.css"));
 
     public static void main(String[] args) { launch(args); }
 
@@ -42,7 +39,7 @@ public class Main extends Application
 //        StyleManager.getInstance().addUserAgentStylesheet(stylesheetTest); //would use but for stubborn galleryView background colour
 
         Scene scene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
-        scene.getRoot().getStylesheets().add(stylesheetTest);
+        scene.getRoot().getStylesheets().add(stylesheet_light);
         allScenes.add(scene.getRoot());
 
         Main.stage = stage;

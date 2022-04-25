@@ -94,7 +94,11 @@ public class ViewWindowController
     {
         this.viewItem = viewItem;
         this.stage = stage;
-        stage.setOnCloseRequest(e -> close());
+        stage.setOnCloseRequest(e ->
+        {
+            close();
+            Main.allScenes.remove(stage.getScene().getRoot());
+        });
         stage.setFullScreenExitHint("");
         borderPane.setCursor(Cursor.DEFAULT);
 
@@ -430,7 +434,10 @@ public class ViewWindowController
     {
         //properly disposes of media when closed
         if(overlay.getChildren().contains(controls))
+        {
             mediaPlayer.dispose();
+            System.out.println("hm");
+        }
     }
 
     private ImageView getVolumeImage()

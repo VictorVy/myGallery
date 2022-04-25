@@ -1,7 +1,5 @@
 .root
 {
-    -fx-font-family: "Monospace";
-    -fx-font-size: 12;
     -fx-base: rgb(50, 50, 50);
 }
 

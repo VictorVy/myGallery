@@ -210,7 +210,7 @@
                         <Tooltip text="Sort items" />
                      </tooltip>
                   </MenuButton>
-                  <MenuButton fx:id="sortDirBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="24.0" minHeight="0.0" mnemonicParsing="false">
+                  <MenuButton fx:id="sortDirBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false">
                     <items>
                         <RadioMenuItem fx:id="ascSortDir" mnemonicParsing="false" onAction="#sortDirToggle" selected="true" text="Ascending">
                            <toggleGroup>

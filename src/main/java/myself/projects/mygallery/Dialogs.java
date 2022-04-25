@@ -22,7 +22,11 @@ public class Dialogs
         itemNames.setWrapText(true);
 
         alert.getDialogPane().setExpandableContent(itemNames);
-        alert.getDialogPane().setPrefWidth(0);
+//        alert.getDialogPane().setPrefWidth(0);
+
+        Main.allScenes.add(alert.getDialogPane().getScene().getRoot());
+        alert.setOnCloseRequest(e -> Main.allScenes.remove(alert.getDialogPane().getScene().getRoot()));
+        MiscUtils.updateStyles();
 
         return alert;
     }
@@ -52,7 +56,11 @@ public class Dialogs
         itemNames.setWrapText(true);
 
         alert.getDialogPane().setExpandableContent(itemNames);
-        alert.getDialogPane().setPrefWidth(0);
+//        alert.getDialogPane().setPrefWidth(0);
+
+        Main.allScenes.add(alert.getDialogPane().getScene().getRoot());
+        alert.setOnCloseRequest(e -> Main.allScenes.remove(alert.getDialogPane().getScene().getRoot()));
+        MiscUtils.updateStyles();
 
         return alert;
     }
@@ -69,6 +77,10 @@ public class Dialogs
         dialog.setHeaderText("Enter tag name(s):");
         dialog.setResizable(true);
         dialog.setGraphic(null);
+
+        Main.allScenes.add(dialog.getDialogPane().getScene().getRoot());
+        dialog.setOnCloseRequest(e -> Main.allScenes.remove(dialog.getDialogPane().getScene().getRoot()));
+        MiscUtils.updateStyles();
 
         return dialog;
     }
