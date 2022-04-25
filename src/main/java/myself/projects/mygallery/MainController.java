@@ -310,22 +310,7 @@ public class MainController
     private void syncFiles()
     {
         if(SQLConnector.getFiles().size() > 0)
-        {
-            //checking if items in the db exist; if not, remove them
-            ObservableList<ViewItem> viewItems = SQLConnector.getFiles();
-            ObservableList<ViewItem> toRemove = FXCollections.observableArrayList();
-
-            for(ViewItem vi : viewItems)
-                if(!(new File(vi.getPath()).exists())) toRemove.add(vi);
-
-            if(toRemove.size() > 0)
-            {
-                SQLConnector.removeFiles(toRemove);
-                MiscUtils.removeThumbs(toRemove);
-            }
-
-            updateViews();
-        }
+            new syncFilesService().start();
     }
 
     @FXML
@@ -575,6 +560,48 @@ public class MainController
                     SQLConnector.insertFiles(items);
                     //generates thumbnails
                     MiscUtils.createThumbs(items, tsl);
+
+                    return null;
+                }
+            };
+        }
+    }
+
+    private class syncFilesService extends Service<Void>
+    {
+        private syncFilesService() { setOnSucceeded(e -> updateViews()); }
+
+        @Override
+        protected Task<Void> createTask()
+        {
+            return new Task<Void>()
+            {
+                @Override
+                protected Void call()
+                {
+                    ObservableList<ViewItem> viewItems = SQLConnector.getFiles();
+                    ObservableList<ViewItem> toRemove = FXCollections.observableArrayList(), missingThumbs = FXCollections.observableArrayList();
+
+                    //checking if items in the db exist; if not, remove them
+
+                    for(ViewItem vi : viewItems)
+                        if(!(new File(vi.getPath()).exists())) toRemove.add(vi);
+
+                    if(toRemove.size() > 0)
+                    {
+                        SQLConnector.removeFiles(toRemove);
+                        MiscUtils.removeThumbs(toRemove);
+                    }
+
+                    //checking if any thumbnails are missing; if yes, create them
+
+                    viewItems = SQLConnector.getFiles();
+
+                    for(ViewItem vi : viewItems)
+                        if(!(new File(vi.getThumb()).exists())) missingThumbs.add(vi);
+
+                    if(missingThumbs.size() > 0)
+                        MiscUtils.createThumbs(missingThumbs, thumbSizeLimit);
 
                     return null;
                 }
