@@ -1,5 +1,6 @@
 package myself.projects.mygallery;
 
+import com.sun.javafx.css.StyleManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 //import javafx.embed.swing.SwingFXUtils;
@@ -278,8 +279,24 @@ public class MiscUtils
     {
         Object[] prefs = SQLConnector.getPrefs();
 
+        String ss = "";
+        switch("" + prefs[2])
+        {
+            case "Light":
+                ss = Main.stylesheet;
+                break;
+            case "Dark":
+                ss = Main.stylesheetTest;
+                break;
+        }
+
         for(Parent p : Main.allScenes)
+        {
+            if(p.getStylesheets().size() > 0)
+                p.getStylesheets().remove(0);
+            p.getStylesheets().add(ss);
             p.setStyle("-fx-font-family: '" + prefs[0] + "';" +
                        "-fx-font-size: " + prefs[1] + ";");
+        }
     }
 }

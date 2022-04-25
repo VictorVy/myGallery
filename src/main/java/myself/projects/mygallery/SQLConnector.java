@@ -53,9 +53,10 @@ public class SQLConnector
         {
             statement.execute("CREATE TABLE prefs (ID INTEGER PRIMARY KEY," +
                                                   "font VARCHAR(64)," +
-                                                  "size INTEGER);");
+                                                  "size INTEGER," +
+                                                  "theme VARCHAR(64));");
             //setting default prefs
-            statement.execute("INSERT INTO prefs (font, size) VALUES('System', 12);");
+            statement.execute("INSERT INTO prefs (font, size, theme) VALUES('System', 12, 'Light');");
         }
     }
 
@@ -314,9 +315,9 @@ public class SQLConnector
     //checks if an xref entry exists
     private static boolean containsXRef(int fileID, String t) throws SQLException { return statement.executeQuery("SELECT * FROM fileTagXRef WHERE fileID LIKE '" + fileID + "' AND tagID LIKE '" + getTagId(t) + "';").next(); }
 
-    public static void updatePrefs(String font, Integer size)
+    public static void updatePrefs(String font, Integer size, String theme)
     {
-        try { statement.execute("UPDATE prefs SET font = '" + font + "', size = " + size + ";"); }
+        try { statement.execute("UPDATE prefs SET font = '" + font + "', size = " + size + ", theme = '" + theme + "';"); }
         catch(SQLException e) { e.printStackTrace(); }
     }
 
@@ -325,9 +326,9 @@ public class SQLConnector
         try
         {
             ResultSet rs = statement.executeQuery("SELECT * FROM prefs;");
-            return new Object[] { rs.getString("font"), rs.getInt("size") };
+            return new Object[] { rs.getString("font"), rs.getInt("size"), rs.getString("theme") };
         }
-        catch(SQLException e) { e.printStackTrace(); return new Object[] { "System", 12 }; }
+        catch(SQLException e) { e.printStackTrace(); return new Object[] { "System", 12, "Light" }; }
     }
 
     public static void close()

@@ -5,13 +5,18 @@
     -fx-base: rgb(50, 50, 50);
 }
 
+.title-bar
+{
+    -fx-background-color: black;
+}
+
 .tooltip
 {
     -fx-font-family: "System";
     -fx-font-size: 1em;
 
-    -fx-text-fill: black;
-    -fx-background-color: white;
+    -fx-text-fill: white; /* WHY NO WORK */
+    -fx-background-color: black;
 
     -fx-background-radius: 0.25em;
 }
@@ -41,19 +46,19 @@
     -fx-alignment: CENTER;
 }
 
-/*#viewTabPane .tab-header-background
+#viewTabPane .tab-header-background
 {
-    -fx-background-color: #f4f4f4;
+    -fx-background-color: rgb(83.5, 83.5, 83.5);
 }
 
 /*#galleryScroll
 {
-    -fx-background: white;
-}
+    -fx-background: black;
+}*/
 #galleryView
 {
-    -fx-background-color: white;
-}*/
+    -fx-background-color: rgb(100, 100, 100);
+}
 
 /* ViewWindow */
 
@@ -62,11 +67,11 @@
     -fx-background-radius: 10em;
 }
 
-/*#rateMenuItem:focused, #expandMenuItem:focused, #searchAllMI:focused, #searchNameMI:focused, #searchTypeMI:focused, #searchTagsMI:focused
+#rateMenuItem:focused, #expandMenuItem:focused, #searchAllMI:focused, #searchNameMI:focused, #searchTypeMI:focused, #searchTagsMI:focused
 {
-    -fx-background: white;
+    -fx-background: #919191;
     -fx-background-color: -fx-background;
-}*/
+}
 
 #rateSlider .axis
 {

@@ -27,10 +27,12 @@
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="Text font:" />
                         <Label text="Text size:" GridPane.rowIndex="1" />
+                        <Label text="Theme:" GridPane.rowIndex="2" />
                         <ChoiceBox fx:id="fontChoiceBox" prefWidth="150.0" GridPane.columnIndex="1">
                            <tooltip>
                               <Tooltip text="Select text font" />
@@ -39,6 +41,11 @@
                            <tooltip>
                               <Tooltip text="Select text size" />
                            </tooltip></ChoiceBox>
+                        <ChoiceBox fx:id="themeChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <tooltip>
+                              <Tooltip text="Select text size" />
+                           </tooltip>
+                        </ChoiceBox>
                      </children>
                      <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />

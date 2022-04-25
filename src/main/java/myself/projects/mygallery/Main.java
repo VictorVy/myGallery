@@ -11,6 +11,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.util.Collections;
+
 public class Main extends Application
 {
     static MainController mainController;
@@ -36,12 +38,11 @@ public class Main extends Application
         mainController = loader.getController();
         mainController.init(); //regular initialize doesn't work...
 
-//        Application.setUserAgentStylesheet();
-        StyleManager.getInstance().addUserAgentStylesheet(stylesheetTest);
-
+//        Application.setUserAgentStylesheet(); //overrides modena
+//        StyleManager.getInstance().addUserAgentStylesheet(stylesheetTest); //would use but for stubborn galleryView background colour
 
         Scene scene = new Scene(root, screenWidth * 0.75, screenHeight * 0.75);
-        scene.getStylesheets().add(stylesheet);
+        scene.getRoot().getStylesheets().add(stylesheetTest);
         allScenes.add(scene.getRoot());
 
         Main.stage = stage;

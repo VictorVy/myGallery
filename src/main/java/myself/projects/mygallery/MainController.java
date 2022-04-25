@@ -189,7 +189,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 350, 500);
-            scene.getStylesheets().add(Main.stylesheet);
+            scene.getRoot().getStylesheets().add(Main.stylesheetTest);
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             stage.setScene(scene);
@@ -213,7 +213,7 @@ public class MainController
             stage.setResizable(false);
 
             Scene scene = new Scene(loader.load(), 350, 300);
-            scene.getStylesheets().add(Main.stylesheet);
+            scene.getRoot().getStylesheets().add(Main.stylesheetTest);
 
             stage.initModality(Modality.APPLICATION_MODAL); //secret sauce
             stage.setScene(scene);
@@ -468,7 +468,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(Main.stylesheet);
+            scene.getRoot().getStylesheets().add(Main.stylesheetTest);
 
             stage.setScene(scene);
 
@@ -492,7 +492,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 300, 450);
-            scene.getStylesheets().add(Main.stylesheet);
+            scene.getRoot().getStylesheets().add(Main.stylesheetTest);
 
             stage.setScene(scene);
 
@@ -516,7 +516,7 @@ public class MainController
             stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
 
             Scene scene = new Scene(loader.load(), 300, 450);
-            scene.getStylesheets().add(Main.stylesheet);
+            scene.getRoot().getStylesheets().add(Main.stylesheetTest);
 
             stage.setScene(scene);
 

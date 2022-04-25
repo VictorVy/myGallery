@@ -14,6 +14,8 @@ public class PreferencesController
     private ChoiceBox<String> fontChoiceBox;
     @FXML
     private ChoiceBox<Integer> sizeChoiceBox;
+    @FXML
+    public ChoiceBox<String> themeChoiceBox;
 
     @FXML
     private Button applyBtn;
@@ -27,6 +29,11 @@ public class PreferencesController
 
         sizeChoiceBox.getItems().addAll(10, 11, 12, 13, 14);
         sizeChoiceBox.setOnAction(e -> { if(applyBtn.isDisabled()) applyBtn.setDisable(false); });
+
+        themeChoiceBox.getItems().addAll("Light", "Dark");
+        themeChoiceBox.setOnAction(e -> { if(applyBtn.isDisabled()) applyBtn.setDisable(false); });
+
+        updateChoiceBoxes();
 
         Main.allScenes.add(stage.getScene().getRoot());
     }
@@ -43,6 +50,7 @@ public class PreferencesController
         Object[] prefs = SQLConnector.getPrefs();
         fontChoiceBox.setValue((String) prefs[0]);
         sizeChoiceBox.setValue((int) prefs[1]);
+        themeChoiceBox.setValue((String) prefs[2]);
     }
 
     @FXML
@@ -51,7 +59,7 @@ public class PreferencesController
     private void applyBtn()
     {
         applyBtn.setDisable(true);
-        SQLConnector.updatePrefs(fontChoiceBox.getValue(), sizeChoiceBox.getValue());
+        SQLConnector.updatePrefs(fontChoiceBox.getValue(), sizeChoiceBox.getValue(), themeChoiceBox.getValue());
         MiscUtils.updateStyles();
     }
 }
