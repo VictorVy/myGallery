@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.util.converter.DefaultStringConverter;
 
@@ -161,4 +163,12 @@ public class TagManagerController
     private void selectAll() { tagListView.getSelectionModel().selectAll(); }
     @FXML
     private void clearSelection() { tagListView.getSelectionModel().clearSelection(); }
+
+    @FXML
+    private void keyPressed(KeyEvent e)
+    {
+        KeyCode code = e.getCode();
+
+        if(!searchBar.isFocused() && (code.equals(KeyCode.DELETE) || code.equals(KeyCode.BACK_SPACE))) deleteTags();
+    }
 }

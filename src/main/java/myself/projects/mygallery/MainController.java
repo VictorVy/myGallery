@@ -286,8 +286,6 @@ public class MainController
     @FXML
     private void search() { updateViews(); }
     @FXML
-    private void searchKeyPressed(KeyEvent e) { if(e.getCode().equals(KeyCode.ENTER)) search(); }
-    @FXML
     private void searchByAll()
     {
         boolean all = searchAll.isSelected();
@@ -375,6 +373,17 @@ public class MainController
             editTagsMenuItem.setDisable(isNotLegit);
             removeMenuItem.setDisable(isNotLegit);
         }
+    }
+
+    //keyboard hotkeys
+
+    @FXML
+    private void keyPressed(KeyEvent e)
+    {
+        KeyCode code = e.getCode();
+
+        if(searchBar.isFocused() && code.equals(KeyCode.ENTER)) search();
+        else if(!searchBar.isFocused() && (code.equals(KeyCode.DELETE) || code.equals(KeyCode.BACK_SPACE))) removeFiles();
     }
 
     //handling dragging files into view
@@ -516,13 +525,13 @@ public class MainController
     private void viewThumbnails() { MiscUtils.openThumbsDirectory(); }
 
     @FXML
-    private void helpHelp() { MiscUtils.openBrowserTo("https://github.com/VictorVy/myGallery/wiki"); }
+    private void helpHelp() { MiscUtils.openBrowserTo("https://github.com/VictorVy/myGallery/wiki#mygallery"); }
     @FXML
     private void helpSrcCode() { MiscUtils.openBrowserTo("https://github.com/VictorVy/myGallery"); }
     @FXML
     private void helpReleases() { MiscUtils.openBrowserTo("https://github.com/VictorVy/myGallery/releases"); }
     @FXML
-    private void helpAbout() { MiscUtils.openBrowserTo("https://github.com/VictorVy/myGallery/wiki"); }
+    private void helpAbout() { MiscUtils.openBrowserTo("https://github.com/VictorVy/myGallery/wiki#about"); }
 
     @FXML
     private void close() { Main.close(); }
