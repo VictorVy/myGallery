@@ -1,20 +1,26 @@
 package myself.projects.mygallery;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.*;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -101,6 +107,8 @@ public class ViewWindowController
         });
         stage.setFullScreenExitHint("");
         borderPane.setCursor(Cursor.DEFAULT);
+
+        stage.getScene().setOnKeyPressed(this::keyPressed); //doesn't work in scene builder for some reason...
 
         //prepares fade transitions
         fadeOutControls.setNode(overlay);
@@ -360,6 +368,58 @@ public class ViewWindowController
         }
     }
 
+    private void keyPressed(KeyEvent e)
+    {
+        KeyCode code = e.getCode();
+
+        if(code.equals(KeyCode.LEFT) || code.equals(KeyCode.RIGHT))
+        {
+            ObservableList<ViewItem> list = Main.mainController.getViewItems();
+
+            if(list.size() == 0) return;
+
+            for(int i = 0; i < list.size(); i++)
+            {
+                if(viewItem.equals(list.get(i)))
+                {
+                    if(code.equals(KeyCode.LEFT))
+                        switchVI(i == 0 ? list.get(list.size() - 1) : list.get(i - 1));
+                    else
+                        switchVI(i == list.size() - 1 ? list.get(0) : list.get(i + 1));
+                }
+            }
+        }
+    }
+
+    private void switchVI(ViewItem viewItem)
+    {
+        try //necessary?
+        {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myself/projects/mygallery/view-window.fxml"));
+
+            Stage stage = new Stage();
+            stage.setTitle(viewItem.getName() + "." + viewItem.getType());
+            stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/myself/projects/mygallery/images/gallery.png"))));
+
+            Scene scene = new Scene(loader.load());
+            scene.getRoot().getStylesheets().add(Main.stylesheet_dark);
+
+            stage.setScene(scene);
+
+            ViewWindowController viewWindowController = loader.getController();
+            viewWindowController.init(viewItem, stage);
+
+            stage.setMaximized(this.stage.isMaximized());
+            stage.setFullScreen(this.stage.isFullScreen());
+
+            stage.show();
+        }
+        catch(IOException e) { e.printStackTrace(); }
+
+        close();
+        stage.close();
+    }
+
     @FXML
     private void btnPlay()
     {
@@ -436,7 +496,7 @@ public class ViewWindowController
         if(overlay.getChildren().contains(controls))
         {
             mediaPlayer.dispose();
-            System.out.println("hm");
+//            System.out.println("hm");
         }
     }
 
