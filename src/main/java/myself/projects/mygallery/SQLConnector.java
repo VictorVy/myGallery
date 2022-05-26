@@ -228,7 +228,7 @@ public class SQLConnector
                     if(name || type) query.append("INTERSECT ").append(tagsQuery);
                     else query = tagsQuery;
                 }
-                String check = query.append("ORDER BY ").append(Main.mainController.sortBy).append(" ").append(Main.mainController.ascending ? "ASC" : "DESC").toString();
+                String check = query.append("ORDER BY files.").append(Main.mainController.sortBy).append(" ").append(Main.mainController.ascending ? "ASC" : "DESC").toString();
 //                System.out.println(check);
                 ResultSet rs = statement.executeQuery(check);
 
