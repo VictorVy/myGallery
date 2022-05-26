@@ -117,8 +117,8 @@ public class MainController
         SelectionHandler.initialize();
         tagManagerInit();
         preferencesInit();
-        syncFiles();
         updateViews();
+        syncFiles(); //must be last; SQLite JDBC internal error: rs.isOpen() on exec.
     }
 
     private void detailsViewInit()
